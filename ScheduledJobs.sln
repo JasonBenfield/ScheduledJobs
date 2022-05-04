@@ -1,0 +1,86 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScheduleJobWebApp", "ScheduleJobWebApp", "{27F82A3E-9BE5-4FBF-983F-AB817B84B327}"
+	ProjectSection(SolutionItems) = preProject
+		ScheduleJobWebApp\install.Development.private.json = ScheduleJobWebApp\install.Development.private.json
+		ScheduleJobWebApp\install.Production.private.json = ScheduleJobWebApp\install.Production.private.json
+		ScheduleJobWebApp\install.Staging.private.json = ScheduleJobWebApp\install.Staging.private.json
+		ScheduleJobWebApp\install.Test.private.json = ScheduleJobWebApp\install.Test.private.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{08C61B50-B37E-4AF9-918B-314A9A0DC06F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduleJobWebApp", "ScheduleJobWebApp\Apps\ScheduleJobWebApp\ScheduleJobWebApp.csproj", "{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Internal", "Internal", "{F868B756-6E03-4438-AB22-8716330DA862}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduleJobWebAppApi", "ScheduleJobWebApp\Internal\XTI_ScheduleJobWebAppApi\XTI_ScheduleJobWebAppApi.csproj", "{9C4372AF-358A-46D2-8516-F75F2D127405}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduleJobWebApp.ApiControllers", "ScheduleJobWebApp\Internal\ScheduleJobWebApp.ApiControllers\ScheduleJobWebApp.ApiControllers.csproj", "{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{DC085377-60F9-4A40-AB31-1DF5FC4A18FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduleJobAppClient", "ScheduleJobWebApp\Lib\XTI_ScheduleJobAppClient\XTI_ScheduleJobAppClient.csproj", "{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduleJobApiGeneratorApp", "ScheduleJobWebApp\Apps\ScheduleJobApiGeneratorApp\ScheduleJobApiGeneratorApp.csproj", "{C86D585F-A801-4F4B-B3E0-B3205F160B0E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduleJobSetupApp", "ScheduleJobWebApp\Apps\ScheduleJobSetupApp\ScheduleJobSetupApp.csproj", "{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{180EDB64-170B-4280-A1AA-C57CFAB529A2}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		xti.ps1 = xti.ps1
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C4372AF-358A-46D2-8516-F75F2D127405}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C4372AF-358A-46D2-8516-F75F2D127405}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C4372AF-358A-46D2-8516-F75F2D127405}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C4372AF-358A-46D2-8516-F75F2D127405}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C86D585F-A801-4F4B-B3E0-B3205F160B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C86D585F-A801-4F4B-B3E0-B3205F160B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C86D585F-A801-4F4B-B3E0-B3205F160B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C86D585F-A801-4F4B-B3E0-B3205F160B0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{08C61B50-B37E-4AF9-918B-314A9A0DC06F} = {27F82A3E-9BE5-4FBF-983F-AB817B84B327}
+		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6} = {08C61B50-B37E-4AF9-918B-314A9A0DC06F}
+		{F868B756-6E03-4438-AB22-8716330DA862} = {27F82A3E-9BE5-4FBF-983F-AB817B84B327}
+		{9C4372AF-358A-46D2-8516-F75F2D127405} = {F868B756-6E03-4438-AB22-8716330DA862}
+		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99} = {F868B756-6E03-4438-AB22-8716330DA862}
+		{DC085377-60F9-4A40-AB31-1DF5FC4A18FD} = {27F82A3E-9BE5-4FBF-983F-AB817B84B327}
+		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33} = {DC085377-60F9-4A40-AB31-1DF5FC4A18FD}
+		{C86D585F-A801-4F4B-B3E0-B3205F160B0E} = {08C61B50-B37E-4AF9-918B-314A9A0DC06F}
+		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681} = {08C61B50-B37E-4AF9-918B-314A9A0DC06F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5CABE53F-2B1C-42E9-9160-E9E3A6B07219}
+	EndGlobalSection
+EndGlobal
