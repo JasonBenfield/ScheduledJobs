@@ -3,37 +3,55 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScheduleJobWebApp", "ScheduleJobWebApp", "{27F82A3E-9BE5-4FBF-983F-AB817B84B327}"
-	ProjectSection(SolutionItems) = preProject
-		ScheduleJobWebApp\install.Development.private.json = ScheduleJobWebApp\install.Development.private.json
-		ScheduleJobWebApp\install.Production.private.json = ScheduleJobWebApp\install.Production.private.json
-		ScheduleJobWebApp\install.Staging.private.json = ScheduleJobWebApp\install.Staging.private.json
-		ScheduleJobWebApp\install.Test.private.json = ScheduleJobWebApp\install.Test.private.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{08C61B50-B37E-4AF9-918B-314A9A0DC06F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduleJobWebApp", "ScheduleJobWebApp\Apps\ScheduleJobWebApp\ScheduleJobWebApp.csproj", "{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Internal", "Internal", "{F868B756-6E03-4438-AB22-8716330DA862}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduleJobWebAppApi", "ScheduleJobWebApp\Internal\XTI_ScheduleJobWebAppApi\XTI_ScheduleJobWebAppApi.csproj", "{9C4372AF-358A-46D2-8516-F75F2D127405}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduleJobWebApp.ApiControllers", "ScheduleJobWebApp\Internal\ScheduleJobWebApp.ApiControllers\ScheduleJobWebApp.ApiControllers.csproj", "{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{DC085377-60F9-4A40-AB31-1DF5FC4A18FD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduleJobAppClient", "ScheduleJobWebApp\Lib\XTI_ScheduleJobAppClient\XTI_ScheduleJobAppClient.csproj", "{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduleJobApiGeneratorApp", "ScheduleJobWebApp\Apps\ScheduleJobApiGeneratorApp\ScheduleJobApiGeneratorApp.csproj", "{C86D585F-A801-4F4B-B3E0-B3205F160B0E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduleJobSetupApp", "ScheduleJobWebApp\Apps\ScheduleJobSetupApp\ScheduleJobSetupApp.csproj", "{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{180EDB64-170B-4280-A1AA-C57CFAB529A2}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		xti.ps1 = xti.ps1
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScheduledJobsWebApp", "ScheduledJobsWebApp", "{D41BEADF-8201-48EB-B779-99745EF8C3C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{514E2103-B915-4E18-A473-A402D3FB5F86}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsWebApp", "ScheduledJobsWebApp\Apps\ScheduledJobsWebApp\ScheduledJobsWebApp.csproj", "{8626AA5D-E0DB-4D37-875E-21B4713E95A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Internal", "Internal", "{98784FFD-984A-469A-8D05-4C268E149058}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduledJobsWebAppApi", "ScheduledJobsWebApp\Internal\XTI_ScheduledJobsWebAppApi\XTI_ScheduledJobsWebAppApi.csproj", "{AC4C52D5-43CF-430C-866D-735FF896A176}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsWebApp.ApiControllers", "ScheduledJobsWebApp\Internal\ScheduledJobsWebApp.ApiControllers\ScheduledJobsWebApp.ApiControllers.csproj", "{0183A625-FC14-4757-AE7F-C2908299DEEE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduledJobsAppClient", "ScheduledJobsWebApp\Lib\XTI_ScheduledJobsAppClient\XTI_ScheduledJobsAppClient.csproj", "{86BC63B1-10B7-47D8-9AFB-CFFEC1A97753}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsApiGeneratorApp", "ScheduledJobsWebApp\Apps\ScheduledJobsApiGeneratorApp\ScheduledJobsApiGeneratorApp.csproj", "{B71A4745-225A-453B-B6A4-DF280865DF0A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsSetupApp", "ScheduledJobsWebApp\Apps\ScheduledJobsSetupApp\ScheduledJobsSetupApp.csproj", "{07E29774-FF7F-44E5-BC31-5CC5CC0DD716}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InstallOptions", "InstallOptions", "{79E3FC0A-9492-4E55-999C-3FA390FF018A}"
+	ProjectSection(SolutionItems) = preProject
+		ScheduledJobsWebApp\install.Development.private.json = ScheduledJobsWebApp\install.Development.private.json
+		ScheduledJobsWebApp\install.Production.private.json = ScheduledJobsWebApp\install.Production.private.json
+		ScheduledJobsWebApp\install.Staging.private.json = ScheduledJobsWebApp\install.Staging.private.json
+		ScheduledJobsWebApp\install.Test.private.json = ScheduledJobsWebApp\install.Test.private.json
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_Jobs", "ScheduledJobsWebApp\Internal\XTI_Jobs\XTI_Jobs.csproj", "{17B348C6-B7E1-490C-ACDB-C8F902DEF778}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0904BA61-8C46-44B5-893D-F6756E92B607}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_ScheduledJobTests", "ScheduledJobsWebApp\Tests\XTI_ScheduledJobTests\XTI_ScheduledJobTests.csproj", "{C2157471-A922-481F-8E5B-8DCD93AE33C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_JobsDB.EF", "ScheduledJobsWebApp\Internal\XTI_JobsDB.EF\XTI_JobsDB.EF.csproj", "{BDF7BB47-ECA6-4C31-B27F-1EF764DFFC27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_JobsDB.InMemory", "ScheduledJobsWebApp\Internal\XTI_JobsDB.InMemory\XTI_JobsDB.InMemory.csproj", "{C01144A8-C01F-4364-B63E-F6FEED4D48D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_JobsDB.SqlServer", "ScheduledJobsWebApp\Internal\XTI_JobsDB.SqlServer\XTI_JobsDB.SqlServer.csproj", "{C2B62418-8EC6-47C0-9937-5C6C41203379}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_JobsDBTool", "ScheduledJobsWebApp\Internal\XTI_JobsDBTool\XTI_JobsDBTool.csproj", "{D0CBB1E8-8AF6-4554-A2D8-E09BEFC9E732}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_Jobs.Abstractions", "ScheduledJobsWebApp\Internal\XTI_Jobs.Abstractions\XTI_Jobs.Abstractions.csproj", "{CB05D78D-5044-46DB-8197-49FBEB1BA3D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,44 +59,81 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C4372AF-358A-46D2-8516-F75F2D127405}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C4372AF-358A-46D2-8516-F75F2D127405}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C4372AF-358A-46D2-8516-F75F2D127405}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C4372AF-358A-46D2-8516-F75F2D127405}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99}.Release|Any CPU.Build.0 = Release|Any CPU
-		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C86D585F-A801-4F4B-B3E0-B3205F160B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C86D585F-A801-4F4B-B3E0-B3205F160B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C86D585F-A801-4F4B-B3E0-B3205F160B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C86D585F-A801-4F4B-B3E0-B3205F160B0E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8626AA5D-E0DB-4D37-875E-21B4713E95A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8626AA5D-E0DB-4D37-875E-21B4713E95A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8626AA5D-E0DB-4D37-875E-21B4713E95A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8626AA5D-E0DB-4D37-875E-21B4713E95A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC4C52D5-43CF-430C-866D-735FF896A176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC4C52D5-43CF-430C-866D-735FF896A176}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC4C52D5-43CF-430C-866D-735FF896A176}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC4C52D5-43CF-430C-866D-735FF896A176}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0183A625-FC14-4757-AE7F-C2908299DEEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0183A625-FC14-4757-AE7F-C2908299DEEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0183A625-FC14-4757-AE7F-C2908299DEEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0183A625-FC14-4757-AE7F-C2908299DEEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86BC63B1-10B7-47D8-9AFB-CFFEC1A97753}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86BC63B1-10B7-47D8-9AFB-CFFEC1A97753}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86BC63B1-10B7-47D8-9AFB-CFFEC1A97753}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86BC63B1-10B7-47D8-9AFB-CFFEC1A97753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B71A4745-225A-453B-B6A4-DF280865DF0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B71A4745-225A-453B-B6A4-DF280865DF0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B71A4745-225A-453B-B6A4-DF280865DF0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B71A4745-225A-453B-B6A4-DF280865DF0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07E29774-FF7F-44E5-BC31-5CC5CC0DD716}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07E29774-FF7F-44E5-BC31-5CC5CC0DD716}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07E29774-FF7F-44E5-BC31-5CC5CC0DD716}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07E29774-FF7F-44E5-BC31-5CC5CC0DD716}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17B348C6-B7E1-490C-ACDB-C8F902DEF778}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17B348C6-B7E1-490C-ACDB-C8F902DEF778}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17B348C6-B7E1-490C-ACDB-C8F902DEF778}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17B348C6-B7E1-490C-ACDB-C8F902DEF778}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2157471-A922-481F-8E5B-8DCD93AE33C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2157471-A922-481F-8E5B-8DCD93AE33C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2157471-A922-481F-8E5B-8DCD93AE33C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2157471-A922-481F-8E5B-8DCD93AE33C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDF7BB47-ECA6-4C31-B27F-1EF764DFFC27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDF7BB47-ECA6-4C31-B27F-1EF764DFFC27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDF7BB47-ECA6-4C31-B27F-1EF764DFFC27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDF7BB47-ECA6-4C31-B27F-1EF764DFFC27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C01144A8-C01F-4364-B63E-F6FEED4D48D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C01144A8-C01F-4364-B63E-F6FEED4D48D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C01144A8-C01F-4364-B63E-F6FEED4D48D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C01144A8-C01F-4364-B63E-F6FEED4D48D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2B62418-8EC6-47C0-9937-5C6C41203379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2B62418-8EC6-47C0-9937-5C6C41203379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2B62418-8EC6-47C0-9937-5C6C41203379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2B62418-8EC6-47C0-9937-5C6C41203379}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0CBB1E8-8AF6-4554-A2D8-E09BEFC9E732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0CBB1E8-8AF6-4554-A2D8-E09BEFC9E732}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0CBB1E8-8AF6-4554-A2D8-E09BEFC9E732}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0CBB1E8-8AF6-4554-A2D8-E09BEFC9E732}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB05D78D-5044-46DB-8197-49FBEB1BA3D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB05D78D-5044-46DB-8197-49FBEB1BA3D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB05D78D-5044-46DB-8197-49FBEB1BA3D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB05D78D-5044-46DB-8197-49FBEB1BA3D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{08C61B50-B37E-4AF9-918B-314A9A0DC06F} = {27F82A3E-9BE5-4FBF-983F-AB817B84B327}
-		{72AB582C-E6FC-449E-A75B-BBB6B7EB7CF6} = {08C61B50-B37E-4AF9-918B-314A9A0DC06F}
-		{F868B756-6E03-4438-AB22-8716330DA862} = {27F82A3E-9BE5-4FBF-983F-AB817B84B327}
-		{9C4372AF-358A-46D2-8516-F75F2D127405} = {F868B756-6E03-4438-AB22-8716330DA862}
-		{9DB4F2E8-9F74-4229-BDB5-5AD268318A99} = {F868B756-6E03-4438-AB22-8716330DA862}
-		{DC085377-60F9-4A40-AB31-1DF5FC4A18FD} = {27F82A3E-9BE5-4FBF-983F-AB817B84B327}
-		{86D97482-0C0F-4EE0-B64D-0B2C1B1A5C33} = {DC085377-60F9-4A40-AB31-1DF5FC4A18FD}
-		{C86D585F-A801-4F4B-B3E0-B3205F160B0E} = {08C61B50-B37E-4AF9-918B-314A9A0DC06F}
-		{5F7BF0EB-8A9E-48BB-8015-A33686C7F681} = {08C61B50-B37E-4AF9-918B-314A9A0DC06F}
+		{514E2103-B915-4E18-A473-A402D3FB5F86} = {D41BEADF-8201-48EB-B779-99745EF8C3C6}
+		{8626AA5D-E0DB-4D37-875E-21B4713E95A4} = {514E2103-B915-4E18-A473-A402D3FB5F86}
+		{98784FFD-984A-469A-8D05-4C268E149058} = {D41BEADF-8201-48EB-B779-99745EF8C3C6}
+		{AC4C52D5-43CF-430C-866D-735FF896A176} = {98784FFD-984A-469A-8D05-4C268E149058}
+		{0183A625-FC14-4757-AE7F-C2908299DEEE} = {98784FFD-984A-469A-8D05-4C268E149058}
+		{48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994} = {D41BEADF-8201-48EB-B779-99745EF8C3C6}
+		{86BC63B1-10B7-47D8-9AFB-CFFEC1A97753} = {48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994}
+		{B71A4745-225A-453B-B6A4-DF280865DF0A} = {514E2103-B915-4E18-A473-A402D3FB5F86}
+		{07E29774-FF7F-44E5-BC31-5CC5CC0DD716} = {514E2103-B915-4E18-A473-A402D3FB5F86}
+		{79E3FC0A-9492-4E55-999C-3FA390FF018A} = {D41BEADF-8201-48EB-B779-99745EF8C3C6}
+		{17B348C6-B7E1-490C-ACDB-C8F902DEF778} = {98784FFD-984A-469A-8D05-4C268E149058}
+		{0904BA61-8C46-44B5-893D-F6756E92B607} = {D41BEADF-8201-48EB-B779-99745EF8C3C6}
+		{C2157471-A922-481F-8E5B-8DCD93AE33C6} = {0904BA61-8C46-44B5-893D-F6756E92B607}
+		{BDF7BB47-ECA6-4C31-B27F-1EF764DFFC27} = {98784FFD-984A-469A-8D05-4C268E149058}
+		{C01144A8-C01F-4364-B63E-F6FEED4D48D7} = {98784FFD-984A-469A-8D05-4C268E149058}
+		{C2B62418-8EC6-47C0-9937-5C6C41203379} = {98784FFD-984A-469A-8D05-4C268E149058}
+		{D0CBB1E8-8AF6-4554-A2D8-E09BEFC9E732} = {98784FFD-984A-469A-8D05-4C268E149058}
+		{CB05D78D-5044-46DB-8197-49FBEB1BA3D6} = {98784FFD-984A-469A-8D05-4C268E149058}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5CABE53F-2B1C-42E9-9160-E9E3A6B07219}
