@@ -4,10 +4,10 @@ namespace XTI_Jobs;
 
 public sealed class IncomingEventFactory
 {
-    private readonly IStoredEvents storedEvents;
+    private readonly IJobDb storedEvents;
     private readonly IClock clock;
 
-    public IncomingEventFactory(IStoredEvents storedEvents, IClock clock)
+    public IncomingEventFactory(IJobDb storedEvents, IClock clock)
     {
         this.storedEvents = storedEvents;
         this.clock = clock;

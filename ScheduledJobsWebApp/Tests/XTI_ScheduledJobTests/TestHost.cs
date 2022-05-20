@@ -15,11 +15,16 @@ internal sealed class TestHost
         host.Services.AddSingleton<FakeClock>();
         host.Services.AddSingleton<IClock>(sp => sp.GetRequiredService<FakeClock>());
         host.Services.AddJobDbContextForInMemory();
-        host.Services.AddScoped<IStoredEvents, EfStoredEvents>();
+        host.Services.AddScoped<IJobDb, EfJobDb>();
         host.Services.AddScoped<EventRegistration>();
         host.Services.AddScoped<JobRegistration>();
         host.Services.AddScoped<IncomingEventFactory>();
         host.Services.AddScoped<EventMonitorFactory>();
+        host.Services.AddScoped<DemoJobActionFactory>();
+        host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().Action01Context);
+        host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().Action02Context);
+        host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().ItemAction01Context);
+        host.Services.AddScoped<IJobActionFactory>(sp => sp.GetRequiredService<DemoJobActionFactory>());
         return host.Build();
     }
 }

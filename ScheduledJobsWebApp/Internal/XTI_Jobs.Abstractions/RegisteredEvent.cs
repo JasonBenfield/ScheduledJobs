@@ -4,5 +4,7 @@ public sealed record RegisteredEvent
 (
     EventKey EventKey, 
     bool CompareSourceKeyAndDataForDuplication, 
-    DuplicateHandling DuplicateHandling
+    DuplicateHandling DuplicateHandling,
+    DateTimeOffset TimeToStartNotifications,
+    TimeSpan ActiveFor
 );

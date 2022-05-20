@@ -2,12 +2,12 @@
 
 public sealed class JobRegistration
 {
-    private readonly IStoredEvents storedEvents;
+    private readonly IJobDb db;
     private readonly List<JobBuilder> jobs = new();
 
-    public JobRegistration(IStoredEvents storedEvents)
+    public JobRegistration(IJobDb db)
     {
-        this.storedEvents = storedEvents;
+        this.db = db;
     }
 
     public JobRegistration AddJob(JobKey jobKey, Action<JobBuilder> config)
@@ -21,6 +21,6 @@ public sealed class JobRegistration
     public Task Register()
     {
         var registeredJobs = jobs.Select(j => j.Build()).ToArray();
-        return storedEvents.AddOrUpdateRegisteredJobs(registeredJobs);
+        return db.AddOrUpdateRegisteredJobs(registeredJobs);
     }
 }

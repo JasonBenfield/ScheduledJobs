@@ -2,10 +2,10 @@
 
 public sealed class EventRegistration
 {
-    private readonly IStoredEvents storedEvents;
+    private readonly IJobDb storedEvents;
     private readonly List<EventBuilder> events = new();
 
-    public EventRegistration(IStoredEvents storedEvents)
+    public EventRegistration(IJobDb storedEvents)
     {
         this.storedEvents = storedEvents;
     }

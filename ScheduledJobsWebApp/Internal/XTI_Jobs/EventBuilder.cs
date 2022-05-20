@@ -9,6 +9,8 @@ public sealed class EventBuilder
         this.eventKey = eventKey;
     }
 
+    private TimeSpan ActiveForValue { get; set; } = TimeSpan.MaxValue;
+    private DateTimeOffset TimeToStartNotification { get; set; } = DateTimeOffset.MinValue;
     internal bool CompareSourceKeyAndDataForDuplication { get; set; } = true;
     internal DuplicateHandling DuplicateHandling { get; set; } = DuplicateHandling.Values.Ignore;
 
@@ -26,27 +28,25 @@ public sealed class EventBuilder
         return new EventDuplicationBuilder(this);
     }
 
-    public RegisteredEvent Build() => new RegisteredEvent(eventKey, CompareSourceKeyAndDataForDuplication, DuplicateHandling);
-}
-
-public sealed class EventDuplicationBuilder
-{
-    private readonly EventBuilder eventBuilder;
-
-    internal EventDuplicationBuilder(EventBuilder eventBuilder)
+    public EventBuilder StartNotifying(DateTimeOffset timeToStartNotifications)
     {
-        this.eventBuilder = eventBuilder;
+        TimeToStartNotification = timeToStartNotifications;
+        return this;
     }
 
-    public EventBuilder WhenSourceKeysOnlyAreEqual()
+    public EventBuilder ActiveFor(TimeSpan activeFor)
     {
-        eventBuilder.CompareSourceKeyAndDataForDuplication = false;
-        return eventBuilder;
+        ActiveForValue = activeFor;
+        return this;
     }
 
-    public EventBuilder WhenSourceKeysAndDataAreEqual()
-    {
-        eventBuilder.CompareSourceKeyAndDataForDuplication = true;
-        return eventBuilder;
-    }
+    internal RegisteredEvent Build() => 
+        new RegisteredEvent
+        (
+            eventKey, 
+            CompareSourceKeyAndDataForDuplication, 
+            DuplicateHandling, 
+            TimeToStartNotification,
+            ActiveForValue
+        );
 }
