@@ -9,11 +9,13 @@ internal sealed class DemoJobActionFactory : IJobActionFactory
         Action01Context = new DemoActionContext<DemoAction01>();
         Action02Context = new DemoActionContext<DemoAction02>();
         ItemAction01Context = new DemoItemActionContext<DemoItem01Action>();
+        ItemAction02Context = new DemoItemActionContext<DemoItem02Action>();
     }
 
     public DemoActionContext<DemoAction01> Action01Context { get; }
     public DemoActionContext<DemoAction02> Action02Context { get; }
     public DemoItemActionContext<DemoItem01Action> ItemAction01Context { get; }
+    public DemoItemActionContext<DemoItem02Action> ItemAction02Context { get; }
 
     public IJobAction CreateJobAction(TriggeredJobTask jobTask)
     {
@@ -26,9 +28,13 @@ internal sealed class DemoJobActionFactory : IJobActionFactory
         {
             action = new DemoAction02(jobTask, Action02Context);
         }
-        else if (jobTask.TaskKey.Equals(DemoJobs.DoSomething.TaskItem))
+        else if (jobTask.TaskKey.Equals(DemoJobs.DoSomething.TaskItem01))
         {
             action = new DemoItem01Action(jobTask, ItemAction01Context);
+        }
+        else if (jobTask.TaskKey.Equals(DemoJobs.DoSomething.TaskItem02))
+        {
+            action = new DemoItem02Action(jobTask, ItemAction02Context);
         }
         else
         {

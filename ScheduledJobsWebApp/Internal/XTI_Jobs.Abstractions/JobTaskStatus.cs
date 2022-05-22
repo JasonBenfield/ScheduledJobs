@@ -7,9 +7,9 @@ public sealed class JobTaskStatus : NumericValue, IEquatable<JobTaskStatus>
     public sealed class JobStatuses : NumericValues<JobTaskStatus>
     {
         internal JobStatuses() 
-            : base(new JobTaskStatus(0, nameof(NotRun)))
+            : base(new JobTaskStatus(0, nameof(NotSet)))
         {
-            NotRun = DefaultValue;
+            NotSet = DefaultValue;
             Failed = Add(new JobTaskStatus(10, nameof(Failed)));
             Retry = Add(new JobTaskStatus(20, nameof(Retry)));
             Running = Add(new JobTaskStatus(30, nameof(Running)));
@@ -17,7 +17,7 @@ public sealed class JobTaskStatus : NumericValue, IEquatable<JobTaskStatus>
             Canceled = Add(new JobTaskStatus(50, nameof(Canceled)));
             Completed = Add(new JobTaskStatus(60, nameof(Completed)));
         }
-        public JobTaskStatus NotRun { get; }
+        public JobTaskStatus NotSet { get; }
         public JobTaskStatus Failed { get; }
         public JobTaskStatus Retry { get; }
         public JobTaskStatus Running { get; }
@@ -33,4 +33,6 @@ public sealed class JobTaskStatus : NumericValue, IEquatable<JobTaskStatus>
     }
 
     public bool Equals(JobTaskStatus? other) => _Equals(other);
+
+    public bool EqualsAny(params JobTaskStatus[] others) => _EqualsAny(others);
 }

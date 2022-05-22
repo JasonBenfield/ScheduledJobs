@@ -5,15 +5,19 @@ namespace XTI_JobsDB.EF;
 
 public sealed class JobDbContext : DbContext
 {
+    private readonly UnitOfWork unitOfWork;
+
     public JobDbContext(DbContextOptions<JobDbContext> options)
         : base(options)
     {
+        unitOfWork = new UnitOfWork(this);
         EventDefinitions = new EfDataRepository<EventDefinitionEntity>(this);
         EventNotifications = new EfDataRepository<EventNotificationEntity>(this);
         JobDefinitions = new EfDataRepository<JobDefinitionEntity>(this);
         JobTaskDefinitions = new EfDataRepository<JobTaskDefinitionEntity>(this);
         TriggeredJobs = new EfDataRepository<TriggeredJobEntity>(this);
         TriggeredJobTasks = new EfDataRepository<TriggeredJobTaskEntity>(this);
+        HierarchicalTriggeredJobTasks = new EfDataRepository<HierarchicalTriggeredJobTaskEntity>(this);
         LogEntries = new EfDataRepository<LogEntryEntity>(this);
     }
 
@@ -26,6 +30,7 @@ public sealed class JobDbContext : DbContext
         modelBuilder.ApplyConfiguration(new JobTaskDefinitionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TriggeredJobEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TriggeredJobTaskEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new HierarchicalTriggeredJobTaskEntityConfiguration());
         modelBuilder.ApplyConfiguration(new LogEntryEntityConfiguration());
     }
 
@@ -41,5 +46,9 @@ public sealed class JobDbContext : DbContext
 
     public DataRepository<TriggeredJobTaskEntity> TriggeredJobTasks { get; }
 
+    public DataRepository<HierarchicalTriggeredJobTaskEntity> HierarchicalTriggeredJobTasks { get; }
+
     public DataRepository<LogEntryEntity> LogEntries { get; }
+
+    public Task Transaction(Func<Task> action) => unitOfWork.Execute(action);
 }

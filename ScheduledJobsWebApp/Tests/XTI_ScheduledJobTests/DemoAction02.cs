@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace XTI_ScheduledJobTests;
+﻿namespace XTI_ScheduledJobTests;
 
 internal sealed class DemoAction02 : JobAction<DoSomethingData>
 {
@@ -12,17 +10,17 @@ internal sealed class DemoAction02 : JobAction<DoSomethingData>
         this.context = context;
     }
 
-    protected override Task<DoSomethingData> Execute(TriggeredJobTask task, DoSomethingData data)
+    protected override async Task<DoSomethingData> Execute(TriggeredJobTask task, JobActionResultBuilder nextTasks, DoSomethingData data)
     {
         context.NumberOfTimesExecuted++;
         data.Output += ",Action2";
         context.TargetID = data.TargetID;
         context.Output = data.Output;
-        return Task.FromResult(data);
+        foreach (var message in context.Messages)
+        {
+            await task.LogMessage(message);
+        }
+        nextTasks.AddNext(DemoJobs.DoSomething.TaskItem01, data.Items);
+        return data;
     }
-
-    protected override NextTask[] Next(TriggeredJobTask task, DoSomethingData data) => 
-        data.Items
-            .Select(item => new NextTask(DemoJobs.DoSomething.TaskItem, item))
-            .ToArray();
 }

@@ -2,11 +2,11 @@
 
 namespace XTI_ScheduledJobTests;
 
-internal sealed class DemoItem01Action : JobAction<DoSomethingItemData>
+internal sealed class DemoItem02Action : JobAction<DoSomethingItemData>
 {
-    private readonly DemoItemActionContext<DemoItem01Action> context;
+    private readonly DemoItemActionContext<DemoItem02Action> context;
 
-    public DemoItem01Action(TriggeredJobTask task, DemoItemActionContext<DemoItem01Action> context) : base(task)
+    public DemoItem02Action(TriggeredJobTask task, DemoItemActionContext<DemoItem02Action> context) : base(task)
     {
         this.context = context;
     }
@@ -16,7 +16,6 @@ internal sealed class DemoItem01Action : JobAction<DoSomethingItemData>
         context.MaybeThrowError(data);
         data.Value = $"Value{data.ItemID}";
         context.AddValue(data.Value);
-        nextTasks.AddNext(DemoJobs.DoSomething.TaskItem02, data);
         return Task.FromResult(data);
     }
 
@@ -28,8 +27,7 @@ internal sealed class DemoItem01Action : JobAction<DoSomethingItemData>
         }
         else if (context.IsContinuedAfterError())
         {
-            onError.Continue()
-                .AddNext(DemoJobs.DoSomething.TaskItem02, data);
+            onError.Continue();
         }
         else if (context.IsRetryAfterError())
         {

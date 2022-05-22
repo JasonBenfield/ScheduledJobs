@@ -8,4 +8,5 @@ public sealed class LogEntryEntity
     public string Category { get; set; } = "";
     public string Message { get; set; } = "";
     public string Details { get; set; } = "";
+    public DateTimeOffset TimeOccurred { get; set; } = DateTimeOffset.MaxValue;
 }

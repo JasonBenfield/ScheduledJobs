@@ -24,6 +24,7 @@ internal sealed class TestHost
         host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().Action01Context);
         host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().Action02Context);
         host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().ItemAction01Context);
+        host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().ItemAction02Context);
         host.Services.AddScoped<IJobActionFactory>(sp => sp.GetRequiredService<DemoJobActionFactory>());
         return host.Build();
     }

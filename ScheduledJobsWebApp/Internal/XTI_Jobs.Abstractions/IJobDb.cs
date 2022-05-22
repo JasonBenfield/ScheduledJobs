@@ -12,6 +12,8 @@ public interface IJobDb
 
     Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset now);
 
+    Task<TriggeredJobDetailModel[]> Retry(JobKey jobKey, DateTimeOffset now);
+
     Task<TriggeredJobDetailModel[]> TriggeredJobs(EventNotificationModel notification);
 
     Task<TriggeredJobDetailModel> StartJob(TriggeredJobModel pendingJob, NextTaskModel[] nextTasks, DateTimeOffset now);
@@ -20,7 +22,7 @@ public interface IJobDb
 
     Task<TriggeredJobDetailModel> TaskCompleted(TriggeredJobModel pendingJob, TriggeredJobTaskModel currentTask, NextTaskModel[] nextTasks, DateTimeOffset now);
 
-    Task JobCompleted(PendingJobModel job);
+    Task<TriggeredJobDetailModel> TaskFailed(TriggeredJobModel job, TriggeredJobTaskModel task, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, string category, string message, string detail, DateTimeOffset now);
 
-    Task<TriggeredJobDetailModel> TaskFailed(TriggeredJobModel job, TriggeredJobTaskModel task, AppEventSeverity severity, string category, string message, string detail);
+    Task LogMessage(TriggeredJobTaskModel task, string category, string message, string details, DateTimeOffset now);
 }

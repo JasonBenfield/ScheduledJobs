@@ -23,7 +23,23 @@ public sealed class TriggeredJobTask
             .Where(e => e.Severity.Equals(AppEventSeverity.Values.CriticalError))
             .ToArray();
 
-    public Task Failed(Exception ex) => job.TaskFailed(this, ex);
+    public LogEntryModel[] Messages() =>
+        Model.LogEntries
+            .Where(e => !e.Severity.Equals(AppEventSeverity.Values.CriticalError))
+            .ToArray();
 
-    public Task Completed(NextTaskModel[] nextTasks) => job.TaskCompleted(this, nextTasks);
+    public Task LogMessage(string message) => LogMessage("", message, "");
+
+    public Task LogMessage(string category, string message, string details) =>
+        job.LogMessage(this, category, message, details);
+
+    internal Task<TriggeredJobTask?> Failed
+    (
+        JobTaskStatus errorStatus, 
+        TimeSpan retryAfter, 
+        NextTaskModel[] nextTasks, 
+        Exception ex
+    ) => job.TaskFailed(this, errorStatus, retryAfter, nextTasks, ex);
+
+    internal Task Completed(NextTaskModel[] nextTasks) => job.TaskCompleted(this, nextTasks);
 }

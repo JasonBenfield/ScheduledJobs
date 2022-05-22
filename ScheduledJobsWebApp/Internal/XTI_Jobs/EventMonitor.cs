@@ -21,6 +21,16 @@ public sealed class EventMonitor
 
     public async Task Run()
     {
+        var retryJobs = await db.Retry(jobKey, clock.Now());
+        foreach(var retryJob in retryJobs)
+        {
+            var triggeredJob = new TriggeredJob(db, clock, retryJob);
+            var nextTask = await triggeredJob.StartNextTask();
+            while (nextTask != null)
+            {
+                nextTask = await ExecuteTask(triggeredJob, nextTask);
+            }
+        }
         var pendingJobs = await db.TriggerJobs(eventKey, jobKey, clock.Now());
         foreach (var pendingJob in pendingJobs)
         {
@@ -33,24 +43,39 @@ public sealed class EventMonitor
             {
                 nextTask = await ExecuteTask(triggeredJob, nextTask);
             }
-            await db.JobCompleted(pendingJob);
         }
     }
 
     private async Task<TriggeredJobTask?> ExecuteTask(TriggeredJob triggeredJob, TriggeredJobTask currentTask)
     {
+        TriggeredJobTask? nextTask;
         var jobAction = jobActionFactory.CreateJobAction(currentTask);
         JobActionResult result;
         try
         {
             result = await jobAction.Execute();
             await currentTask.Completed(result.NextTasks);
+            nextTask = await triggeredJob.StartNextTask();
         }
         catch (Exception ex)
         {
-            await currentTask.Failed(ex);
+            JobErrorResult errorResult;
+            try
+            {
+                errorResult = await jobAction.OnError(ex);
+            }
+            catch
+            {
+                errorResult = new JobErrorResultBuilder(currentTask.Model).Build();
+            }
+            nextTask = await currentTask.Failed
+            (
+                errorResult.UpdatedStatus, 
+                errorResult.RetryAfter, 
+                errorResult.NextTasks, 
+                ex
+            );
         }
-        var nextTask = await triggeredJob.StartNextTask();
         return nextTask;
     }
 }

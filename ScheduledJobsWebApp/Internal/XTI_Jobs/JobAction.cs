@@ -4,6 +4,7 @@ public abstract class JobAction<T> : IJobAction
     where T : new()
 {
     private readonly TriggeredJobTask task;
+    private T data = new T();
 
     protected JobAction(TriggeredJobTask task)
     {
@@ -12,13 +13,20 @@ public abstract class JobAction<T> : IJobAction
 
     public async Task<JobActionResult> Execute()
     {
-        var data = task.Data<T>();
-        data = await Execute(task, data);
-        var nextTasks = Next(task, data);
-        return new JobActionResult(task.Model, nextTasks.Select(nt => nt.ToModel()).ToArray());
+        data = task.Data<T>();
+        var resultBuilder = new JobActionResultBuilder(task.Model);
+        await Execute(task, resultBuilder, data);
+        return resultBuilder.Build();
     }
 
-    protected abstract Task<T> Execute(TriggeredJobTask task, T data);
+    protected abstract Task<T> Execute(TriggeredJobTask task, JobActionResultBuilder next, T data);
 
-    protected abstract NextTask[] Next(TriggeredJobTask task, T data);
+    public async Task<JobErrorResult> OnError(Exception ex)
+    {
+        var resultBuilder = new JobErrorResultBuilder(task.Model);
+        await OnError(ex, data, resultBuilder);
+        return resultBuilder.Build();
+    }
+
+    protected virtual Task OnError(Exception ex, T data, JobErrorResultBuilder onError) => Task.CompletedTask;
 }
