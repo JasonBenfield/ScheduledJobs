@@ -1,18 +1,14 @@
-﻿using XTI_Core;
-
-namespace XTI_Jobs;
+﻿namespace XTI_Jobs;
 
 public sealed class TriggeredJob
 {
     private readonly IJobDb db;
-    private readonly IClock clock;
     private TriggeredJobTask[] tasks = new TriggeredJobTask[0];
 
-    internal TriggeredJob(IJobDb db, IClock clock, PendingJobModel job)
+    internal TriggeredJob(IJobDb db, PendingJobModel job)
         : this
         (
             db,
-            clock,
             new TriggeredJobDetailModel
             (
                 new TriggeredJobModel(job.Job.ID, job.Job.JobDefinition),
@@ -22,10 +18,9 @@ public sealed class TriggeredJob
     {
     }
 
-    public TriggeredJob(IJobDb db, IClock clock, TriggeredJobDetailModel jobDetail)
+    public TriggeredJob(IJobDb db, TriggeredJobDetailModel jobDetail)
     {
         this.db = db;
-        this.clock = clock;
         Model = jobDetail.Job;
         UpdateJob(jobDetail);
     }
@@ -59,7 +54,7 @@ public sealed class TriggeredJob
 
     internal async Task<TriggeredJobTask?> Start(NextTaskModel[] firstTasks)
     {
-        var startedJob = await db.StartJob(Model, firstTasks, clock.Now());
+        var startedJob = await db.StartJob(Model.ID, firstTasks);
         UpdateJob(startedJob);
         var task = await StartNextTask();
         return task;
@@ -74,7 +69,7 @@ public sealed class TriggeredJob
             nextTask = tasks.Where(t => t.Model.Status.Equals(JobTaskStatus.Values.Pending)).FirstOrDefault();
             if (nextTask != null)
             {
-                await db.StartTask(nextTask.Model, clock.Now());
+                await db.StartTask(nextTask.Model.ID);
             }
         }
         return nextTask;
@@ -83,26 +78,24 @@ public sealed class TriggeredJob
     internal Task LogMessage(TriggeredJobTask task, string category, string message, string details) =>
         db.LogMessage
         (
-            task.Model,
+            task.Model.ID,
             category,
             message,
-            details,
-            clock.Now()
+            details
         );
 
     internal async Task<TriggeredJobTask?> TaskFailed(TriggeredJobTask task, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, Exception ex)
     {
         var updatedJob = await db.TaskFailed
         (
-            Model,
-            task.Model,
+            Model.ID,
+            task.Model.ID,
             errorStatus,
             retryAfter,
             nextTasks,
             ex.GetType().Name,
             ex.Message,
-            ex.ToString(),
-            clock.Now()
+            ex.ToString()
         );
         UpdateJob(updatedJob);
         var nextTask = await StartNextTask();
@@ -111,7 +104,7 @@ public sealed class TriggeredJob
 
     internal async Task TaskCompleted(TriggeredJobTask task, NextTaskModel[] nextTasks)
     {
-        var updatedJob = await db.TaskCompleted(Model, task.Model, nextTasks, clock.Now());
+        var updatedJob = await db.TaskCompleted(Model.ID, task.Model.ID, nextTasks);
         UpdateJob(updatedJob);
     }
 

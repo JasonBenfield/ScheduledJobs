@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Text.Json;
+using XTI_App.Api;
 using XTI_Core.Extensions;
 using XTI_Core.Fakes;
+using XTI_ScheduledJobsWebAppApi;
 
 namespace XTI_ScheduledJobTests;
 
@@ -106,7 +108,7 @@ internal sealed class RunJobTest
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         Assert.That(demoContext.Values, Is.EqualTo(new[] { "Value1", "Value2", "Value3" }), "Should loop through tasks");
     }
 
@@ -182,7 +184,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -211,7 +213,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -238,10 +240,10 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext1 = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext1 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext1.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var demoContext2 = host.GetRequiredService<DemoItemActionContext<DemoItem02Action>>();
+        var demoContext2 = host.GetRequiredService<DemoItemActionContext<DemoItemAction02>>();
         var values = demoContext2.Values();
         Assert.That(values, Is.EqualTo(new[] { "Value1" }), "Should run next child task");
     }
@@ -265,7 +267,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var values = demoContext.Values();
@@ -291,7 +293,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext.CancelAfterError();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -319,7 +321,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext.CancelAfterError();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -346,7 +348,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext.ContinueAfterError();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -373,11 +375,11 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext01.ContinueAfterError();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var demoContext02 = host.GetRequiredService<DemoItemActionContext<DemoItem02Action>>();
+        var demoContext02 = host.GetRequiredService<DemoItemActionContext<DemoItemAction02>>();
         var values = demoContext02.Values();
         Assert.That(values, Is.EqualTo(new[] { "Value1", "Value2", "Value3" }));
     }
@@ -401,7 +403,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext01.ContinueAfterError();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -429,7 +431,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -456,7 +458,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -487,7 +489,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -519,7 +521,7 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItem01Action>>();
+        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -528,6 +530,175 @@ internal sealed class RunJobTest
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var values = demoContext01.Values();
         Assert.That(values, Is.EqualTo(new[] { "Value1" }), "Should not redo task before retry time");
+    }
+
+    [Test]
+    public async Task ShouldNotRetry_WhenJobTimesOut()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
+        demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
+        demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        fastForward(host, TimeSpan.FromHours(1).Add(TimeSpan.FromSeconds(1)));
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var status = triggeredJobs[0].Status();
+        Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Failed), "Should not retry after job times out");
+    }
+
+    [Test]
+    public async Task ShouldLogJobTimeoutError_WhenJobTimesOut()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
+        demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
+        demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        fastForward(host, TimeSpan.FromHours(1).Add(TimeSpan.FromSeconds(1)));
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var errors = triggeredJobs[0].Errors().Where(err => err.Message != "Whatever").ToArray();
+        Assert.That(errors.Length, Is.EqualTo(1), "Should log job timeout error");
+        Assert.That(errors[0].Category, Is.EqualTo(JobErrors.JobTimeoutCategory), "Should log job timeout error");
+        Assert.That(errors[0].Message, Is.EqualTo(JobErrors.JobTimeoutMessage), "Should log job timeout error");
+    }
+
+    [Test]
+    public async Task ShouldFailJob_WhenTaskTimesOut()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var demoContext01 = host.GetRequiredService<DemoActionContext<DemoAction01>>();
+        demoContext01.Delay = TimeSpan.FromHours(1);
+        var monitor = Task.Run
+        (
+            () => host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey)
+        );
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        fastForward(host, TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
+        var api = host.GetRequiredService<ScheduledJobsAppApi>();
+        await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var status = triggeredJobs[0].Status();
+        Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Failed), "Should fail job when job times out");
+        host.GetRequiredService<CancellationTokenSource>().Cancel();
+    }
+
+    [Test]
+    public async Task ShouldLogError_WhenTaskTimesOut()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var demoContext01 = host.GetRequiredService<DemoActionContext<DemoAction01>>();
+        demoContext01.Delay = TimeSpan.FromHours(1);
+        var monitor = Task.Run
+        (
+            () => host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey)
+        );
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        fastForward(host, TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
+        var api = host.GetRequiredService<ScheduledJobsAppApi>();
+        await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var errors = triggeredJobs[0].Errors();
+        Assert.That(errors.Length, Is.EqualTo(1), "Should log error when task times out");
+        Assert.That(errors[0].Category, Is.EqualTo(JobErrors.TaskTimeoutCategory), "Should log error when task times out");
+        Assert.That(errors[0].Message, Is.EqualTo(JobErrors.TaskTimeoutMessage), "Should log error when task times out");
+        host.GetRequiredService<CancellationTokenSource>().Cancel();
+    }
+
+    [Test]
+    public async Task ShouldNotFailJob_BeforeJobTimesOut()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var demoContext01 = host.GetRequiredService<DemoActionContext<DemoAction01>>();
+        demoContext01.Delay = TimeSpan.FromHours(1);
+        var monitor = Task.Run
+        (
+            () => host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey)
+        );
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        fastForward(host, TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(-1)));
+        var api = host.GetRequiredService<ScheduledJobsAppApi>();
+        await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var status = triggeredJobs[0].Status();
+        Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Running), "Should not fail job before job times out");
+        host.GetRequiredService<CancellationTokenSource>().Cancel();
     }
 
     private static void fastForward(XtiHost host, TimeSpan howLong)
@@ -541,9 +712,10 @@ internal sealed class RunJobTest
         (
             DemoJobs.DoSomething.JobKey,
             job => job
-                .AddFirstTask(DemoJobs.DoSomething.Task01)
-                .AddTask(DemoJobs.DoSomething.Task02)
-                .AddTask(DemoJobs.DoSomething.TaskItem01)
-                .AddTask(DemoJobs.DoSomething.TaskItem02)
+                .TimeoutAfter(TimeSpan.FromHours(1))
+                .AddTask(DemoJobs.DoSomething.Task01).TimeoutAfter(TimeSpan.FromMinutes(5))
+                .AddTask(DemoJobs.DoSomething.Task02).TimeoutAfter(TimeSpan.FromMinutes(5))
+                .AddTask(DemoJobs.DoSomething.TaskItem01).TimeoutAfter(TimeSpan.FromMinutes(5))
+                .AddTask(DemoJobs.DoSomething.TaskItem02).TimeoutAfter(TimeSpan.FromMinutes(5))
         );
 }

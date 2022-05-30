@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -8,8 +8,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_Core.Fakes" Version="1.10.8" />
-		<PackageReference Include="XTI_Core.Extensions" Version="1.10.8" />
+		<PackageReference Include="XTI_Core.Fakes" Version="1.10.10" />
+		<PackageReference Include="XTI_Core.Extensions" Version="1.10.10" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -18,15 +18,14 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 		<PackageReference Include="NUnit" Version="3.13.3" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
-		<PackageReference Include="coverlet.collector" Version="3.1.2">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		<PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
+		<PackageReference Include="coverlet.collector" Version="3.1.2" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\Tests\XTI_ScheduledJobSharedTests\XTI_ScheduledJobSharedTests.csproj" />
 		<ProjectReference Include="..\..\Internal\XTI_JobsDB.InMemory\XTI_JobsDB.InMemory.csproj" />
-		<ProjectReference Include="..\..\Internal\XTI_Jobs\XTI_Jobs.csproj" />
+		<ProjectReference Include="..\..\Internal\XTI_ScheduledJobsWebAppApi\XTI_ScheduledJobsWebAppApi.csproj" />
 	</ItemGroup>
 
 </Project>

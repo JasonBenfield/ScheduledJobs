@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using XTI_App.Api;
 using XTI_Core;
 using XTI_Core.Extensions;
 using XTI_Core.Fakes;
 using XTI_JobsDB.EF;
 using XTI_JobsDB.InMemory;
+using XTI_ScheduledJobsWebAppApi;
 
 namespace XTI_ScheduledJobTests;
 
@@ -26,6 +28,10 @@ internal sealed class TestHost
         host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().ItemAction01Context);
         host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().ItemAction02Context);
         host.Services.AddScoped<IJobActionFactory>(sp => sp.GetRequiredService<DemoJobActionFactory>());
+        host.Services.AddScheduledJobsAppApiServices();
+        host.Services.AddScoped<ScheduledJobsAppApiFactory>();
+        host.Services.AddScoped(sp => sp.GetRequiredService<ScheduledJobsAppApiFactory>().CreateForSuperUser());
+        host.Services.AddSingleton<CancellationTokenSource>();
         return host.Build();
     }
 }

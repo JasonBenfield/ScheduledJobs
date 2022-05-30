@@ -11,6 +11,7 @@ public sealed class TriggeredJobTaskEntity
     public int Sequence { get; set; }
     public DateTimeOffset TimeAdded { get; set; } = DateTimeOffset.MaxValue;
     public DateTimeOffset TimeActive { get; set; } = DateTimeOffset.MaxValue;
+    public DateTimeOffset TimeInactive { get; set; } = DateTimeOffset.MaxValue;
     public DateTimeOffset TimeStarted { get; set; } = DateTimeOffset.MaxValue;
     public DateTimeOffset TimeEnded { get; set; } = DateTimeOffset.MaxValue;
     public int Status { get; set; } = JobTaskStatus.Values.NotSet;

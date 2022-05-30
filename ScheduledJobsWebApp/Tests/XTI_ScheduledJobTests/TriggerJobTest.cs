@@ -33,7 +33,7 @@ internal sealed class TriggerJobTest
         jobs.AddJob
         (
             DemoJobs.DoSomething.JobKey,
-            j => j.AddFirstTask(DemoJobs.DoSomething.Task01)
+            j => j.AddTask(DemoJobs.DoSomething.Task01)
                 .AddTask(DemoJobs.DoSomething.Task02)
         );
 

@@ -4,10 +4,11 @@ internal sealed class JobTaskDefinitionEntityConfiguration : IEntityTypeConfigur
 {
     public void Configure(EntityTypeBuilder<JobTaskDefinitionEntity> builder)
     {
-        builder.HasKey(jd => jd.ID);
-        builder.Property(jd => jd.ID).ValueGeneratedOnAdd();
-        builder.Property(jd => jd.TaskKey).HasMaxLength(100);
-        builder.HasIndex(jd => new { jd.JobDefinitionID, jd.TaskKey }).IsUnique();
+        builder.HasKey(td => td.ID);
+        builder.Property(td => td.ID).ValueGeneratedOnAdd();
+        builder.Property(td => td.TaskKey).HasMaxLength(100);
+        builder.Property(td => td.Timeout).HasConversion<string>();
+        builder.HasIndex(td => new { td.JobDefinitionID, td.TaskKey }).IsUnique();
         builder.ToTable("JobTaskDefinitions");
     }
 }

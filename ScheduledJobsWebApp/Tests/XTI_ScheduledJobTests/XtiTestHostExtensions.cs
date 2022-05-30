@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using XTI_Core.Extensions;
 
@@ -21,11 +22,12 @@ internal static class XtiTestHostExtensions
 
     public static Task MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey)
     {
+        var stoppingToken = host.GetRequiredService<CancellationTokenSource>().Token;
         var monitorFactory = host.GetRequiredService<EventMonitorFactory>();
         var monitor = monitorFactory
             .When(eventKey)
             .Trigger(jobKey);
-        return monitor.Run();
+        return monitor.Run(stoppingToken);
     }
 
     public static Task<EventNotification[]> RaiseEvent(this XtiHost host, EventKey eventKey, EventSource source)

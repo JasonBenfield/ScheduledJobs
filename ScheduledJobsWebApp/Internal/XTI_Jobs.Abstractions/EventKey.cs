@@ -4,6 +4,8 @@ namespace XTI_Jobs.Abstractions;
 
 public sealed class EventKey : TextKeyValue, IEquatable<EventKey>
 {
+    public EventKey() : this("") { }
+
     public EventKey(string value) : base(value)
     {
     }

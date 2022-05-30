@@ -1,6 +1,4 @@
-﻿using XTI_Core;
-
-namespace XTI_Jobs.Abstractions;
+﻿namespace XTI_Jobs.Abstractions;
 
 public interface IJobDb
 {
@@ -8,21 +6,46 @@ public interface IJobDb
 
     Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs);
 
-    Task<EventNotificationModel[]> AddNotifications(EventKey eventKey, EventSource[] sources, DateTimeOffset now);
+    Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, EventSource[] sources);
 
-    Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset now);
+    Task<TriggeredJobDetailModel[]> TriggeredJobs(int notificationID);
 
-    Task<TriggeredJobDetailModel[]> Retry(JobKey jobKey, DateTimeOffset now);
+    Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey);
 
-    Task<TriggeredJobDetailModel[]> TriggeredJobs(EventNotificationModel notification);
+    Task<TriggeredJobDetailModel[]> RetryJobs(JobKey jobKey);
 
-    Task<TriggeredJobDetailModel> StartJob(TriggeredJobModel pendingJob, NextTaskModel[] nextTasks, DateTimeOffset now);
+    Task<TriggeredJobDetailModel> StartJob
+    (
+        int jobID, 
+        NextTaskModel[] nextTasks
+    );
 
-    Task StartTask(TriggeredJobTaskModel pendingTask, DateTimeOffset now);
+    Task StartTask(int taskID);
 
-    Task<TriggeredJobDetailModel> TaskCompleted(TriggeredJobModel pendingJob, TriggeredJobTaskModel currentTask, NextTaskModel[] nextTasks, DateTimeOffset now);
+    Task<TriggeredJobDetailModel> TaskCompleted
+    (
+        int jobID,
+        int completedTaskID, 
+        NextTaskModel[] nextTasks
+    );
 
-    Task<TriggeredJobDetailModel> TaskFailed(TriggeredJobModel job, TriggeredJobTaskModel task, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, string category, string message, string detail, DateTimeOffset now);
+    Task<TriggeredJobDetailModel> TaskFailed
+    (
+        int jobID, 
+        int failedTaskID, 
+        JobTaskStatus errorStatus, 
+        TimeSpan retryAfter, 
+        NextTaskModel[] nextTasks, 
+        string category, 
+        string message, 
+        string detail
+    );
 
-    Task LogMessage(TriggeredJobTaskModel task, string category, string message, string details, DateTimeOffset now);
+    Task LogMessage
+    (
+        int taskID, 
+        string category, 
+        string message, 
+        string details
+    );
 }

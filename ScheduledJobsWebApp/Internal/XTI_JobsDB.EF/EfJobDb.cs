@@ -6,10 +6,12 @@ namespace XTI_JobsDB.EF;
 public sealed class EfJobDb : IJobDb
 {
     private readonly JobDbContext db;
+    private readonly IClock clock;
 
-    public EfJobDb(JobDbContext db)
+    public EfJobDb(JobDbContext db, IClock clock)
     {
         this.db = db;
+        this.clock = clock;
     }
 
     public async Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents)
@@ -37,34 +39,63 @@ public sealed class EfJobDb : IJobDb
     {
         foreach (var registeredJob in registeredJobs)
         {
-            var jobDefinitionEntity = await db.JobDefinitions.Retrieve()
-                .FirstOrDefaultAsync(jd => jd.JobKey == registeredJob.JobKey.Value);
-            if (jobDefinitionEntity == null)
+            var jobDefinitionEntity = await AddOrUpdateJobDefinition(registeredJob);
+            foreach (var task in registeredJob.Tasks)
             {
-                jobDefinitionEntity = new JobDefinitionEntity
-                {
-                    JobKey = registeredJob.JobKey.Value
-                };
-                await db.JobDefinitions.Create(jobDefinitionEntity);
-            }
-            foreach (var taskKey in registeredJob.TaskKeys)
-            {
-                var taskDefinitionEntity = await db.JobTaskDefinitions.Retrieve()
-                    .FirstOrDefaultAsync(td => td.TaskKey == taskKey.Value);
-                if (taskDefinitionEntity == null)
-                {
-                    taskDefinitionEntity = new JobTaskDefinitionEntity
-                    {
-                        JobDefinitionID = jobDefinitionEntity.ID,
-                        TaskKey = taskKey.Value
-                    };
-                    await db.JobTaskDefinitions.Create(taskDefinitionEntity);
-                }
+                await AddOrUpdateTaskDefinition(jobDefinitionEntity, task);
             }
         }
     }
 
-    public async Task<EventNotificationModel[]> AddNotifications(EventKey eventKey, EventSource[] sources, DateTimeOffset now)
+    private async Task<JobDefinitionEntity> AddOrUpdateJobDefinition(RegisteredJob registeredJob)
+    {
+        var jobDefinitionEntity = await db.JobDefinitions.Retrieve()
+            .FirstOrDefaultAsync(jd => jd.JobKey == registeredJob.JobKey.Value);
+        if (jobDefinitionEntity == null)
+        {
+            jobDefinitionEntity = new JobDefinitionEntity
+            {
+                JobKey = registeredJob.JobKey.Value,
+                Timeout = registeredJob.Timeout
+            };
+            await db.JobDefinitions.Create(jobDefinitionEntity);
+        }
+        else
+        {
+            await db.JobDefinitions.Update
+            (
+                jobDefinitionEntity,
+                jd => jd.Timeout = registeredJob.Timeout
+            );
+        }
+        return jobDefinitionEntity;
+    }
+
+    private async Task AddOrUpdateTaskDefinition(JobDefinitionEntity jobDefinitionEntity, RegisteredJobTask task)
+    {
+        var taskDefinitionEntity = await db.JobTaskDefinitions.Retrieve()
+            .FirstOrDefaultAsync(td => td.TaskKey == task.TaskKey.Value);
+        if (taskDefinitionEntity == null)
+        {
+            taskDefinitionEntity = new JobTaskDefinitionEntity
+            {
+                JobDefinitionID = jobDefinitionEntity.ID,
+                TaskKey = task.TaskKey.Value,
+                Timeout = task.Timeout
+            };
+            await db.JobTaskDefinitions.Create(taskDefinitionEntity);
+        }
+        else
+        {
+            await db.JobTaskDefinitions.Update
+            (
+                taskDefinitionEntity,
+                td => td.Timeout = task.Timeout
+            );
+        }
+    }
+
+    public async Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, EventSource[] sources)
     {
         var eventNotifications = new List<EventNotificationModel>();
         var eventDefinition = await db.EventDefinitions.Retrieve()
@@ -73,6 +104,7 @@ public sealed class EfJobDb : IJobDb
         {
             throw new ArgumentException($"Event '{eventKey.DisplayText}' not found");
         }
+        var now = clock.Now();
         if (now >= eventDefinition.TimeToStartNotifications)
         {
             var duplicateHandling = DuplicateHandling.Values.Value(eventDefinition.DuplicateHandling);
@@ -160,7 +192,7 @@ public sealed class EfJobDb : IJobDb
         return notificationEntity;
     }
 
-    public async Task<TriggeredJobDetailModel[]> Retry(JobKey jobKey, DateTimeOffset now)
+    public async Task<TriggeredJobDetailModel[]> RetryJobs(JobKey jobKey)
     {
         var jobDefinitionID = db.JobDefinitions.Retrieve()
             .Where(jd => jd.JobKey == jobKey.Value)
@@ -168,11 +200,12 @@ public sealed class EfJobDb : IJobDb
         var triggeredJobIDs = db.TriggeredJobs.Retrieve()
             .Where(tj => jobDefinitionID.Contains(tj.JobDefinitionID))
             .Select(tj => tj.ID);
+        var now = clock.Now();
         var retryTasks = await db.TriggeredJobTasks.Retrieve()
             .Where
             (
-                t => 
-                    triggeredJobIDs.Contains(t.TriggeredJobID) && 
+                t =>
+                    triggeredJobIDs.Contains(t.TriggeredJobID) &&
                     t.Status == JobTaskStatus.Values.Retry.Value &&
                     now >= t.TimeActive
             )
@@ -210,7 +243,7 @@ public sealed class EfJobDb : IJobDb
         return triggeredJobModels.ToArray();
     }
 
-    public async Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset now)
+    public async Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey)
     {
         var jobDefinitionEntity = await db.JobDefinitions.Retrieve()
             .FirstOrDefaultAsync(jd => jd.JobKey == jobKey.Value);
@@ -224,6 +257,7 @@ public sealed class EfJobDb : IJobDb
         var triggeredJobEventNotificationIDs = db.TriggeredJobs.Retrieve()
             .Where(tj => tj.JobDefinitionID == jobDefinitionEntity.ID)
             .Select(tj => tj.EventNotificationID);
+        var now = clock.Now();
         var eventNotifications = await db.EventNotifications.Retrieve()
             .Where
             (
@@ -250,11 +284,11 @@ public sealed class EfJobDb : IJobDb
         return pendingJobs.ToArray();
     }
 
-    public async Task<TriggeredJobDetailModel[]> TriggeredJobs(EventNotificationModel notification)
+    public async Task<TriggeredJobDetailModel[]> TriggeredJobs(int notificationID)
     {
         var triggeredJobs = await
             db.TriggeredJobs.Retrieve()
-                .Where(tj => tj.EventNotificationID == notification.ID)
+                .Where(tj => tj.EventNotificationID == notificationID)
                 .Join
                 (
                     db.JobDefinitions.Retrieve(),
@@ -363,18 +397,43 @@ public sealed class EfJobDb : IJobDb
             tasks
         );
 
-    public async Task<TriggeredJobDetailModel> StartJob(TriggeredJobModel pendingJob, NextTaskModel[] nextTasks, DateTimeOffset now)
+    public async Task<TriggeredJobDetailModel> StartJob(int jobID, NextTaskModel[] nextTasks)
     {
-        await AddNextTasks(pendingJob, null, nextTasks, now);
-        var updatedJob = await GetTriggeredJob(pendingJob.ID);
+        await db.Transaction
+        (
+            async () =>
+            {
+                var jobWithDefEntity = await db.TriggeredJobs.Retrieve()
+                    .Where(j => j.ID == jobID)
+                    .Join
+                    (
+                        db.JobDefinitions.Retrieve(),
+                        j => j.JobDefinitionID,
+                        jd => jd.ID,
+                        (j, jd) => new TriggeredJobWithDefinitionEntity(j, jd)
+                    )
+                    .FirstAsync();
+                var now = clock.Now();
+                await db.TriggeredJobs.Update
+                (
+                    jobWithDefEntity.Job,
+                    j => j.TimeInactive = now.Add(jobWithDefEntity.Definition.Timeout)
+                );
+                await AddNextTasks(jobWithDefEntity.Job, null, nextTasks, now);
+            }
+        );
+        var updatedJob = await GetTriggeredJob(jobID);
         return updatedJob;
     }
 
-    public async Task StartTask(TriggeredJobTaskModel pendingTask, DateTimeOffset now)
+    public async Task StartTask(int taskID)
     {
         var taskEntity = await db.TriggeredJobTasks.Retrieve()
-            .FirstOrDefaultAsync(jt => jt.ID == pendingTask.ID);
-        if (taskEntity == null) { throw new ArgumentException($"Task {pendingTask.ID} was not found"); }
+            .FirstOrDefaultAsync(jt => jt.ID == taskID);
+        if (taskEntity == null) { throw new ArgumentException($"Task {taskID} was not found"); }
+        var taskDefEntity = await db.JobTaskDefinitions.Retrieve()
+            .FirstAsync(td => td.ID == taskEntity.TaskDefinitionID);
+        var now = clock.Now();
         await db.TriggeredJobTasks.Update
         (
             taskEntity,
@@ -382,32 +441,38 @@ public sealed class EfJobDb : IJobDb
             {
                 jt.Status = JobTaskStatus.Values.Running.Value;
                 jt.TimeStarted = now;
+                jt.TimeInactive = now.Add(taskDefEntity.Timeout);
             }
         );
     }
 
-    public async Task<TriggeredJobDetailModel> TaskCompleted(TriggeredJobModel pendingJob, TriggeredJobTaskModel currentTask, NextTaskModel[] nextTasks, DateTimeOffset now)
+    public async Task<TriggeredJobDetailModel> TaskCompleted(int jobID, int completedTaskID, NextTaskModel[] nextTasks)
     {
         var currentTaskEntity = await db.TriggeredJobTasks.Retrieve()
-            .FirstOrDefaultAsync(jt => jt.ID == currentTask.ID);
-        if (currentTaskEntity == null) { throw new ArgumentException($"Task {currentTask.ID} was not found"); }
+            .FirstOrDefaultAsync(jt => jt.ID == completedTaskID);
+        if (currentTaskEntity == null) { throw new ArgumentException($"Task {completedTaskID} was not found"); }
+        var now = clock.Now();
+        var jobEntity = await JobByID(jobID);
         await db.Transaction
         (
             async () =>
             {
-                await EndTask(currentTaskEntity, JobTaskStatus.Values.Completed, now);
-                await AddNextTasks(pendingJob, currentTaskEntity, nextTasks, now);
+                await new EfTriggeredJobTask(db, currentTaskEntity).End(JobTaskStatus.Values.Completed, now);
+                await AddNextTasks(jobEntity, currentTaskEntity, nextTasks, now);
             }
         );
-        var updatedJob = await GetTriggeredJob(pendingJob.ID);
+        var updatedJob = await GetTriggeredJob(jobID);
         return updatedJob;
     }
 
-    private async Task AddNextTasks(TriggeredJobModel job, TriggeredJobTaskEntity? currentTaskEntity, NextTaskModel[] nextTasks, DateTimeOffset now)
+    private Task<TriggeredJobEntity> JobByID(int jobID)=>
+        db.TriggeredJobs.Retrieve().FirstAsync(tj => tj.ID == jobID);
+
+    private async Task AddNextTasks(TriggeredJobEntity jobEntity, TriggeredJobTaskEntity? currentTaskEntity, NextTaskModel[] nextTasks, DateTimeOffset now)
     {
         var generation = (currentTaskEntity?.Generation ?? 0) + 1;
         var maxSequence = await db.TriggeredJobTasks.Retrieve()
-            .Where(t => t.TriggeredJobID == job.ID && t.Generation == generation)
+            .Where(t => t.TriggeredJobID == jobEntity.ID && t.Generation == generation)
             .OrderByDescending(t => t.Sequence)
             .Select(t => t.Sequence)
             .FirstOrDefaultAsync();
@@ -415,19 +480,20 @@ public sealed class EfJobDb : IJobDb
         foreach (var nextTask in nextTasks)
         {
             var taskDefEntity = await db.JobTaskDefinitions.Retrieve()
-                .FirstOrDefaultAsync(td => td.JobDefinitionID == job.JobDefinition.ID && td.TaskKey == nextTask.TaskKey.Value);
+                .FirstOrDefaultAsync(td => td.JobDefinitionID == jobEntity.JobDefinitionID && td.TaskKey == nextTask.TaskKey.Value);
             if (taskDefEntity == null)
             {
                 throw new ArgumentException($"Task '{nextTask.TaskKey.DisplayText}' was not found");
             }
             var taskEntity = new TriggeredJobTaskEntity
             {
-                TriggeredJobID = job.ID,
+                TriggeredJobID = jobEntity.ID,
                 TaskDefinitionID = taskDefEntity.ID,
                 Generation = generation,
                 Sequence = sequence,
                 TimeAdded = now,
                 TimeActive = DateTimeOffset.MinValue,
+                TimeInactive = DateTimeOffset.MaxValue,
                 TaskData = nextTask.TaskData,
                 Status = JobTaskStatus.Values.Pending.Value
             };
@@ -469,13 +535,14 @@ public sealed class EfJobDb : IJobDb
                 .ToArray()
         );
 
-    public async Task<TriggeredJobDetailModel> TaskFailed(TriggeredJobModel job, TriggeredJobTaskModel task, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, string category, string message, string details, DateTimeOffset now)
+    public async Task<TriggeredJobDetailModel> TaskFailed(int jobID, int failedTaskID, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, string category, string message, string details)
     {
+        var now = clock.Now();
         await db.Transaction
         (
             async () =>
             {
-                var currentTaskEntity = await db.TriggeredJobTasks.Retrieve().FirstAsync(t => t.ID == task.ID);
+                var currentTaskEntity = await db.TriggeredJobTasks.Retrieve().FirstAsync(t => t.ID == failedTaskID);
                 if (errorStatus.Equals(JobTaskStatus.Values.Retry))
                 {
                     await Retry(currentTaskEntity, retryAfter, now);
@@ -485,92 +552,127 @@ public sealed class EfJobDb : IJobDb
                     if (errorStatus.Equals(JobTaskStatus.Values.Canceled))
                     {
                         var pendingTaskEntities = await db.TriggeredJobTasks.Retrieve()
-                            .Where(t => t.TriggeredJobID == job.ID && t.Status == JobTaskStatus.Values.Pending)
+                            .Where(t => t.TriggeredJobID == jobID && t.Status == JobTaskStatus.Values.Pending)
                             .ToArrayAsync();
                         foreach (var pendingTaskEntity in pendingTaskEntities)
                         {
-                            await EndTask(pendingTaskEntity, errorStatus, now);
+                            await new EfTriggeredJobTask(db, pendingTaskEntity).End(errorStatus, now);
                         }
                     }
-                    await EndTask(currentTaskEntity, errorStatus, now);
+                    await new EfTriggeredJobTask(db, currentTaskEntity).End(errorStatus, now);
                 }
                 await db.LogEntries.Create
                 (
                     new LogEntryEntity
                     {
-                        TaskID = task.ID,
+                        TaskID = failedTaskID,
                         Severity = AppEventSeverity.Values.CriticalError.Value,
                         Category = category,
                         Message = message,
-                        Details = details
+                        Details = details,
+                        TimeOccurred = now
                     }
                 );
-                await AddNextTasks(job, currentTaskEntity, nextTasks, now);
+                var jobEntity = await JobByID(jobID);
+                await AddNextTasks(jobEntity, currentTaskEntity, nextTasks, now);
             }
         );
-        var jobDetail = await GetTriggeredJob(job.ID);
+        var jobDetail = await GetTriggeredJob(jobID);
         return jobDetail;
     }
 
     private async Task Retry(TriggeredJobTaskEntity currentTaskEntity, TimeSpan retryAfter, DateTimeOffset now)
     {
-        await db.TriggeredJobTasks.Update
-        (
-            currentTaskEntity,
-            t =>
-            {
-                t.Status = JobTaskStatus.Values.Completed.Value;
-                t.TimeEnded = now;
-            }
-        );
-        var subsequentTasks = await db.TriggeredJobTasks.Retrieve()
-            .Where(t => t.TriggeredJobID == currentTaskEntity.TriggeredJobID && t.Generation == currentTaskEntity.Generation && t.Sequence > currentTaskEntity.Sequence)
-            .ToArrayAsync();
-        foreach (var subsequentTask in subsequentTasks)
+        var timeToRetry = now.Add(retryAfter);
+        var job = await db.TriggeredJobs.Retrieve()
+            .FirstAsync(j => j.ID == currentTaskEntity.TriggeredJobID);
+        if (timeToRetry > job.TimeInactive)
         {
             await db.TriggeredJobTasks.Update
             (
-                subsequentTask,
-                t => t.Sequence = t.Sequence + 1
+                currentTaskEntity,
+                t =>
+                {
+                    t.Status = JobTaskStatus.Values.Failed.Value;
+                    t.TimeEnded = now;
+                }
+            );
+            await db.LogEntries.Create
+            (
+                new LogEntryEntity
+                {
+                    TaskID = currentTaskEntity.ID,
+                    Severity = AppEventSeverity.Values.CriticalError,
+                    TimeOccurred = now,
+                    Category = JobErrors.JobTimeoutCategory,
+                    Message = JobErrors.JobTimeoutMessage,
+                    Details = ""
+                }
             );
         }
-        await db.TriggeredJobTasks.Create
-        (
-            new TriggeredJobTaskEntity
+        else
+        {
+            await db.TriggeredJobTasks.Update
+            (
+                currentTaskEntity,
+                t =>
+                {
+                    t.Status = JobTaskStatus.Values.Completed.Value;
+                    t.TimeEnded = now;
+                }
+            );
+            var subsequentTasks = await db.TriggeredJobTasks.Retrieve()
+                .Where(t => t.TriggeredJobID == currentTaskEntity.TriggeredJobID && t.Generation == currentTaskEntity.Generation && t.Sequence > currentTaskEntity.Sequence)
+                .ToArrayAsync();
+            foreach (var subsequentTask in subsequentTasks)
+            {
+                await db.TriggeredJobTasks.Update
+                (
+                    subsequentTask,
+                    t => t.Sequence = t.Sequence + 1
+                );
+            }
+            var retryTask = new TriggeredJobTaskEntity
             {
                 Status = JobTaskStatus.Values.Retry.Value,
                 Generation = currentTaskEntity.Generation,
                 Sequence = currentTaskEntity.Sequence + 1,
                 TimeAdded = now,
-                TimeActive = now.Add(retryAfter),
+                TimeActive = timeToRetry,
                 TaskData = currentTaskEntity.TaskData,
                 TaskDefinitionID = currentTaskEntity.TaskDefinitionID,
                 TriggeredJobID = currentTaskEntity.TriggeredJobID
+            };
+            await db.TriggeredJobTasks.Create(retryTask);
+            var parentTaskID = await db.HierarchicalTriggeredJobTasks.Retrieve()
+                .Where(ht => ht.ChildTaskID == currentTaskEntity.ID)
+                .Select(ht => (int?)ht.ParentTaskID)
+                .FirstOrDefaultAsync();
+            if (parentTaskID.HasValue)
+            {
+                await db.HierarchicalTriggeredJobTasks.Create
+                (
+                    new HierarchicalTriggeredJobTaskEntity
+                    {
+                        ParentTaskID = parentTaskID.Value,
+                        ChildTaskID = retryTask.ID
+                    }
+                );
             }
-        );
+        }
     }
 
-    private Task EndTask(TriggeredJobTaskEntity taskEntity, JobTaskStatus status, DateTimeOffset now) =>
-        db.TriggeredJobTasks.Update
-        (
-            taskEntity,
-            t =>
-            {
-                t.Status = status.Value;
-                t.TimeEnded = now;
-            }
-        );
-
-    public Task LogMessage(TriggeredJobTaskModel task, string category, string message, string details, DateTimeOffset now) =>
+    public Task LogMessage(int taskID, string category, string message, string details) =>
         db.LogEntries.Create
         (
             new LogEntryEntity
             {
-                TaskID = task.ID,
+                TaskID = taskID,
                 Severity = AppEventSeverity.Values.Information.Value,
                 Category = category,
                 Message = message,
-                Details = details
+                Details = details,
+                TimeOccurred = clock.Now()
             }
         );
 }

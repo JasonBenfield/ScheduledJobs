@@ -20,7 +20,31 @@ public sealed partial class ScheduledJobsAppApi : WebAppApiWrapper
         )
     {
         createHomeGroup(sp);
+        createRecurringGroup(sp);
+        createEventsGroup(sp);
+        createJobsGroup(sp);
     }
 
     partial void createHomeGroup(IServiceProvider sp);
+
+    partial void createRecurringGroup(IServiceProvider sp);
+
+    partial void createEventsGroup(IServiceProvider sp);
+
+    partial void createJobsGroup(IServiceProvider sp);
+
+    protected override void ConfigureTemplate(AppApiTemplate template)
+    {
+        template.ExcludeValueTemplates
+        (
+            (temp, generators) =>
+            {
+                if(generators == ApiCodeGenerators.Dotnet)
+                {
+                    return temp.DataType.Namespace == "XTI_Jobs.Abstractions";
+                }
+                return false;
+            }
+        );
+    }
 }

@@ -11,15 +11,15 @@ public abstract class JobAction<T> : IJobAction
         this.task = task;
     }
 
-    public async Task<JobActionResult> Execute()
+    public async Task<JobActionResult> Execute(CancellationToken stoppingToken)
     {
         data = task.Data<T>();
         var resultBuilder = new JobActionResultBuilder(task.Model);
-        await Execute(task, resultBuilder, data);
+        await Execute(stoppingToken, task, resultBuilder, data);
         return resultBuilder.Build();
     }
 
-    protected abstract Task<T> Execute(TriggeredJobTask task, JobActionResultBuilder next, T data);
+    protected abstract Task<T> Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder next, T data);
 
     public async Task<JobErrorResult> OnError(Exception ex)
     {

@@ -8,6 +8,8 @@ namespace XTI_Jobs.Abstractions;
 [TypeConverter(typeof(TextValueTypeConverter<JobKey>))]
 public sealed class JobKey : TextKeyValue
 {
+    public JobKey() : this("") { }
+
     public JobKey(string value) : base(value)
     {
     }

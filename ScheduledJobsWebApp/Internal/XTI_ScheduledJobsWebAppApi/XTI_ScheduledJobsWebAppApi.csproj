@@ -7,8 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_App.Extensions" Version="1.8.16" />
-		<PackageReference Include="XTI_WebApp.Api" Version="1.8.17" />
+		<PackageReference Include="XTI_App.Extensions" Version="1.8.18" />
+		<PackageReference Include="XTI_WebApp.Api" Version="1.8.19" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\XTI_JobsDB.EF\XTI_JobsDB.EF.csproj" />
+	  <ProjectReference Include="..\XTI_Jobs\XTI_Jobs.csproj" />
 	</ItemGroup>
 
 </Project>

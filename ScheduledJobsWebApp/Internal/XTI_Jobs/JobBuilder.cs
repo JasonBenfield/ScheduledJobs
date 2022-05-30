@@ -3,35 +3,26 @@
 public sealed class JobBuilder
 {
     private readonly JobKey jobKey;
-    private readonly List<JobTaskKey> taskKeys = new();
+    private TimeSpan timeout;
+    private readonly List<JobTaskBuilder> tasks = new();
 
     internal JobBuilder(JobKey jobKey)
     {
         this.jobKey = jobKey;
     }
 
-    public JobTaskBuilder AddFirstTask(JobTaskKey taskKey)
+    public JobBuilder TimeoutAfter(TimeSpan timeout)
     {
-        taskKeys.Add(taskKey);
-        return new JobTaskBuilder(taskKeys);
-    }
-
-    internal RegisteredJob Build() => new RegisteredJob(jobKey, taskKeys.ToArray());
-}
-
-public sealed class JobTaskBuilder
-{
-    private readonly List<JobTaskKey> taskKeys;
-
-    internal JobTaskBuilder(List<JobTaskKey> taskKeys)
-    {
-        this.taskKeys = taskKeys;
+        this.timeout = timeout;
+        return this;
     }
 
     public JobTaskBuilder AddTask(JobTaskKey taskKey)
     {
-        taskKeys.Add(taskKey);
-        return this;
+        var taskBuilder = new JobTaskBuilder(this, taskKey);
+        tasks.Add(taskBuilder);
+        return taskBuilder;
     }
 
+    internal RegisteredJob Build() => new RegisteredJob(jobKey, timeout, tasks.Select(t => t.Build()).ToArray());
 }

@@ -19,7 +19,7 @@ public sealed class IncomingEvent
 
     public async Task<EventNotification[]> Notify()
     {
-        var notificationModels = await db.AddNotifications(eventKey, sources, clock.Now());
-        return notificationModels.Select(n => new EventNotification(db, clock, n)).ToArray();
+        var notificationModels = await db.AddEventNotifications(eventKey, sources);
+        return notificationModels.Select(n => new EventNotification(db, n)).ToArray();
     }
 }
