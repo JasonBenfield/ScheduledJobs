@@ -32,5 +32,6 @@ public static class SqlServerExtensions
                 options.EnableSensitiveDataLogging(false);
             }
         });
+        services.AddScoped<DbAdmin<JobDbContext>>();
     }
 }

@@ -18,11 +18,13 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    <PackageReference Include="XTI_HubAppClient.Extensions" Version="1.4.18" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\ScheduledJobsWebApp\Internal\XTI_JobsDB.SqlServer\XTI_JobsDB.SqlServer.csproj" />
     <ProjectReference Include="..\..\ScheduledJobsWebApp\Internal\XTI_ScheduledJobsWebAppApi\XTI_ScheduledJobsWebAppApi.csproj" />
+    <ProjectReference Include="..\..\ScheduledJobsWebApp\Lib\XTI_ScheduledJobsAppClient\XTI_ScheduledJobsAppClient.csproj" />
     <ProjectReference Include="..\XTI_ScheduledJobSharedTests\XTI_ScheduledJobSharedTests.csproj" />
   </ItemGroup>
 
