@@ -14,7 +14,7 @@ public abstract class JobAction<T> : IJobAction
     public async Task<JobActionResult> Execute(CancellationToken stoppingToken)
     {
         data = task.Data<T>();
-        var resultBuilder = new JobActionResultBuilder(task.Model);
+        var resultBuilder = new JobActionResultBuilder();
         await Execute(stoppingToken, task, resultBuilder, data);
         return resultBuilder.Build();
     }

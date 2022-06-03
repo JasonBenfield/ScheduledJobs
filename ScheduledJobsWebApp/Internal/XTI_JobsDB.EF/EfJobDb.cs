@@ -25,6 +25,7 @@ public sealed class EfJobDb : IJobDb
                 eventDefinition = new EventDefinitionEntity
                 {
                     EventKey = registeredEvent.EventKey.Value,
+                    DisplayText = registeredEvent.EventKey.DisplayText,
                     CompareSourceKeyAndDataForDuplication = registeredEvent.CompareSourceKeyAndDataForDuplication,
                     DuplicateHandling = registeredEvent.DuplicateHandling,
                     TimeToStartNotifications = registeredEvent.TimeToStartNotifications,
@@ -56,6 +57,7 @@ public sealed class EfJobDb : IJobDb
             jobDefinitionEntity = new JobDefinitionEntity
             {
                 JobKey = registeredJob.JobKey.Value,
+                DisplayText = registeredJob.JobKey.DisplayText,
                 Timeout = registeredJob.Timeout
             };
             await db.JobDefinitions.Create(jobDefinitionEntity);
@@ -81,6 +83,7 @@ public sealed class EfJobDb : IJobDb
             {
                 JobDefinitionID = jobDefinitionEntity.ID,
                 TaskKey = task.TaskKey.Value,
+                DisplayText = task.TaskKey.DisplayText,
                 Timeout = task.Timeout
             };
             await db.JobTaskDefinitions.Create(taskDefinitionEntity);
@@ -243,7 +246,7 @@ public sealed class EfJobDb : IJobDb
         return triggeredJobModels.ToArray();
     }
 
-    public async Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey)
+    public async Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime)
     {
         var jobDefinitionEntity = await db.JobDefinitions.Retrieve()
             .FirstOrDefaultAsync(jd => jd.JobKey == jobKey.Value);
@@ -266,6 +269,7 @@ public sealed class EfJobDb : IJobDb
                     && !triggeredJobEventNotificationIDs.Contains(en.ID)
                     && now >= en.TimeActive
                     && now < en.TimeInactive
+                    && en.TimeAdded >= eventRaisedStartTime
             )
             .ToArrayAsync();
         var pendingJobs = new List<PendingJobModel>();
@@ -277,7 +281,12 @@ public sealed class EfJobDb : IJobDb
                 JobDefinitionID = jobDefinitionEntity.ID
             };
             await db.TriggeredJobs.Create(triggeredJobEntity);
-            var triggeredJob = CreateTriggeredJobDetailModel(triggeredJobEntity, jobDefinitionEntity, new TriggeredJobTaskModel[0]);
+            var triggeredJob = CreateTriggeredJobDetailModel
+            (
+                triggeredJobEntity, 
+                jobDefinitionEntity, 
+                new TriggeredJobTaskModel[0]
+            );
             var pendingJob = new PendingJobModel(triggeredJob.Job, eventNotification.SourceData);
             pendingJobs.Add(pendingJob);
         }
@@ -365,7 +374,7 @@ public sealed class EfJobDb : IJobDb
                 new JobDefinitionModel
                 (
                     jobDefEntity.ID,
-                    new JobKey(jobDefEntity.JobKey)
+                    new JobKey(jobDefEntity.DisplayText)
                 )
             ),
             tasks
@@ -420,7 +429,7 @@ public sealed class EfJobDb : IJobDb
         );
     }
 
-    public async Task<TriggeredJobDetailModel> TaskCompleted(int jobID, int completedTaskID, NextTaskModel[] nextTasks)
+    public async Task<TriggeredJobDetailModel> TaskCompleted(int jobID, int completedTaskID, bool preserveData, NextTaskModel[] nextTasks)
     {
         var currentTaskEntity = await db.TriggeredJobTasks.Retrieve()
             .FirstOrDefaultAsync(jt => jt.ID == completedTaskID);
@@ -431,7 +440,7 @@ public sealed class EfJobDb : IJobDb
         (
             async () =>
             {
-                await new EfTriggeredJobTask(db, currentTaskEntity).End(JobTaskStatus.Values.Completed, now);
+                await new EfTriggeredJobTask(db, currentTaskEntity).End(JobTaskStatus.Values.Completed, preserveData, now);
                 await AddNextTasks(jobEntity, currentTaskEntity, nextTasks, now);
             }
         );
@@ -508,7 +517,7 @@ public sealed class EfJobDb : IJobDb
         new TriggeredJobTaskModel
         (
             taskEntity.ID,
-            new JobTaskDefinitionModel(taskDefEntity.ID, new JobTaskKey(taskDefEntity.TaskKey)),
+            new JobTaskDefinitionModel(taskDefEntity.ID, new JobTaskKey(taskDefEntity.DisplayText)),
             JobTaskStatus.Values.Value(taskEntity.Status),
             taskEntity.TaskData,
             entries
@@ -547,10 +556,10 @@ public sealed class EfJobDb : IJobDb
                             .ToArrayAsync();
                         foreach (var pendingTaskEntity in pendingTaskEntities)
                         {
-                            await new EfTriggeredJobTask(db, pendingTaskEntity).End(errorStatus, now);
+                            await new EfTriggeredJobTask(db, pendingTaskEntity).End(errorStatus, true, now);
                         }
                     }
-                    await new EfTriggeredJobTask(db, currentTaskEntity).End(errorStatus, now);
+                    await new EfTriggeredJobTask(db, currentTaskEntity).End(errorStatus, true, now);
                 }
                 await db.LogEntries.Create
                 (

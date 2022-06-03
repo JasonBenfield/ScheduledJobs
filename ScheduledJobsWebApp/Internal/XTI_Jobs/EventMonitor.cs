@@ -6,13 +6,15 @@ public sealed class EventMonitor
     private readonly IJobActionFactory jobActionFactory;
     private readonly EventKey eventKey;
     private readonly JobKey jobKey;
+    private readonly DateTimeOffset eventRaisedStartTime;
 
-    internal EventMonitor(IJobDb db, IJobActionFactory jobActionFactory, EventKey eventKey, JobKey jobKey)
+    internal EventMonitor(IJobDb db, IJobActionFactory jobActionFactory, EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime)
     {
         this.db = db;
         this.jobActionFactory = jobActionFactory;
         this.eventKey = eventKey;
         this.jobKey = jobKey;
+        this.eventRaisedStartTime = eventRaisedStartTime;
     }
 
     public async Task Run(CancellationToken stoppingToken)
@@ -27,7 +29,7 @@ public sealed class EventMonitor
                 nextTask = await ExecuteTask(stoppingToken, triggeredJob, nextTask);
             }
         }
-        var pendingJobs = await db.TriggerJobs(eventKey, jobKey);
+        var pendingJobs = await db.TriggerJobs(eventKey, jobKey, eventRaisedStartTime);
         foreach (var pendingJob in pendingJobs)
         {
             var transformedData = jobActionFactory.CreateTransformedSourceData(pendingJob.SourceData);
@@ -50,7 +52,7 @@ public sealed class EventMonitor
         try
         {
             result = await jobAction.Execute(stoppingToken);
-            await currentTask.Completed(result.NextTasks);
+            await currentTask.Completed(result.PreserveData, result.NextTasks);
             nextTask = await triggeredJob.StartNextTask();
         }
         catch (Exception ex)

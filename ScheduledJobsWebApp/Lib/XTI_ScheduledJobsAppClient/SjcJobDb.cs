@@ -69,6 +69,7 @@ public sealed class SjcJobDb : IJobDb
     (
         int jobID,
         int completedTaskID,
+        bool preserveData,
         NextTaskModel[] nextTasks
     ) =>
         schdJobClient.Jobs.TaskCompleted
@@ -77,6 +78,7 @@ public sealed class SjcJobDb : IJobDb
             {
                 JobID = jobID,
                 CompletedTaskID = completedTaskID,
+                PreserveData = preserveData,
                 NextTasks = nextTasks
             }
         );
@@ -116,13 +118,14 @@ public sealed class SjcJobDb : IJobDb
             }
         );
 
-    public Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey) =>
+    public Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime) =>
         schdJobClient.Jobs.TriggerJobs
         (
             new TriggerJobsRequest
             {
                 EventKey = eventKey,
-                JobKey = jobKey
+                JobKey = jobKey,
+                EventRaisedStartTime = eventRaisedStartTime
             }
         );
 }

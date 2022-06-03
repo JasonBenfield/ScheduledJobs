@@ -2,16 +2,24 @@
 
 public sealed class EventMonitorBuilder
 {
-    private readonly IJobDb storedEvents;
+    private readonly IJobDb db;
     private readonly IJobActionFactory jobActionFactory;
     private readonly EventKey eventKey;
+    private DateTimeOffset eventRaisedStartTime = DateTimeOffset.MinValue;
 
-    internal EventMonitorBuilder(IJobDb storedEvents, IJobActionFactory jobActionFactory, EventKey eventKey)
+    internal EventMonitorBuilder(IJobDb db, IJobActionFactory jobActionFactory, EventKey eventKey)
     {
-        this.storedEvents = storedEvents;
+        this.db = db;
         this.jobActionFactory = jobActionFactory;
         this.eventKey = eventKey;
     }
 
-    public EventMonitor Trigger(JobKey jobKey) => new EventMonitor(storedEvents, jobActionFactory, eventKey, jobKey);
+    public EventMonitorBuilder HandleEventsRaisedOnOrAfter(DateTimeOffset eventRaisedStartTime)
+    {
+        this.eventRaisedStartTime = eventRaisedStartTime;
+        return this;
+    }
+
+    public EventMonitor Trigger(JobKey jobKey) => 
+        new EventMonitor(db, jobActionFactory, eventKey, jobKey, eventRaisedStartTime);
 }

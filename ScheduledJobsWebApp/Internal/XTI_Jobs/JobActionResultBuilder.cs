@@ -5,12 +5,7 @@ namespace XTI_Jobs;
 public sealed class JobActionResultBuilder
 {
     private readonly List<NextTaskModel> nextTasks = new();
-    private readonly TriggeredJobTaskModel task;
-
-    public JobActionResultBuilder(TriggeredJobTaskModel task)
-    {
-        this.task = task;
-    }
+    private bool preserveData;
 
     public JobActionResultBuilder AddNext(JobTaskKey taskKey, object[] items)
     {
@@ -29,5 +24,11 @@ public sealed class JobActionResultBuilder
         return this;
     }
 
-    internal JobActionResult Build() => new JobActionResult(task, nextTasks.ToArray());
+    public JobActionResultBuilder PreserveData()
+    {
+        preserveData = true;
+        return this;
+    }
+
+    internal JobActionResult Build() => new JobActionResult(preserveData, nextTasks.ToArray());
 }

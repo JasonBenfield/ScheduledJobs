@@ -1,32 +1,12 @@
 ﻿Import-Module PowershellForXti -Force
 
-$BaseXtiPublish = ${Function:Xti-Publish}
-
-function Xti-Publish {
-    param(
-        [ValidateSet("Production", "Development")]
-        [string] $EnvName="Development"
-    )
-    & $BaseXtiPublish @PsBoundParameters
-}
-
-$BaseXtiInstall = ${Function:Xti-Install}
-
-function Xti-Install {
-    param(
-        [ValidateSet("Development", "Production", "Staging", "Test")]
-        $EnvName = "Development"
-    )
-    & $BaseXtiInstall @PsBoundParameters
-}
-
 function Add-JobDBMigrations {
     param ([Parameter(Mandatory)]$Name)
     $env:DOTNET_ENVIRONMENT="Development"
     dotnet ef --startup-project ./ScheduledJobsWebApp/Internal/XTI_JobsDbTool migrations add $Name --project ./ScheduledJobsWebApp/Internal/XTI_JobsDB.SqlServer
 }
 
-function Xti-ResetHubDb {
+function Xti-ResetJobDb {
     param (
         [Parameter(ValueFromPipelineByPropertyName = $true)]
         [ValidateSet(“Development", "Production", "Staging", "Test")]
@@ -39,7 +19,7 @@ function Xti-ResetHubDb {
     }
 }
 
-function Xti-BackupHubDb {
+function Xti-BackupJobDb {
     param (
         [Parameter(ValueFromPipelineByPropertyName = $true)]
         [ValidateSet(“Development", "Production", "Staging", "Test")]
@@ -59,7 +39,7 @@ function Xti-BackupHubDb {
     }
 }
 
-function Xti-RestoreHubDb {
+function Xti-RestoreJobDb {
     param (
         [Parameter(ValueFromPipelineByPropertyName = $true)]
         [ValidateSet(“Development", "Production", "Staging", "Test")]
@@ -67,19 +47,19 @@ function Xti-RestoreHubDb {
         [Parameter(Mandatory)]
         [string] $BackupFilePath
     )
-    dotnet run --environment $EnvName --project ./Tools/HubDbTool --Command restore --BackupFilePath $BackupFilePath
+    dotnet run --environment $EnvName --project ./ScheduledJobsWebApp/Internal/XTI_JobsDbTool --Command restore --BackupFilePath $BackupFilePath
     if( $LASTEXITCODE -ne 0 ) {
         Throw "Restore failed"
     }
 }
 
-function Xti-UpdateHubDb {
+function Xti-UpdateJobDb {
     param (
         [Parameter(ValueFromPipelineByPropertyName = $true)]
         [ValidateSet(“Development", "Production", "Staging", "Test")]
         $EnvName='Test'
     )
-    dotnet run --environment $EnvName --project ./Tools/HubDbTool --Command update
+    dotnet run --environment $EnvName --project ./ScheduledJobsWebApp/Internal/XTI_JobsDbTool --Command update
     if( $LASTEXITCODE -ne 0 ) {
         Throw "Update failed"
     }

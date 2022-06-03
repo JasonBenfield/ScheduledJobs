@@ -10,5 +10,5 @@ internal sealed class TriggerJobsAction : AppAction<TriggerJobsRequest, PendingJ
     }
 
     public Task<PendingJobModel[]> Execute(TriggerJobsRequest model) =>
-        db.TriggerJobs(model.EventKey, model.JobKey);
+        db.TriggerJobs(model.EventKey, model.JobKey, model.EventRaisedStartTime);
 }

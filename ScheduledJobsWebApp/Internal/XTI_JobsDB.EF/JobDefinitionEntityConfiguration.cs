@@ -8,7 +8,8 @@ internal sealed class JobDefinitionEntityConfiguration : IEntityTypeConfiguratio
         builder.Property(jd => jd.ID).ValueGeneratedOnAdd();
         builder.Property(jd => jd.JobKey).HasMaxLength(100);
         builder.HasIndex(jd => jd.JobKey).IsUnique();
-        builder.Property(td => td.Timeout).HasConversion<string>();
+        builder.Property(jd => jd.DisplayText).HasMaxLength(100);
+        builder.Property(jd => jd.Timeout).HasConversion<string>();
         builder.ToTable("JobDefinitions");
     }
 }

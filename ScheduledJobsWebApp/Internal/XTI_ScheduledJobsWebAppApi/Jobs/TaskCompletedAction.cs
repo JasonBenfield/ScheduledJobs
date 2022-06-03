@@ -10,5 +10,5 @@ internal class TaskCompletedAction : AppAction<TaskCompletedRequest, TriggeredJo
     }
 
     public Task<TriggeredJobDetailModel> Execute(TaskCompletedRequest model) =>
-        db.TaskCompleted(model.JobID, model.CompletedTaskID, model.NextTasks);
+        db.TaskCompleted(model.JobID, model.CompletedTaskID, model.PreserveData, model.NextTasks);
 }

@@ -1,4 +1,8 @@
 using System;
+using System.Linq;
+using System.Text.Json;
+using XTI_Core;
+using XTI_Core.Extensions;
 using XTI_Core.Fakes;
 
 namespace XTI_ScheduledJobTests;
@@ -309,5 +313,58 @@ internal sealed class TriggerJobTest
         );
         Assert.That(eventNotifications.Length, Is.EqualTo(0), "Should not notify before event has started.");
     }
+
+    [Test]
+    public async Task ShouldNotTriggerJob_WhenEventWasRaisedBeforeEventStartTime()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications1 = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var now = host.CurrentTime();
+        var eventRaisedStartTime = now.AddMinutes(5);
+        await host.MonitorEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            DemoJobs.DoSomething.JobKey,
+            (monitorBuilder) =>
+            {
+                monitorBuilder.HandleEventsRaisedOnOrAfter(eventRaisedStartTime);
+            }
+        );
+        var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs();
+        Assert.That(triggeredJobs1.Length, Is.EqualTo(0), "Should not trigger jobs before event raised start time");
+        host.FastForward(TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
+        sourceData.ID = 4;
+        var eventNotifications2 = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        await host.MonitorEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            DemoJobs.DoSomething.JobKey,
+            (monitorBuilder) =>
+            {
+                monitorBuilder.HandleEventsRaisedOnOrAfter(eventRaisedStartTime);
+            }
+        );
+        var triggeredJobs2 = await eventNotifications2[0].TriggeredJobs();
+        Assert.That(triggeredJobs2.Length, Is.EqualTo(1), "Should trigger jobs after event raised start time");
+    }
+
 
 }

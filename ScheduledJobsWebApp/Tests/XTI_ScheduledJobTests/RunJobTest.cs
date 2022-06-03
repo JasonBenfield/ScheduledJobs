@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Text.Json;
 using XTI_App.Api;
-using XTI_Core.Extensions;
-using XTI_Core.Fakes;
 using XTI_ScheduledJobsWebAppApi;
 
 namespace XTI_ScheduledJobTests;
@@ -464,7 +462,7 @@ internal sealed class RunJobTest
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         demoContext01.DontThrowError();
         var howLong = TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1));
-        fastForward(host, howLong);
+        host.FastForward(howLong);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var values = demoContext01.Values();
         Assert.That(values, Is.EqualTo(new[] { "Value1", "Value2", "Value3" }), "Should redo task when retrying after an error");
@@ -495,7 +493,7 @@ internal sealed class RunJobTest
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         demoContext01.DontThrowError();
         var howLong = TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1));
-        fastForward(host, howLong);
+        host.FastForward(howLong);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
         var status = triggeredJobs[0].Status();
@@ -526,7 +524,7 @@ internal sealed class RunJobTest
         demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         demoContext01.DontThrowError();
-        fastForward(host, TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(-1)));
+        host.FastForward(TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(-1)));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var values = demoContext01.Values();
         Assert.That(values, Is.EqualTo(new[] { "Value1" }), "Should not redo task before retry time");
@@ -555,7 +553,7 @@ internal sealed class RunJobTest
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        fastForward(host, TimeSpan.FromHours(1).Add(TimeSpan.FromSeconds(1)));
+        host.FastForward(TimeSpan.FromHours(1).Add(TimeSpan.FromSeconds(1)));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
         var status = triggeredJobs[0].Status();
@@ -585,7 +583,7 @@ internal sealed class RunJobTest
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        fastForward(host, TimeSpan.FromHours(1).Add(TimeSpan.FromSeconds(1)));
+        host.FastForward(TimeSpan.FromHours(1).Add(TimeSpan.FromSeconds(1)));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
         var errors = triggeredJobs[0].Errors().Where(err => err.Message != "Whatever").ToArray();
@@ -620,7 +618,7 @@ internal sealed class RunJobTest
             () => host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey)
         );
         await Task.Delay(TimeSpan.FromSeconds(1));
-        fastForward(host, TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
+        host.FastForward(TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -655,7 +653,7 @@ internal sealed class RunJobTest
             () => host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey)
         );
         await Task.Delay(TimeSpan.FromSeconds(1));
-        fastForward(host, TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
+        host.FastForward(TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -692,7 +690,7 @@ internal sealed class RunJobTest
             () => host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey)
         );
         await Task.Delay(TimeSpan.FromSeconds(1));
-        fastForward(host, TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(-1)));
+        host.FastForward(TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(-1)));
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -702,7 +700,7 @@ internal sealed class RunJobTest
     }
 
     [Test]
-    public async Task ShouldNotTriggerJob_WhenEventWasRaisedBeforeEventStartTime()
+    public async Task ShouldPreserveData()
     {
         var host = TestHost.CreateDefault();
         await host.Register
@@ -720,34 +718,39 @@ internal sealed class RunJobTest
             DemoEventKeys.SomethingHappened,
             new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        await host.MonitorEvent
-        (
-            DemoEventKeys.SomethingHappened, 
-            DemoJobs.DoSomething.JobKey,
-            (monitorBuilder) =>
-            {
-
-            }
-        );
-
-
-
-
-        fastForward(host, TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(-1)));
-
-
-        var api = host.GetRequiredService<ScheduledJobsAppApi>();
-        await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
-        var status = triggeredJobs[0].Status();
-        Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Running), "Should not fail job before job times out");
-        host.GetRequiredService<CancellationTokenSource>().Cancel();
+        var itemIDs = triggeredJobs[0].Tasks(DemoJobs.DoSomething.TaskItem01)
+            .Select(t => t.Data<DoSomethingItemData>().ItemID)
+            .ToArray();
+        Assert.That(itemIDs, Is.EqualTo(new[] { 1, 2, 3 }), "Should preserve data");
     }
 
-    private static void fastForward(XtiHost host, TimeSpan howLong)
+    [Test]
+    public async Task ShouldNotPreserveData()
     {
-        var clock = host.GetRequiredService<FakeClock>();
-        clock.Add(howLong);
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var itemIDs = triggeredJobs[0].Tasks(DemoJobs.DoSomething.TaskItem02)
+            .Select(t => t.Data<DoSomethingItemData>().ItemID)
+            .ToArray();
+        Assert.That(itemIDs, Is.EqualTo(new[] { 0, 0, 0 }), "Should not preserve data");
     }
 
     private static JobRegistration BuildJobs(JobRegistration jobs) =>

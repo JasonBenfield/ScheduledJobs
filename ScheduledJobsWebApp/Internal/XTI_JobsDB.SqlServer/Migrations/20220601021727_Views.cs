@@ -98,7 +98,7 @@ JobCounts as
 	group by EventNotificationID
 )
 select 
-	a.id EventNotificationID, b.EventKey, 
+	a.id EventNotificationID, b.DisplayText EventDisplayText,
 	dbo.ToEST(a.timeadded) TimeAddedEst, 
 	isnull(c.JobCount,0) TriggeredJobCount,
 	a.SourceKey, a.sourcedata, 
@@ -113,6 +113,7 @@ select
 	a.timeadded, 
 	a.timeactive, 
 	a.TimeInactive, 
+	b.EventKey, 
 	b.TimeToStartNotifications
 from EventNotifications a
 inner join EventDefinitions b
@@ -147,7 +148,7 @@ ChildTaskCounts as
 select 
 	tasks.ID TaskID, tasks.Generation, 
 	tasks.Sequence,
-	taskDefs.TaskKey,
+	taskDefs.DisplayText TaskDisplayText,
 	dbo.JobTaskStatusDisplayText(tasks.Status) TaskStatusDisplayText,
 	isnull(errorCounts.LogEntryCount, 0) ErrorCount,
 	isnull(infoCounts.LogEntryCount, 0) InformationCount,
@@ -160,19 +161,21 @@ select
 	dbo.ToEst(tasks.TimeAdded) TimeTaskAddedEst,
 	dbo.ToEst(tasks.TimeActive) TimeTaskActiveEst,
 	dbo.ToEst(tasks.TimeInactive) TimeTaskInactiveEst,
-	jobDefs.JobKey,
 	isnull(hierTasks.ParentTaskID,0) ParentTaskID,
-	evtDefs.EventKey, evtNots.SourceKey, evtNots.SourceData,
+	jobDefs.DisplayText JobDisplayText,
+	evtDefs.DisplayText EventDisplayText, evtDefs.EventKey, evtNots.SourceKey, evtNots.SourceData,
 	evtNots.ID EventNotificationID, evtDefs.ID EventDefinitionID,
 	dbo.ToEst(evtNots.TimeAdded) TimeEventAddedEst,
 	dbo.ToEst(evtNOts.TimeActive) TimeEventActiveEst,
 	dbo.ToEst(evtNots.TimeInactive) TimeEventInactiveEst,
-	jobs.ID JobID, jobDefs.ID JobDefinitionID, jobDefs.Timeout JobTimeout,
+	jobs.ID JobID, jobDefs.ID JobDefinitionID,
+	jobDefs.JobKey, jobDefs.Timeout JobTimeout,
 	dbo.ToEst(jobs.TimeInactive) TimeJobInactiveEst,
 	jobs.TimeInactive TimeJobInactive,
 	tasks.Timestarted TimeTaskStarted, tasks.TimeEnded TimeTaskEnded, 
 	tasks.TimeActive TimeTaskActive, tasks.TimeInactive TimeTaskInactive, tasks.Status TaskStatus,
-	taskDefs.ID TaskDefinitionID, taskDefs.Timeout TaskTimeout,
+	taskDefs.ID TaskDefinitionID,
+	taskDefs.TaskKey, taskDefs.Timeout TaskTimeout,
 	evtNots.TimeAdded TimeEventAdded, evtNots.TimeActive TimeEventActive, evtNots.TimeInactive TimeEventInactive
 from TriggeredJobTasks tasks
 inner join JobTaskDefinitions taskDefs
@@ -197,10 +200,72 @@ left outer join ChildTaskCounts childCounts
 on tasks.ID = childCounts.ParentTaskID
 "
 		);
+		migrationBuilder.Sql
+		(
+			@"
+create or alter view ExpandedTriggeredJobs as
+with 
+JobStatuses as
+(
+	select TriggeredJobID, min(Status) JobStatus
+	from TriggeredJobTasks
+	group by TriggeredJobID
+),
+StartTimes as
+(
+	select TriggeredJobID, min(TimeStarted) TimeStarted
+	from TriggeredJobTasks
+	group by TriggeredJobID
+),
+EndTimes as
+(
+	select TriggeredJobID, max(TimeEnded) TimeEnded
+	from TriggeredJobTasks
+	group by TriggeredJobID
+),
+TaskCounts as
+(
+	select TriggeredJobID, count(TriggeredJobID) TaskCount
+	from TriggeredJobTasks
+	group by TriggeredJobID
+)
+select 
+	jobs.ID JobID, jobDefs.DisplayText JobDisplayText,
+	jobs.TimeInactive TimeJobInactive, 
+	dbo.JobTaskStatusDisplayText(isnull(JobStatuses.JobStatus,0)) JobStatus,
+	dbo.ToEst(isnull(StartTimes.TimeStarted,'1/1/1')) TimeJobStartedEst,
+	dbo.ToEst(isnull(EndTimes.TimeEnded,'12/31/9999')) TimeJobEndedEst,
+	dbo.TimeElapsedDisplayText(isnull(StartTimes.TimeStarted,'1/1/1'), isnull(EndTimes.TimeEnded,'12/31/9999')) TimeElapsed,
+	isnull(TaskCounts.TaskCount, 0) TaskCount,
+	jobs.JobDefinitionID, jobDefs.JobKey, jobDefs.Timeout JobTimeout,
+	evtDefs.DisplayText EventDisplayText, evtDefs.EventKey, evtNots.SourceKey, evtNots.SourceData,
+	evtNots.ID EventNotificationID, evtDefs.ID EventDefinitionID,
+	dbo.ToEst(evtNots.TimeAdded) TimeEventAddedEst,
+	dbo.ToEst(evtNOts.TimeActive) TimeEventActiveEst,
+	dbo.ToEst(evtNots.TimeInactive) TimeEventInactiveEst,
+	dbo.ToEst(jobs.TimeInactive) TimeJobInactiveEst,
+	evtNots.TimeAdded TimeEventAdded, evtNots.TimeActive TimeEventActive, evtNots.TimeInactive TimeEventInactive,
+	isnull(JobStatuses.JobStatus,0) JobStatus,
+	isnull(StartTimes.TimeStarted,'1/1/1') TimeJobStarted,
+	isnull(EndTimes.TimeEnded,'12/31/9999') TimeJobEnded
+from TriggeredJobs jobs
+inner join JobDefinitions jobDefs
+on jobs.JobDefinitionID = jobDefs.id
+inner join EventNotifications evtNots
+on jobs.EventNotificationID = evtNots.id
+inner join EventDefinitions evtDefs
+on evtNots.EventDefinitionID = evtDefs.id
+left outer join JobStatuses
+on jobs.ID = JobStatuses.TriggeredJobID
+left outer join TaskCounts
+on jobs.ID = TaskCounts.TriggeredJobID
+left outer join StartTimes
+on jobs.ID = StartTimes.TriggeredJobID
+left outer join EndTimes
+on jobs.ID = EndTimes.TriggeredJobID
+"
+		);
     }
 
-    protected override void Down(MigrationBuilder migrationBuilder)
-    {
-
-    }
+	protected override void Down(MigrationBuilder migrationBuilder) { }
 }

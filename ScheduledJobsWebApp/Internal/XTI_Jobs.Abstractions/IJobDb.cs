@@ -10,7 +10,7 @@ public interface IJobDb
 
     Task<TriggeredJobDetailModel[]> TriggeredJobs(int notificationID);
 
-    Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey);
+    Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime);
 
     Task<TriggeredJobDetailModel[]> RetryJobs(JobKey jobKey);
 
@@ -26,6 +26,7 @@ public interface IJobDb
     (
         int jobID,
         int completedTaskID, 
+        bool preserveData,
         NextTaskModel[] nextTasks
     );
 

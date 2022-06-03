@@ -102,9 +102,9 @@ public sealed class TriggeredJob
         return nextTask;
     }
 
-    internal async Task TaskCompleted(TriggeredJobTask task, NextTaskModel[] nextTasks)
+    internal async Task TaskCompleted(TriggeredJobTask task, bool preserveData, NextTaskModel[] nextTasks)
     {
-        var updatedJob = await db.TaskCompleted(Model.ID, task.Model.ID, nextTasks);
+        var updatedJob = await db.TaskCompleted(Model.ID, task.Model.ID, preserveData, nextTasks);
         UpdateJob(updatedJob);
     }
 

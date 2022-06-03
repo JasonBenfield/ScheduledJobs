@@ -16,7 +16,10 @@ public sealed class TriggeredJobTask
 
     public JobTaskKey TaskKey { get => Model.TaskDefinition.TaskKey; }
 
-    public T Data<T>() where T : new() => XtiSerializer.Deserialize<T>(Model.TaskData);
+    public T Data<T>() where T : new() => 
+        string.IsNullOrWhiteSpace(Model.TaskData) 
+            ? new T() 
+            : XtiSerializer.Deserialize<T>(Model.TaskData);
 
     public LogEntryModel[] Errors() =>
         Model.LogEntries
@@ -41,5 +44,6 @@ public sealed class TriggeredJobTask
         Exception ex
     ) => job.TaskFailed(this, errorStatus, retryAfter, nextTasks, ex);
 
-    internal Task Completed(NextTaskModel[] nextTasks) => job.TaskCompleted(this, nextTasks);
+    internal Task Completed(bool preserveData, NextTaskModel[] nextTasks) => 
+        job.TaskCompleted(this, preserveData, nextTasks);
 }

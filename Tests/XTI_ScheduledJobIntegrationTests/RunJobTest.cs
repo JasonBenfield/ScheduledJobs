@@ -61,6 +61,36 @@ internal sealed class RunJobTest
         Assert.That(errors.Select(err => err.Message), Is.EqualTo(new[] { "Whatever" }), "Should log errors");
     }
 
+    [Test]
+    public async Task ShouldRetryJob()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Setup();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
+        demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
+        demoContext.RetryAfterError(TimeSpan.Zero);
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        demoContext.DontThrowError();
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        var jobs = await eventNotifications[0].TriggeredJobs();
+        Assert.That(jobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should retry job");
+    }
+
     private static JobRegistration BuildJobs(JobRegistration jobs) =>
         jobs.AddJob
         (

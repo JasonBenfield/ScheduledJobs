@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using XTI_Core;
-using XTI_Jobs;
 
 namespace XTI_ScheduledJobsWebAppApi.Recurring;
 
@@ -23,17 +22,28 @@ internal sealed class TimeoutTasksAction : AppAction<EmptyRequest, EmptyActionRe
             .ToArrayAsync();
         foreach(var runningTask in runningTasks)
         {
-            await new EfTriggeredJobTask(db, runningTask).End(JobTaskStatus.Values.Failed, clock.Now());
-            await db.LogEntries.Create
+            await db.Transaction
             (
-                new LogEntryEntity
+                async () =>
                 {
-                    TaskID = runningTask.ID,
-                    Severity = AppEventSeverity.Values.CriticalError.Value,
-                    Category = JobErrors.TaskTimeoutCategory,
-                    Message = JobErrors.TaskTimeoutMessage,
-                    Details = "",
-                    TimeOccurred = now
+                    await new EfTriggeredJobTask(db, runningTask).End
+                    (
+                        JobTaskStatus.Values.Failed, 
+                        true, 
+                        clock.Now()
+                    );
+                    await db.LogEntries.Create
+                    (
+                        new LogEntryEntity
+                        {
+                            TaskID = runningTask.ID,
+                            Severity = AppEventSeverity.Values.CriticalError.Value,
+                            Category = JobErrors.TaskTimeoutCategory,
+                            Message = JobErrors.TaskTimeoutMessage,
+                            Details = "",
+                            TimeOccurred = now
+                        }
+                    );
                 }
             );
         }

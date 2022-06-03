@@ -2,12 +2,12 @@
 
 public sealed class JobActionResult
 {
-    internal JobActionResult(TriggeredJobTaskModel completedTask, NextTaskModel[] nextTasks)
+    internal JobActionResult(bool preserveData, NextTaskModel[] nextTasks)
     {
-        CompletedTask = completedTask;
+        PreserveData = preserveData;
         NextTasks = nextTasks;
     }
 
-    public TriggeredJobTaskModel CompletedTask { get; }
+    public bool PreserveData { get; }
     public NextTaskModel[] NextTasks { get; }
 }

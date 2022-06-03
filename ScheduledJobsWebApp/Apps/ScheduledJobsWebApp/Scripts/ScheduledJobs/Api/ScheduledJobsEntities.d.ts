@@ -85,6 +85,7 @@ interface IRegisteredJobTask {
 interface ITriggerJobsRequest {
 	EventKey: IEventKey;
 	JobKey: IJobKey;
+	EventRaisedStartTime: Date;
 }
 interface IPendingJobModel {
 	Job: ITriggeredJobModel;
@@ -107,6 +108,7 @@ interface IStartTaskRequest {
 interface ITaskCompletedRequest {
 	JobID: number;
 	CompletedTaskID: number;
+	PreserveData: boolean;
 	NextTasks: INextTaskModel[];
 }
 interface ITaskFailedRequest {

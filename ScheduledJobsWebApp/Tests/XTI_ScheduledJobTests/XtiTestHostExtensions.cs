@@ -1,5 +1,7 @@
 ﻿using System;
+using XTI_Core;
 using XTI_Core.Extensions;
+using XTI_Core.Fakes;
 
 namespace XTI_ScheduledJobTests;
 
@@ -15,7 +17,7 @@ internal static class XtiTestHostExtensions
         await jobs.Register();
     }
 
-    public static Task MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey, Action<EventMonitorBuilder>? configMonitor =null)
+    public static Task MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey, Action<EventMonitorBuilder>? configMonitor = null)
     {
         var stoppingToken = host.GetRequiredService<CancellationTokenSource>().Token;
         var monitorFactory = host.GetRequiredService<EventMonitorFactory>();
@@ -33,4 +35,13 @@ internal static class XtiTestHostExtensions
             .From(source)
             .Notify();
     }
+
+    public static void FastForward(this XtiHost host, TimeSpan howLong)
+    {
+        var clock = host.GetRequiredService<FakeClock>();
+        clock.Add(howLong);
+    }
+
+    public static DateTimeOffset CurrentTime(this XtiHost host) =>
+        host.GetRequiredService<IClock>().Now();
 }

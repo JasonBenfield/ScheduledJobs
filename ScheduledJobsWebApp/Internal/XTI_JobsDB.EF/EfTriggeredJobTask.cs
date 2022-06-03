@@ -13,13 +13,17 @@ public sealed class EfTriggeredJobTask
         this.entity = entity;
     }
 
-    public Task End(JobTaskStatus status, DateTimeOffset now) =>
+    public Task End(JobTaskStatus status, bool preserveData, DateTimeOffset now) =>
         db.TriggeredJobTasks.Update
         (
             entity,
             t =>
             {
                 t.Status = status.Value;
+                if (!preserveData)
+                {
+                    t.TaskData = "";
+                }
                 t.TimeEnded = now;
             }
         );
