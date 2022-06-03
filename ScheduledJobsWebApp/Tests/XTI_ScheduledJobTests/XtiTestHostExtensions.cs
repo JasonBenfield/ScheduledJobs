@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using XTI_Core.Extensions;
 
 namespace XTI_ScheduledJobTests;
@@ -20,13 +15,13 @@ internal static class XtiTestHostExtensions
         await jobs.Register();
     }
 
-    public static Task MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey)
+    public static Task MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey, Action<EventMonitorBuilder>? configMonitor =null)
     {
         var stoppingToken = host.GetRequiredService<CancellationTokenSource>().Token;
         var monitorFactory = host.GetRequiredService<EventMonitorFactory>();
-        var monitor = monitorFactory
-            .When(eventKey)
-            .Trigger(jobKey);
+        var monitorBuilder = monitorFactory.When(eventKey);
+        configMonitor?.Invoke(monitorBuilder);
+        var monitor = monitorBuilder.Trigger(jobKey);
         return monitor.Run(stoppingToken);
     }
 

@@ -10,12 +10,14 @@ public sealed class DemoJobActionFactory : IJobActionFactory
         Action02Context = new DemoActionContext<DemoAction02>();
         ItemAction01Context = new DemoItemActionContext<DemoItemAction01>();
         ItemAction02Context = new DemoItemActionContext<DemoItemAction02>();
+        ActionFinalContext = new DemoActionContext<DemoActionFinal>();
     }
 
     public DemoActionContext<DemoAction01> Action01Context { get; }
     public DemoActionContext<DemoAction02> Action02Context { get; }
     public DemoItemActionContext<DemoItemAction01> ItemAction01Context { get; }
     public DemoItemActionContext<DemoItemAction02> ItemAction02Context { get; }
+    public DemoActionContext<DemoActionFinal> ActionFinalContext { get; }
 
     public IJobAction CreateJobAction(TriggeredJobTask jobTask)
     {
@@ -35,6 +37,10 @@ public sealed class DemoJobActionFactory : IJobActionFactory
         else if (jobTask.TaskKey.Equals(DemoJobs.DoSomething.TaskItem02))
         {
             action = new DemoItemAction02(jobTask, ItemAction02Context);
+        }
+        else if (jobTask.TaskKey.Equals(DemoJobs.DoSomething.TaskFinal))
+        {
+            action = new DemoActionFinal(jobTask, ActionFinalContext);
         }
         else
         {

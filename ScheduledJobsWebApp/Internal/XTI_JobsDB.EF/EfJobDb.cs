@@ -335,12 +335,6 @@ public sealed class EfJobDb : IJobDb
     private async Task<TriggeredJobTaskModel[]> TaskModels(int jobID)
     {
         var taskModels = new List<TriggeredJobTaskModel>();
-        var taskIDs = db.TriggeredJobTasks.Retrieve()
-            .Where(t => t.TriggeredJobID == jobID)
-            .Select(t => t.ID);
-        var hierarchicalTaskEntities = await db.HierarchicalTriggeredJobTasks.Retrieve()
-            .Where(ht => taskIDs.Contains(ht.ParentTaskID))
-            .ToArrayAsync();
         var taskEntities = await db.TriggeredJobTasks.Retrieve()
             .Where(t => t.TriggeredJobID == jobID)
             .Join
@@ -350,29 +344,9 @@ public sealed class EfJobDb : IJobDb
                 td => td.ID,
                 (t, td) => new { Task = t, Definition = td }
             )
+            .OrderBy(grouped => grouped.Task.Sequence)
             .ToArrayAsync();
-        var joinedTaskEntities = taskEntities
-            .GroupJoin
-            (
-                hierarchicalTaskEntities,
-                t => t.Task.ID,
-                ht => ht.ParentTaskID,
-                (t, ht) => new { TaskWithDef = t, HierarchicalParentTasks = ht }
-            )
-            .Select(grouped => new { Task = grouped.TaskWithDef, HierarchicalParentTask = grouped.HierarchicalParentTasks.FirstOrDefault() })
-            .GroupJoin
-            (
-                taskEntities,
-                grouped => grouped.HierarchicalParentTask?.ParentTaskID ?? 0,
-                t => t.Task.ID,
-                (grouped, t) => new { TaskWithDef = grouped.Task, ParentTasks = t }
-            )
-            .Select(grouped => new { TaskWithDef = grouped.TaskWithDef, ParentTask = grouped.ParentTasks.FirstOrDefault() })
-            .OrderBy(grouped => grouped.ParentTask?.Task.Generation ?? 0)
-            .ThenBy(grouped => grouped.ParentTask?.Task.Sequence ?? 0)
-            .ThenBy(grouped => grouped.TaskWithDef.Task.Sequence)
-            .Select(grouped => grouped.TaskWithDef);
-        foreach (var t in joinedTaskEntities)
+        foreach (var t in taskEntities)
         {
             var entries = await db.LogEntries.Retrieve()
                 .Where(e => e.TaskID == t.Task.ID)
@@ -465,18 +439,16 @@ public sealed class EfJobDb : IJobDb
         return updatedJob;
     }
 
-    private Task<TriggeredJobEntity> JobByID(int jobID)=>
+    private Task<TriggeredJobEntity> JobByID(int jobID) =>
         db.TriggeredJobs.Retrieve().FirstAsync(tj => tj.ID == jobID);
 
     private async Task AddNextTasks(TriggeredJobEntity jobEntity, TriggeredJobTaskEntity? currentTaskEntity, NextTaskModel[] nextTasks, DateTimeOffset now)
     {
+        var currentTaskSequence = currentTaskEntity?.Sequence ?? 0;
+        var howMany = nextTasks.Length;
+        await ResequenceTasks(jobEntity.ID, currentTaskSequence, howMany);
         var generation = (currentTaskEntity?.Generation ?? 0) + 1;
-        var maxSequence = await db.TriggeredJobTasks.Retrieve()
-            .Where(t => t.TriggeredJobID == jobEntity.ID && t.Generation == generation)
-            .OrderByDescending(t => t.Sequence)
-            .Select(t => t.Sequence)
-            .FirstOrDefaultAsync();
-        var sequence = maxSequence + 1;
+        var sequence = currentTaskSequence + 1;
         foreach (var nextTask in nextTasks)
         {
             var taskDefEntity = await db.JobTaskDefinitions.Retrieve()
@@ -510,6 +482,25 @@ public sealed class EfJobDb : IJobDb
                 );
             }
             sequence++;
+        }
+    }
+
+    private async Task ResequenceTasks(int jobID, int currentTaskSequence, int howMany)
+    {
+        var tasksToResequence = await db.TriggeredJobTasks.Retrieve()
+            .Where(t => t.TriggeredJobID == jobID && t.Sequence > currentTaskSequence)
+            .OrderBy(t => t.Sequence)
+            .ToArrayAsync();
+        foreach (var task in tasksToResequence)
+        {
+            await db.TriggeredJobTasks.Update
+            (
+                task,
+                t =>
+                {
+                    t.Sequence += howMany;
+                }
+            );
         }
     }
 
@@ -612,6 +603,7 @@ public sealed class EfJobDb : IJobDb
         }
         else
         {
+            await ResequenceTasks(currentTaskEntity.TriggeredJobID, currentTaskEntity.Sequence, 1);
             await db.TriggeredJobTasks.Update
             (
                 currentTaskEntity,
@@ -621,17 +613,6 @@ public sealed class EfJobDb : IJobDb
                     t.TimeEnded = now;
                 }
             );
-            var subsequentTasks = await db.TriggeredJobTasks.Retrieve()
-                .Where(t => t.TriggeredJobID == currentTaskEntity.TriggeredJobID && t.Generation == currentTaskEntity.Generation && t.Sequence > currentTaskEntity.Sequence)
-                .ToArrayAsync();
-            foreach (var subsequentTask in subsequentTasks)
-            {
-                await db.TriggeredJobTasks.Update
-                (
-                    subsequentTask,
-                    t => t.Sequence = t.Sequence + 1
-                );
-            }
             var retryTask = new TriggeredJobTaskEntity
             {
                 Status = JobTaskStatus.Values.Retry.Value,

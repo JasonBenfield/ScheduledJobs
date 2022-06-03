@@ -14,14 +14,10 @@ public partial class Views : Migration
 CREATE or ALTER FUNCTION [ToEST](
     @dt datetimeoffset
 )
-RETURNS datetime
+RETURNS datetime2
 AS 
 BEGIN
-    RETURN case 
-		when @dt < '0001-01-02' then '1900-01-01'
-		when @dt > '9999-01-01' then '9999-12-31'
-		else cast(@dt at time zone 'Eastern Standard Time' as datetime) 
-		end
+    RETURN cast(@dt at time zone 'Eastern Standard Time' as datetime2) 
 END
 "
         );
@@ -66,6 +62,29 @@ BEGIN
 END
 "
         );
+		migrationBuilder.Sql
+		(
+			@"
+CREATE or ALTER FUNCTION [TimeElapsedDisplayText](
+    @timestarted datetimeoffset,
+	@timeended datetimeoffset
+)
+RETURNS varchar(50)
+AS 
+BEGIN
+    RETURN 
+	case 
+	when @timeended >= '9999-12-31' then null
+	when datediff(year,@timestarted,@timeended) > 1 then cast(datediff(month, @TimeStarted, @TimeEnded) as varchar) + ' month'
+	when datediff(day,@timestarted,@timeended) > 7 then format((datediff(hour, @TimeStarted, @TimeEnded) / 24.0), 'F2') + ' day'
+	when datediff(hour,@timestarted,@timeended) > 1 then format((datediff(minute, @TimeStarted, @TimeEnded) / 60.0), 'F2') + ' hr'
+	when datediff(minute,@timestarted,@timeended) > 1 then format((datediff(second, @TimeStarted, @TimeEnded) / 60.0), 'F2') + ' min'
+	when datediff(second,@timestarted,@timeended) > 1 then format((datediff(millisecond, @TimeStarted, @TimeEnded) / 1000.0), 'F3') + ' s'
+	else cast(datediff(millisecond, @TimeStarted, @TimeEnded) as varchar)  + ' ms'
+	end
+END
+"
+		);
         migrationBuilder.Sql
         (
 			@"
@@ -100,6 +119,82 @@ inner join EventDefinitions b
 on a.EventDefinitionID = b.id
 left outer join JobCounts c
 on a.id = c.EventNotificationID
+"
+		);
+		migrationBuilder.Sql
+		(
+			@"
+create or alter view ExpandedTriggeredJobTasks as
+with 
+LogEntrySeverityCounts as
+(
+	select TaskID, Severity, count(TaskID) LogEntryCount
+	from LogEntries
+	group by TaskID, Severity
+),
+LogEntryCounts as
+(
+	select TaskID, count(TaskID) LogEntryCount
+	from LogEntries
+	group by TaskID
+),
+ChildTaskCounts as
+(
+	select ParentTaskID, count(ParentTaskID) ChildTaskCount
+	from HierarchicalTriggeredJobTasks
+	group by ParentTaskID
+)
+select 
+	tasks.ID TaskID, tasks.Generation, 
+	tasks.Sequence,
+	taskDefs.TaskKey,
+	dbo.JobTaskStatusDisplayText(tasks.Status) TaskStatusDisplayText,
+	isnull(errorCounts.LogEntryCount, 0) ErrorCount,
+	isnull(infoCounts.LogEntryCount, 0) InformationCount,
+	isnull(entryCounts.LogEntryCount, 0) LogEntryCount,
+	isnull(childCounts.ChildTaskCount, 0) ChildTaskCount,
+	tasks.TaskData,
+	dbo.ToEst(tasks.TimeStarted) TimeTaskStartedEst,
+	dbo.ToEst(tasks.TimeEnded) TimeTaskEndedEst,
+	dbo.TimeElapsedDisplayText(tasks.TimeStarted, tasks.TimeEnded) TimeElapsed,
+	dbo.ToEst(tasks.TimeAdded) TimeTaskAddedEst,
+	dbo.ToEst(tasks.TimeActive) TimeTaskActiveEst,
+	dbo.ToEst(tasks.TimeInactive) TimeTaskInactiveEst,
+	jobDefs.JobKey,
+	isnull(hierTasks.ParentTaskID,0) ParentTaskID,
+	evtDefs.EventKey, evtNots.SourceKey, evtNots.SourceData,
+	evtNots.ID EventNotificationID, evtDefs.ID EventDefinitionID,
+	dbo.ToEst(evtNots.TimeAdded) TimeEventAddedEst,
+	dbo.ToEst(evtNOts.TimeActive) TimeEventActiveEst,
+	dbo.ToEst(evtNots.TimeInactive) TimeEventInactiveEst,
+	jobs.ID JobID, jobDefs.ID JobDefinitionID, jobDefs.Timeout JobTimeout,
+	dbo.ToEst(jobs.TimeInactive) TimeJobInactiveEst,
+	jobs.TimeInactive TimeJobInactive,
+	tasks.Timestarted TimeTaskStarted, tasks.TimeEnded TimeTaskEnded, 
+	tasks.TimeActive TimeTaskActive, tasks.TimeInactive TimeTaskInactive, tasks.Status TaskStatus,
+	taskDefs.ID TaskDefinitionID, taskDefs.Timeout TaskTimeout,
+	evtNots.TimeAdded TimeEventAdded, evtNots.TimeActive TimeEventActive, evtNots.TimeInactive TimeEventInactive
+from TriggeredJobTasks tasks
+inner join JobTaskDefinitions taskDefs
+on tasks.TaskDefinitionID = taskDefs.id
+inner join TriggeredJobs jobs
+on tasks.TriggeredJobID = jobs.id
+inner join JobDefinitions jobDefs
+on jobs.JobDefinitionID = jobDefs.id
+inner join EventNotifications evtNots
+on jobs.EventNotificationID = evtNots.id
+inner join EventDefinitions evtDefs
+on evtNots.EventDefinitionID = evtDefs.id
+left outer join HierarchicalTriggeredJobTasks hierTasks
+on tasks.ID = hierTasks.ChildTaskID
+left outer join LogEntrySeverityCounts errorCounts
+on tasks.ID = errorCounts.TaskID and errorCounts.Severity = 100
+left outer join LogEntrySeverityCounts infoCounts
+on tasks.ID = infoCounts.TaskID and infoCounts.Severity = 50
+left outer join LogEntryCounts entryCounts
+on tasks.ID = entryCounts.TaskID
+left outer join ChildTaskCounts childCounts
+on tasks.ID = childCounts.ParentTaskID
 "
 		);
     }

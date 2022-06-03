@@ -2,11 +2,11 @@
 
 namespace XTI_ScheduledJobSharedTests;
 
-public sealed class DemoAction01 : JobAction<DoSomethingData>
+public sealed class DemoActionFinal : JobAction<DoSomethingData>
 {
-    private readonly DemoActionContext<DemoAction01> context;
+    private readonly DemoActionContext<DemoActionFinal> context;
 
-    public DemoAction01(TriggeredJobTask task, DemoActionContext<DemoAction01> context)
+    public DemoActionFinal(TriggeredJobTask task, DemoActionContext<DemoActionFinal> context)
         : base(task)
     {
         this.context = context;
@@ -19,16 +19,13 @@ public sealed class DemoAction01 : JobAction<DoSomethingData>
             await Task.Delay(context.Delay, stoppingToken);
         }
         context.NumberOfTimesExecuted++;
-        data.Output += "Action1";
+        data.Output += ",Final";
         context.TargetID = data.TargetID;
         context.Output = data.Output;
-        foreach(var message in context.Messages)
+        foreach (var message in context.Messages)
         {
             await task.LogMessage(message);
         }
-        nextTasks
-            .AddNext(DemoJobs.DoSomething.Task02, data)
-            .AddNext(DemoJobs.DoSomething.TaskFinal, data);
         return data;
     }
 }

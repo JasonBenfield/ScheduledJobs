@@ -701,6 +701,49 @@ internal sealed class RunJobTest
         host.GetRequiredService<CancellationTokenSource>().Cancel();
     }
 
+    [Test]
+    public async Task ShouldNotTriggerJob_WhenEventWasRaisedBeforeEventStartTime()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        await host.MonitorEvent
+        (
+            DemoEventKeys.SomethingHappened, 
+            DemoJobs.DoSomething.JobKey,
+            (monitorBuilder) =>
+            {
+
+            }
+        );
+
+
+
+
+        fastForward(host, TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(-1)));
+
+
+        var api = host.GetRequiredService<ScheduledJobsAppApi>();
+        await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var status = triggeredJobs[0].Status();
+        Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Running), "Should not fail job before job times out");
+        host.GetRequiredService<CancellationTokenSource>().Cancel();
+    }
+
     private static void fastForward(XtiHost host, TimeSpan howLong)
     {
         var clock = host.GetRequiredService<FakeClock>();
@@ -717,5 +760,6 @@ internal sealed class RunJobTest
                 .AddTask(DemoJobs.DoSomething.Task02).TimeoutAfter(TimeSpan.FromMinutes(5))
                 .AddTask(DemoJobs.DoSomething.TaskItem01).TimeoutAfter(TimeSpan.FromMinutes(5))
                 .AddTask(DemoJobs.DoSomething.TaskItem02).TimeoutAfter(TimeSpan.FromMinutes(5))
+                .AddTask(DemoJobs.DoSomething.TaskFinal).TimeoutAfter(TimeSpan.FromMinutes(5))
         );
 }

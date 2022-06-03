@@ -6,6 +6,7 @@ internal sealed class TriggeredJobTaskEntityConfiguration : IEntityTypeConfigura
     {
         builder.HasKey(tjt => tjt.ID);
         builder.Property(tjt => tjt.ID).ValueGeneratedOnAdd();
+        builder.HasIndex(tjt => new { tjt.TriggeredJobID, tjt.Sequence });
         builder
             .HasOne<TriggeredJobEntity>()
             .WithMany()
