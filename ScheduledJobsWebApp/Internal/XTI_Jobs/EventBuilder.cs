@@ -3,13 +3,14 @@
 public sealed class EventBuilder
 {
     private readonly EventKey eventKey;
+    private TimeSpan deleteAfter = TimeSpan.FromDays(365);
+    private TimeSpan activeFor = TimeSpan.MaxValue;
 
     internal EventBuilder(EventKey eventKey)
     {
         this.eventKey = eventKey;
     }
 
-    private TimeSpan ActiveForValue { get; set; } = TimeSpan.MaxValue;
     private DateTimeOffset TimeToStartNotification { get; set; } = DateTimeOffset.MinValue;
     internal bool CompareSourceKeyAndDataForDuplication { get; set; } = true;
     internal DuplicateHandling DuplicateHandling { get; set; } = DuplicateHandling.Values.Ignore;
@@ -36,7 +37,13 @@ public sealed class EventBuilder
 
     public EventBuilder ActiveFor(TimeSpan activeFor)
     {
-        ActiveForValue = activeFor;
+        this.activeFor = activeFor;
+        return this;
+    }
+
+    public EventBuilder DeleteAfter(TimeSpan deleteAfter)
+    {
+        this.deleteAfter = deleteAfter;
         return this;
     }
 
@@ -47,6 +54,7 @@ public sealed class EventBuilder
             CompareSourceKeyAndDataForDuplication, 
             DuplicateHandling, 
             TimeToStartNotification,
-            ActiveForValue
+            activeFor,
+            deleteAfter
         );
 }

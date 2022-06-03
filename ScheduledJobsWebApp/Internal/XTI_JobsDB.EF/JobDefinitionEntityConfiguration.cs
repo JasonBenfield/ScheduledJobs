@@ -10,6 +10,7 @@ internal sealed class JobDefinitionEntityConfiguration : IEntityTypeConfiguratio
         builder.HasIndex(jd => jd.JobKey).IsUnique();
         builder.Property(jd => jd.DisplayText).HasMaxLength(100);
         builder.Property(jd => jd.Timeout).HasConversion<string>();
+        builder.Property(jd => jd.DeleteAfter).HasConversion<string>();
         builder.ToTable("JobDefinitions");
     }
 }

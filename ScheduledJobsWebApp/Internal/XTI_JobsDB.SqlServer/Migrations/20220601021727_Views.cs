@@ -230,22 +230,23 @@ TaskCounts as
 	group by TriggeredJobID
 )
 select 
-	jobs.ID JobID, jobDefs.DisplayText JobDisplayText,
-	jobs.TimeInactive TimeJobInactive, 
-	dbo.JobTaskStatusDisplayText(isnull(JobStatuses.JobStatus,0)) JobStatus,
+	jobs.ID JobID, jobDefs.DisplayText JobDisplayText, 
+	dbo.JobTaskStatusDisplayText(isnull(JobStatuses.JobStatus,0)) JobStatusDisplayText,
 	dbo.ToEst(isnull(StartTimes.TimeStarted,'1/1/1')) TimeJobStartedEst,
 	dbo.ToEst(isnull(EndTimes.TimeEnded,'12/31/9999')) TimeJobEndedEst,
 	dbo.TimeElapsedDisplayText(isnull(StartTimes.TimeStarted,'1/1/1'), isnull(EndTimes.TimeEnded,'12/31/9999')) TimeElapsed,
 	isnull(TaskCounts.TaskCount, 0) TaskCount,
-	jobs.JobDefinitionID, jobDefs.JobKey, jobDefs.Timeout JobTimeout,
+	jobs.JobDefinitionID,
+	dbo.ToEst(jobs.TimeInactive) TimeJobInactiveEst, 
+	jobDefs.JobKey, jobDefs.Timeout JobTimeout,
 	evtDefs.DisplayText EventDisplayText, evtDefs.EventKey, evtNots.SourceKey, evtNots.SourceData,
 	evtNots.ID EventNotificationID, evtDefs.ID EventDefinitionID,
 	dbo.ToEst(evtNots.TimeAdded) TimeEventAddedEst,
 	dbo.ToEst(evtNOts.TimeActive) TimeEventActiveEst,
 	dbo.ToEst(evtNots.TimeInactive) TimeEventInactiveEst,
-	dbo.ToEst(jobs.TimeInactive) TimeJobInactiveEst,
 	evtNots.TimeAdded TimeEventAdded, evtNots.TimeActive TimeEventActive, evtNots.TimeInactive TimeEventInactive,
 	isnull(JobStatuses.JobStatus,0) JobStatus,
+	jobs.TimeInactive TimeJobInactive,
 	isnull(StartTimes.TimeStarted,'1/1/1') TimeJobStarted,
 	isnull(EndTimes.TimeEnded,'12/31/9999') TimeJobEnded
 from TriggeredJobs jobs

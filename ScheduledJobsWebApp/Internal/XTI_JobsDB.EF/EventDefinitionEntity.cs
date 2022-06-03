@@ -8,5 +8,6 @@ public sealed class EventDefinitionEntity
     public bool CompareSourceKeyAndDataForDuplication { get; set; }
     public int DuplicateHandling { get; set; }
     public DateTimeOffset TimeToStartNotifications { get; set; } = DateTimeOffset.MinValue;
-    public string ActiveFor { get; set; } = TimeSpan.MaxValue.ToString();
+    public TimeSpan ActiveFor { get; set; } = TimeSpan.Zero;
+    public TimeSpan DeleteAfter { get; set; } = TimeSpan.Zero;
 }

@@ -7,5 +7,6 @@ internal static class RecurringGroupExtensions
     public static void AddRecurringGroupServices(this IServiceCollection services)
     {
         services.AddScoped<TimeoutTasksAction>();
+        services.AddScoped<PurgeJobsAndEventsAction>();
     }
 }

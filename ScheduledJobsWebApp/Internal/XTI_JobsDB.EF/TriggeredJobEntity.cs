@@ -6,4 +6,5 @@ public sealed class TriggeredJobEntity
     public int JobDefinitionID { get; set; }
     public int EventNotificationID { get; set; }
     public DateTimeOffset TimeInactive { get; set; } = DateTimeOffset.MaxValue;
+    public DateTimeOffset TimeToDelete { get; set; } = DateTimeOffset.MaxValue;
 }

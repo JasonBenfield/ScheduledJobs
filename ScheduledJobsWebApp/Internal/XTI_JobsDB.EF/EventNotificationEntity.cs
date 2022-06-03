@@ -9,4 +9,5 @@ public sealed class EventNotificationEntity
     public DateTimeOffset TimeAdded { get; set; } = DateTimeOffset.MaxValue;
     public DateTimeOffset TimeActive { get; set; } = DateTimeOffset.MaxValue;
     public DateTimeOffset TimeInactive { get; set; } = DateTimeOffset.MinValue;
+    public DateTimeOffset TimeToDelete { get; set; } = DateTimeOffset.MaxValue;
 }

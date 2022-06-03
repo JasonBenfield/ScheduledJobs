@@ -4,6 +4,7 @@ public sealed class JobBuilder
 {
     private readonly JobKey jobKey;
     private TimeSpan timeout;
+    private TimeSpan deleteAfter = TimeSpan.FromDays(365);
     private readonly List<JobTaskBuilder> tasks = new();
 
     internal JobBuilder(JobKey jobKey)
@@ -17,6 +18,12 @@ public sealed class JobBuilder
         return this;
     }
 
+    public JobBuilder DeleteAfter(TimeSpan deleteAfter)
+    {
+        this.deleteAfter = deleteAfter;
+        return this;
+    }
+
     public JobTaskBuilder AddTask(JobTaskKey taskKey)
     {
         var taskBuilder = new JobTaskBuilder(this, taskKey);
@@ -24,5 +31,12 @@ public sealed class JobBuilder
         return taskBuilder;
     }
 
-    internal RegisteredJob Build() => new RegisteredJob(jobKey, timeout, tasks.Select(t => t.Build()).ToArray());
+    internal RegisteredJob Build() => 
+        new RegisteredJob
+        (
+            jobKey, 
+            timeout, 
+            deleteAfter,
+            tasks.Select(t => t.Build()).ToArray()
+        );
 }

@@ -469,6 +469,39 @@ internal sealed class RunJobTest
     }
 
     [Test]
+    public async Task ShouldLogRetried_WhenRetryingAfterError()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
+        demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
+        demoContext01.RetryAfterError(TimeSpan.FromMinutes(5));
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        demoContext01.DontThrowError();
+        var howLong = TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1));
+        host.FastForward(howLong);
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var messages = triggeredJobs[0].Messages();
+        Assert.That(messages.Select(m => m.Category), Is.EqualTo(new[] { "Retried" }));
+        Assert.That(messages.Select(m => m.Message), Is.EqualTo(new[] { "Retried" }));
+    }
+
+    [Test]
     public async Task ShouldCompleteJob_WhenRetryingAfterError()
     {
         var host = TestHost.CreateDefault();

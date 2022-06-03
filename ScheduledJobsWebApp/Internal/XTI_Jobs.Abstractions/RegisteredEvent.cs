@@ -6,5 +6,6 @@ public sealed record RegisteredEvent
     bool CompareSourceKeyAndDataForDuplication, 
     DuplicateHandling DuplicateHandling,
     DateTimeOffset TimeToStartNotifications,
-    TimeSpan ActiveFor
+    TimeSpan ActiveFor,
+    TimeSpan DeleteAfter
 );
