@@ -4,12 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ScheduledJobsWebApp\Internal\XTI_Jobs\XTI_Jobs.csproj" />
+    <ProjectReference Include="..\..\ScheduledJobsWebApp\Lib\XTI_Jobs\XTI_Jobs.csproj" />
   </ItemGroup>
 
 </Project>

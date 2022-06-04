@@ -12,8 +12,8 @@ using XTI_JobsDB.EF;
 namespace XTI_JobsDB.SqlServer.Migrations
 {
     [DbContext(typeof(JobDbContext))]
-    [Migration("20220602110512_Index Tasks by Job ID and Sequence")]
-    partial class IndexTasksbyJobIDandSequence
+    [Migration("20220604180752_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,34 @@ namespace XTI_JobsDB.SqlServer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("XTI_JobsDB.EF.ExpandedTriggeredJobEntity", b =>
+                {
+                    b.Property<int>("JobID")
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobID"), 1L, 1);
+
+                    b.Property<string>("JobDisplayText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("JobStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("TimeJobEnded")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("TimeJobStarted")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("JobID");
+
+                    b.ToView("ExpandedTriggeredJobs");
+                });
 
             modelBuilder.Entity("XTI_JobsDB.EF.HierarchicalTriggeredJobTaskEntity", b =>
                 {
@@ -55,6 +83,15 @@ namespace XTI_JobsDB.SqlServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
+                    b.Property<string>("DeleteAfter")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(48)");
+
+                    b.Property<string>("DisplayText")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("JobKey")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -79,6 +116,11 @@ namespace XTI_JobsDB.SqlServer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<string>("DisplayText")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("JobDefinitionID")
                         .HasColumnType("int");
@@ -154,6 +196,9 @@ namespace XTI_JobsDB.SqlServer.Migrations
                     b.Property<DateTimeOffset>("TimeInactive")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset>("TimeToDelete")
+                        .HasColumnType("datetimeoffset");
+
                     b.HasKey("ID");
 
                     b.HasIndex("EventNotificationID");
@@ -224,10 +269,19 @@ namespace XTI_JobsDB.SqlServer.Migrations
 
                     b.Property<string>("ActiveFor")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(48)");
 
                     b.Property<bool>("CompareSourceKeyAndDataForDuplication")
                         .HasColumnType("bit");
+
+                    b.Property<string>("DeleteAfter")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(48)");
+
+                    b.Property<string>("DisplayText")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("DuplicateHandling")
                         .HasColumnType("int");
@@ -274,6 +328,9 @@ namespace XTI_JobsDB.SqlServer.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset>("TimeInactive")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("TimeToDelete")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("ID");

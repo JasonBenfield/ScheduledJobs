@@ -16,6 +16,7 @@ public sealed class JobDbContext : DbContext
         JobDefinitions = new EfDataRepository<JobDefinitionEntity>(this);
         JobTaskDefinitions = new EfDataRepository<JobTaskDefinitionEntity>(this);
         TriggeredJobs = new EfDataRepository<TriggeredJobEntity>(this);
+        ExpandedTriggeredJobs = new EfDataRepository<ExpandedTriggeredJobEntity>(this);
         TriggeredJobTasks = new EfDataRepository<TriggeredJobTaskEntity>(this);
         HierarchicalTriggeredJobTasks = new EfDataRepository<HierarchicalTriggeredJobTaskEntity>(this);
         LogEntries = new EfDataRepository<LogEntryEntity>(this);
@@ -29,6 +30,7 @@ public sealed class JobDbContext : DbContext
         modelBuilder.ApplyConfiguration(new JobDefinitionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new JobTaskDefinitionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TriggeredJobEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new ExpandedTriggeredJobEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TriggeredJobTaskEntityConfiguration());
         modelBuilder.ApplyConfiguration(new HierarchicalTriggeredJobTaskEntityConfiguration());
         modelBuilder.ApplyConfiguration(new LogEntryEntityConfiguration());
@@ -43,6 +45,8 @@ public sealed class JobDbContext : DbContext
     public DataRepository<JobTaskDefinitionEntity> JobTaskDefinitions { get; }
 
     public DataRepository<TriggeredJobEntity> TriggeredJobs { get; }
+
+    public DataRepository<ExpandedTriggeredJobEntity> ExpandedTriggeredJobs { get; }
 
     public DataRepository<TriggeredJobTaskEntity> TriggeredJobTasks { get; }
 

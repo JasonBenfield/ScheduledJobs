@@ -8,12 +8,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="XTI_App.Api" Version="1.8.19" />
-		<PackageReference Include="XTI_WebAppClient" Version="1.8.20" />
+		<PackageReference Include="XTI_WebAppClient" Version="1.8.21" />
 		<PackageReference Include="XTI_TempLog.Abstractions" Version="1.2.27" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Internal\XTI_Jobs.Abstractions\XTI_Jobs.Abstractions.csproj" />
+	  <ProjectReference Include="..\XTI_Jobs.Abstractions\XTI_Jobs.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

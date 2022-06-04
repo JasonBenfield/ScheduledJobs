@@ -37,7 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InstallOptions", "InstallOp
 		ScheduledJobsWebApp\install.Test.private.json = ScheduledJobsWebApp\install.Test.private.json
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Jobs", "ScheduledJobsWebApp\Internal\XTI_Jobs\XTI_Jobs.csproj", "{17B348C6-B7E1-490C-ACDB-C8F902DEF778}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Jobs", "ScheduledJobsWebApp\Lib\XTI_Jobs\XTI_Jobs.csproj", "{17B348C6-B7E1-490C-ACDB-C8F902DEF778}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0904BA61-8C46-44B5-893D-F6756E92B607}"
 EndProject
@@ -51,23 +51,31 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_JobsDB.SqlServer", "Sch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_JobsDBTool", "ScheduledJobsWebApp\Internal\XTI_JobsDBTool\XTI_JobsDBTool.csproj", "{D0CBB1E8-8AF6-4554-A2D8-E09BEFC9E732}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Jobs.Abstractions", "ScheduledJobsWebApp\Internal\XTI_Jobs.Abstractions\XTI_Jobs.Abstractions.csproj", "{CB05D78D-5044-46DB-8197-49FBEB1BA3D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Jobs.Abstractions", "ScheduledJobsWebApp\Lib\XTI_Jobs.Abstractions\XTI_Jobs.Abstractions.csproj", "{CB05D78D-5044-46DB-8197-49FBEB1BA3D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_ScheduledJobSharedTests", "Tests\XTI_ScheduledJobSharedTests\XTI_ScheduledJobSharedTests.csproj", "{BD182C36-41C7-4BFE-AA91-7747CDDD552E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduledJobSharedTests", "Tests\XTI_ScheduledJobSharedTests\XTI_ScheduledJobSharedTests.csproj", "{BD182C36-41C7-4BFE-AA91-7747CDDD552E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_ScheduledJobIntegrationTests", "Tests\XTI_ScheduledJobIntegrationTests\XTI_ScheduledJobIntegrationTests.csproj", "{8807D3B1-FEC5-405A-9CA7-F5913E9E69EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduledJobIntegrationTests", "Tests\XTI_ScheduledJobIntegrationTests\XTI_ScheduledJobIntegrationTests.csproj", "{8807D3B1-FEC5-405A-9CA7-F5913E9E69EF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScheduledJobsServiceApp", "ScheduledJobsServiceApp", "{3FEDAB60-7DB0-44D7-9C7E-AB4437F3FABC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{33F1D804-BC54-4F7C-ABA1-87D9E8F4B326}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScheduledJobsServiceApp", "ScheduledJobsServiceApp\Apps\ScheduledJobsServiceApp\ScheduledJobsServiceApp.csproj", "{146977BE-D91E-4B74-ACD1-576FC320E635}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsServiceApp", "ScheduledJobsServiceApp\Apps\ScheduledJobsServiceApp\ScheduledJobsServiceApp.csproj", "{146977BE-D91E-4B74-ACD1-576FC320E635}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Internal", "Internal", "{EF3EB845-2EE5-4863-BF76-3BBC1466989D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_ScheduledJobsServiceAppApi", "ScheduledJobsServiceApp\Internal\XTI_ScheduledJobsServiceAppApi\XTI_ScheduledJobsServiceAppApi.csproj", "{8A9C8378-8722-46CA-AB26-B9464E58386C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduledJobsServiceAppApi", "ScheduledJobsServiceApp\Internal\XTI_ScheduledJobsServiceAppApi\XTI_ScheduledJobsServiceAppApi.csproj", "{8A9C8378-8722-46CA-AB26-B9464E58386C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScheduledJobsSetupApp", "ScheduledJobsServiceApp\Apps\ScheduledJobsSetupApp\ScheduledJobsSetupApp.csproj", "{145F3B1C-493E-4E82-B896-E5E0374426F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsSetupApp", "ScheduledJobsServiceApp\Apps\ScheduledJobsSetupApp\ScheduledJobsSetupApp.csproj", "{145F3B1C-493E-4E82-B896-E5E0374426F7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InstallOptions", "InstallOptions", "{79878EBC-50D8-47E4-BC9E-16013ACDFB9E}"
+	ProjectSection(SolutionItems) = preProject
+		ScheduledJobsServiceApp\install.Development.private.json = ScheduledJobsServiceApp\install.Development.private.json
+		ScheduledJobsServiceApp\install.Production.private.json = ScheduledJobsServiceApp\install.Production.private.json
+		ScheduledJobsServiceApp\install.Staging.private.json = ScheduledJobsServiceApp\install.Staging.private.json
+		ScheduledJobsServiceApp\install.Test.private.json = ScheduledJobsServiceApp\install.Test.private.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -162,14 +170,14 @@ Global
 		{B71A4745-225A-453B-B6A4-DF280865DF0A} = {514E2103-B915-4E18-A473-A402D3FB5F86}
 		{07E29774-FF7F-44E5-BC31-5CC5CC0DD716} = {514E2103-B915-4E18-A473-A402D3FB5F86}
 		{79E3FC0A-9492-4E55-999C-3FA390FF018A} = {D41BEADF-8201-48EB-B779-99745EF8C3C6}
-		{17B348C6-B7E1-490C-ACDB-C8F902DEF778} = {98784FFD-984A-469A-8D05-4C268E149058}
+		{17B348C6-B7E1-490C-ACDB-C8F902DEF778} = {48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994}
 		{0904BA61-8C46-44B5-893D-F6756E92B607} = {D41BEADF-8201-48EB-B779-99745EF8C3C6}
 		{C2157471-A922-481F-8E5B-8DCD93AE33C6} = {0904BA61-8C46-44B5-893D-F6756E92B607}
 		{BDF7BB47-ECA6-4C31-B27F-1EF764DFFC27} = {98784FFD-984A-469A-8D05-4C268E149058}
 		{C01144A8-C01F-4364-B63E-F6FEED4D48D7} = {98784FFD-984A-469A-8D05-4C268E149058}
 		{C2B62418-8EC6-47C0-9937-5C6C41203379} = {98784FFD-984A-469A-8D05-4C268E149058}
 		{D0CBB1E8-8AF6-4554-A2D8-E09BEFC9E732} = {98784FFD-984A-469A-8D05-4C268E149058}
-		{CB05D78D-5044-46DB-8197-49FBEB1BA3D6} = {98784FFD-984A-469A-8D05-4C268E149058}
+		{CB05D78D-5044-46DB-8197-49FBEB1BA3D6} = {48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994}
 		{BD182C36-41C7-4BFE-AA91-7747CDDD552E} = {0904BA61-8C46-44B5-893D-F6756E92B607}
 		{8807D3B1-FEC5-405A-9CA7-F5913E9E69EF} = {0904BA61-8C46-44B5-893D-F6756E92B607}
 		{33F1D804-BC54-4F7C-ABA1-87D9E8F4B326} = {3FEDAB60-7DB0-44D7-9C7E-AB4437F3FABC}
@@ -177,6 +185,7 @@ Global
 		{EF3EB845-2EE5-4863-BF76-3BBC1466989D} = {3FEDAB60-7DB0-44D7-9C7E-AB4437F3FABC}
 		{8A9C8378-8722-46CA-AB26-B9464E58386C} = {EF3EB845-2EE5-4863-BF76-3BBC1466989D}
 		{145F3B1C-493E-4E82-B896-E5E0374426F7} = {33F1D804-BC54-4F7C-ABA1-87D9E8F4B326}
+		{79878EBC-50D8-47E4-BC9E-16013ACDFB9E} = {3FEDAB60-7DB0-44D7-9C7E-AB4437F3FABC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5CABE53F-2B1C-42E9-9160-E9E3A6B07219}

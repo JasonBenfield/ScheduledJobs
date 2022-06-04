@@ -74,6 +74,14 @@ interface ILogEntryModel {
 	Message: string;
 	Details: string;
 }
+interface IJobSummaryModel {
+	ID: number;
+	JobKey: IJobKey;
+	Status: IJobTaskStatus;
+	TimeStarted: Date;
+	TimeEnded: Date;
+	TaskCount: number;
+}
 interface IRegisteredJob {
 	JobKey: IJobKey;
 	Timeout: string;

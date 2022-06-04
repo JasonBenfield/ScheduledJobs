@@ -16,6 +16,11 @@
       "../../node_modules/@types"
     ]
   },
+  "include": [
+    "./**/*.ts",
+    "../ScheduledJobs/**/*.d.ts",
+    "../../node_modules/@jasonbenfield/**/*.d.ts"
+  ],
   "exclude": [
     "Imports",
     "node_modules",

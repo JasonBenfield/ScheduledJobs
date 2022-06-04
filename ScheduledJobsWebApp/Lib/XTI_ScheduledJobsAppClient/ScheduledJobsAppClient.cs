@@ -9,6 +9,7 @@ public sealed partial class ScheduledJobsAppClient : AppClient
         Home = GetGroup((_clientFactory, _tokenAccessor, _url) => new HomeGroup(_clientFactory, _tokenAccessor, _url));
         Recurring = GetGroup((_clientFactory, _tokenAccessor, _url) => new RecurringGroup(_clientFactory, _tokenAccessor, _url));
         Events = GetGroup((_clientFactory, _tokenAccessor, _url) => new EventsGroup(_clientFactory, _tokenAccessor, _url));
+        JobInquiry = GetGroup((_clientFactory, _tokenAccessor, _url) => new JobInquiryGroup(_clientFactory, _tokenAccessor, _url));
         Jobs = GetGroup((_clientFactory, _tokenAccessor, _url) => new JobsGroup(_clientFactory, _tokenAccessor, _url));
     }
 
@@ -23,6 +24,8 @@ public sealed partial class ScheduledJobsAppClient : AppClient
     public RecurringGroup Recurring { get; }
 
     public EventsGroup Events { get; }
+
+    public JobInquiryGroup JobInquiry { get; }
 
     public JobsGroup Jobs { get; }
 }

@@ -22,6 +22,34 @@ namespace XTI_JobsDB.SqlServer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("XTI_JobsDB.EF.ExpandedTriggeredJobEntity", b =>
+                {
+                    b.Property<int>("JobID")
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobID"), 1L, 1);
+
+                    b.Property<string>("JobDisplayText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("JobStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("TimeJobEnded")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("TimeJobStarted")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("JobID");
+
+                    b.ToView("ExpandedTriggeredJobs");
+                });
+
             modelBuilder.Entity("XTI_JobsDB.EF.HierarchicalTriggeredJobTaskEntity", b =>
                 {
                     b.Property<int>("ID")

@@ -15,9 +15,10 @@ namespace XTI_ScheduledJobIntegrationTests;
 
 internal sealed class TestHost
 {
-    public static XtiHost CreateDefault()
+    public static XtiHost CreateDefault() => CreateDefault(XtiEnvironment.Test);
+
+    public static XtiHost CreateDefault(XtiEnvironment xtiEnv)
     {
-        var xtiEnv = XtiEnvironment.Test;
         Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", xtiEnv.EnvironmentName);
         var host = new XtiHostBuilder(xtiEnv);
         host.Services.AddMemoryCache();

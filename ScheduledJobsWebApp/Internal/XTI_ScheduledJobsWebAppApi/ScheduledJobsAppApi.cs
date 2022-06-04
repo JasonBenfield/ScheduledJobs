@@ -22,6 +22,7 @@ public sealed partial class ScheduledJobsAppApi : WebAppApiWrapper
         createHomeGroup(sp);
         createRecurringGroup(sp);
         createEventsGroup(sp);
+        createJobInquiryGroup(sp);
         createJobsGroup(sp);
     }
 
@@ -30,6 +31,8 @@ public sealed partial class ScheduledJobsAppApi : WebAppApiWrapper
     partial void createRecurringGroup(IServiceProvider sp);
 
     partial void createEventsGroup(IServiceProvider sp);
+
+    partial void createJobInquiryGroup(IServiceProvider sp);
 
     partial void createJobsGroup(IServiceProvider sp);
 

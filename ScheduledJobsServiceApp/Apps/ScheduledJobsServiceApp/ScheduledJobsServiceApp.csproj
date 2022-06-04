@@ -9,7 +9,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
-		<PackageReference Include="XTI_HubAppClient.ServiceApp.Extensions" Version="1.4.19" />
+		<PackageReference Include="XTI_HubAppClient.ServiceApp.Extensions" Version="1.4.21" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -2,16 +2,13 @@
 
 public sealed class IndexAction : AppAction<EmptyRequest, WebViewResult>
 {
-    private readonly IPageContext pageContext;
+    private readonly WebViewResultFactory viewFactory;
 
-    public IndexAction(IPageContext pageContext)
+    public IndexAction(WebViewResultFactory viewFactory)
     {
-        this.pageContext = pageContext;
+        this.viewFactory = viewFactory;
     }
 
-    public Task<WebViewResult> Execute(EmptyRequest model, CancellationToken ct)
-    {
-        var action = new TitledViewAppAction<EmptyRequest>(pageContext, "Index", "ScheduledJobs");
-        return action.Execute(model, ct);
-    }
+    public Task<WebViewResult> Execute(EmptyRequest model, CancellationToken ct) =>
+        Task.FromResult(viewFactory.Default("home", "Scheduled Jobs"));
 }

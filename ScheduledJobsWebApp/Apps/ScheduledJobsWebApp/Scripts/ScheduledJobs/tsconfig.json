@@ -17,7 +17,8 @@
     ]
   },
   "include": [
-    "./**/*.ts"
+    "./**/*.ts",
+    "../../node_modules/@jasonbenfield/**/*.d.ts"
   ],
   "exclude": [
     "Imports",

@@ -4,6 +4,7 @@ using XTI_App.Api;
 using XTI_Core;
 using XTI_HubAppClient.ServiceApp.Extensions;
 using XTI_Schedule;
+using XTI_ScheduledJobsAppClient;
 using XTI_ScheduledJobsServiceAppApi;
 
 await XtiServiceAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
@@ -12,6 +13,8 @@ await XtiServiceAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
         services.AddScheduledJobsAppApiServices();
         services.AddScoped<AppApiFactory, ScheduledJobsAppApiFactory>();
         services.AddScoped(sp => (ScheduledJobsAppApi)sp.GetRequiredService<IAppApi>());
+        services.AddSingleton<ScheduledJobsAppClientVersion>();
+        services.AddScoped<ScheduledJobsAppClient>();
         services.AddAppAgenda
         (
             (sp, agenda) =>

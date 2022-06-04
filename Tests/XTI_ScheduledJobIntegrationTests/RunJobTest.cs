@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using XTI_Core;
 
 namespace XTI_ScheduledJobIntegrationTests;
 
@@ -7,7 +8,7 @@ internal sealed class RunJobTest
     [Test]
     public async Task ShouldRunJob()
     {
-        var host = TestHost.CreateDefault();
+        var host = TestHost.CreateDefault(XtiEnvironment.Development);
         await host.Setup();
         await host.Register
         (
@@ -34,7 +35,7 @@ internal sealed class RunJobTest
     [Test]
     public async Task ShouldFailJob_WhenErrorOccurs()
     {
-        var host = TestHost.CreateDefault();
+        var host = TestHost.CreateDefault(XtiEnvironment.Development);
         await host.Setup();
         await host.Register
         (
@@ -43,7 +44,7 @@ internal sealed class RunJobTest
         );
         var sourceData = new SomethingHappenedData
         {
-            ID = 2,
+            ID = 3,
             Items = Enumerable.Range(1, 3).ToArray()
         };
         var eventNotifications = await host.RaiseEvent
@@ -73,7 +74,7 @@ internal sealed class RunJobTest
         );
         var sourceData = new SomethingHappenedData
         {
-            ID = 2,
+            ID = 4,
             Items = Enumerable.Range(1, 3).ToArray()
         };
         var eventNotifications = await host.RaiseEvent
