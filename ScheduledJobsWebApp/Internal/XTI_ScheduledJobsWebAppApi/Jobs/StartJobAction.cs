@@ -9,6 +9,6 @@ internal sealed class StartJobAction : AppAction<StartJobRequest, TriggeredJobDe
         this.db = db;
     }
 
-    public Task<TriggeredJobDetailModel> Execute(StartJobRequest model) =>
+    public Task<TriggeredJobDetailModel> Execute(StartJobRequest model, CancellationToken ct) =>
         db.StartJob(model.JobID, model.NextTasks);
 }

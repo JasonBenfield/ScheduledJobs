@@ -21,7 +21,7 @@ internal sealed class TestHost
         host.Services.AddScoped<EventRegistration>();
         host.Services.AddScoped<JobRegistration>();
         host.Services.AddScoped<IncomingEventFactory>();
-        host.Services.AddScoped<EventMonitorFactory>();
+        host.Services.AddScoped<EventMonitorBuilder>();
         host.Services.AddScoped<DemoJobActionFactory>();
         host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().Action01Context);
         host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().Action02Context);

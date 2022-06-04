@@ -266,6 +266,60 @@ left outer join EndTimes
 on jobs.ID = EndTimes.TriggeredJobID
 "
 		);
+		migrationBuilder.Sql
+		(
+			@"
+create or alter view ExpandedLogEntries as
+select 
+	entries.ID LogEntryID, 
+	case entries.Severity when 100 then 'Error' else 'Information' end SeverityDispalyText,
+	entries.Category, entries.Message, entries.Details, 
+	dbo.ToEst(entries.TimeOccurred) TimeOccurredEst,
+	entries.Severity, entries.TimeOccurred,
+	tasks.ID TaskID, tasks.Generation, 
+	tasks.Sequence,
+	taskDefs.DisplayText TaskDisplayText,
+	dbo.JobTaskStatusDisplayText(tasks.Status) TaskStatusDisplayText,
+	tasks.TaskData,
+	dbo.ToEst(tasks.TimeStarted) TimeTaskStartedEst,
+	dbo.ToEst(tasks.TimeEnded) TimeTaskEndedEst,
+	dbo.TimeElapsedDisplayText(tasks.TimeStarted, tasks.TimeEnded) TimeElapsed,
+	dbo.ToEst(tasks.TimeAdded) TimeTaskAddedEst,
+	dbo.ToEst(tasks.TimeActive) TimeTaskActiveEst,
+	dbo.ToEst(tasks.TimeInactive) TimeTaskInactiveEst,
+	isnull(hierTasks.ParentTaskID,0) ParentTaskID,
+	jobDefs.DisplayText JobDisplayText,
+	evtDefs.DisplayText EventDisplayText, evtDefs.EventKey, evtNots.SourceKey, evtNots.SourceData,
+	evtNots.ID EventNotificationID, evtDefs.ID EventDefinitionID,
+	dbo.ToEst(evtNots.TimeAdded) TimeEventAddedEst,
+	dbo.ToEst(evtNOts.TimeActive) TimeEventActiveEst,
+	dbo.ToEst(evtNots.TimeInactive) TimeEventInactiveEst,
+	jobs.ID JobID, jobDefs.ID JobDefinitionID,
+	jobDefs.JobKey, jobDefs.Timeout JobTimeout,
+	dbo.ToEst(jobs.TimeInactive) TimeJobInactiveEst,
+	jobs.TimeInactive TimeJobInactive,
+	tasks.Timestarted TimeTaskStarted, tasks.TimeEnded TimeTaskEnded, 
+	tasks.TimeActive TimeTaskActive, tasks.TimeInactive TimeTaskInactive, tasks.Status TaskStatus,
+	taskDefs.ID TaskDefinitionID,
+	taskDefs.TaskKey, taskDefs.Timeout TaskTimeout,
+	evtNots.TimeAdded TimeEventAdded, evtNots.TimeActive TimeEventActive, evtNots.TimeInactive TimeEventInactive
+from LogEntries entries
+inner join TriggeredJobTasks tasks
+on entries.TaskID = tasks.ID
+inner join JobTaskDefinitions taskDefs
+on tasks.TaskDefinitionID = taskDefs.id
+inner join TriggeredJobs jobs
+on tasks.TriggeredJobID = jobs.id
+inner join JobDefinitions jobDefs
+on jobs.JobDefinitionID = jobDefs.id
+inner join EventNotifications evtNots
+on jobs.EventNotificationID = evtNots.id
+inner join EventDefinitions evtDefs
+on evtNots.EventDefinitionID = evtDefs.id
+left outer join HierarchicalTriggeredJobTasks hierTasks
+on tasks.ID = hierTasks.ChildTaskID
+"
+		);
     }
 
 	protected override void Down(MigrationBuilder migrationBuilder) { }

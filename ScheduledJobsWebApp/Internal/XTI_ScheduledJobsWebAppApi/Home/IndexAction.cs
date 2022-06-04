@@ -9,9 +9,9 @@ public sealed class IndexAction : AppAction<EmptyRequest, WebViewResult>
         this.pageContext = pageContext;
     }
 
-    public Task<WebViewResult> Execute(EmptyRequest model)
+    public Task<WebViewResult> Execute(EmptyRequest model, CancellationToken ct)
     {
         var action = new TitledViewAppAction<EmptyRequest>(pageContext, "Index", "ScheduledJobs");
-        return action.Execute(model);
+        return action.Execute(model, ct);
     }
 }

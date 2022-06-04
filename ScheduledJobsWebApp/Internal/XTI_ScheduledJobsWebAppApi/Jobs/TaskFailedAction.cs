@@ -9,7 +9,7 @@ internal sealed class TaskFailedAction : AppAction<TaskFailedRequest, TriggeredJ
         this.db = db;
     }
 
-    public Task<TriggeredJobDetailModel> Execute(TaskFailedRequest model) =>
+    public Task<TriggeredJobDetailModel> Execute(TaskFailedRequest model, CancellationToken ct) =>
         db.TaskFailed
         (
             model.JobID,

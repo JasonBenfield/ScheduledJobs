@@ -9,7 +9,7 @@ internal sealed class LogMessageAction : AppAction<LogMessageRequest, EmptyActio
         this.db = db;
     }
 
-    public async Task<EmptyActionResult> Execute(LogMessageRequest model)
+    public async Task<EmptyActionResult> Execute(LogMessageRequest model, CancellationToken ct)
     {
         await db.LogMessage(model.TaskID, model.Category, model.Message, model.Details);
         return new EmptyActionResult();

@@ -9,7 +9,7 @@ public sealed class AddOrUpdateRegisteredJobsAction : AppAction<RegisteredJob[],
         this.db = db;
     }
 
-    public async Task<EmptyActionResult> Execute(RegisteredJob[] registeredJobs)
+    public async Task<EmptyActionResult> Execute(RegisteredJob[] registeredJobs, CancellationToken ct)
     {
         await db.AddOrUpdateRegisteredJobs(registeredJobs);
         return new EmptyActionResult();

@@ -14,7 +14,7 @@ internal sealed class TimeoutTasksAction : AppAction<EmptyRequest, EmptyActionRe
         this.clock = clock;
     }
 
-    public async Task<EmptyActionResult> Execute(EmptyRequest model)
+    public async Task<EmptyActionResult> Execute(EmptyRequest model, CancellationToken ct)
     {
         var now = clock.Now();
         var runningTasks = await db.TriggeredJobTasks.Retrieve()

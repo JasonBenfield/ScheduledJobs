@@ -9,7 +9,7 @@ internal sealed class StartTaskAction : AppAction<StartTaskRequest, EmptyActionR
         this.db = db;
     }
 
-    public async Task<EmptyActionResult> Execute(StartTaskRequest model)
+    public async Task<EmptyActionResult> Execute(StartTaskRequest model, CancellationToken ct)
     {
         await db.StartTask(model.TaskID);
         return new EmptyActionResult();

@@ -9,6 +9,6 @@ internal sealed class RetryJobsAction : AppAction<RetryJobsRequest, TriggeredJob
         this.db = db;
     }
 
-    public Task<TriggeredJobDetailModel[]> Execute(RetryJobsRequest model) =>
+    public Task<TriggeredJobDetailModel[]> Execute(RetryJobsRequest model, CancellationToken ct) =>
         db.RetryJobs(model.JobKey);
 }

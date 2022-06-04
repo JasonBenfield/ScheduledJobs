@@ -16,6 +16,7 @@ interface IRegisteredEvent {
 	DuplicateHandling: IDuplicateHandling;
 	TimeToStartNotifications: Date;
 	ActiveFor: string;
+	DeleteAfter: string;
 }
 interface IEventKey {
 	Value: string;
@@ -76,6 +77,7 @@ interface ILogEntryModel {
 interface IRegisteredJob {
 	JobKey: IJobKey;
 	Timeout: string;
+	DeleteAfter: string;
 	Tasks: IRegisteredJobTask[];
 }
 interface IRegisteredJobTask {

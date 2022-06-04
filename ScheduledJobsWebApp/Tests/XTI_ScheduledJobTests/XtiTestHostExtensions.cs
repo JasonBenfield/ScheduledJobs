@@ -17,13 +17,16 @@ internal static class XtiTestHostExtensions
         await jobs.Register();
     }
 
-    public static Task MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey, Action<EventMonitorBuilder>? configMonitor = null)
+    public static Task MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey, Action<EventMonitorBuilder1>? configMonitor = null)
     {
         var stoppingToken = host.GetRequiredService<CancellationTokenSource>().Token;
-        var monitorFactory = host.GetRequiredService<EventMonitorFactory>();
-        var monitorBuilder = monitorFactory.When(eventKey);
-        configMonitor?.Invoke(monitorBuilder);
-        var monitor = monitorBuilder.Trigger(jobKey);
+        var monitorBuilder = host.GetRequiredService<EventMonitorBuilder>();
+        var monitorBuilder1 = monitorBuilder.When(eventKey);
+        configMonitor?.Invoke(monitorBuilder1);
+        var jobActionFactory = host.GetRequiredService<IJobActionFactory>();
+        var monitor = monitorBuilder1
+            .Trigger(jobKey)
+            .UseJobActionFactory(jobActionFactory);
         return monitor.Run(stoppingToken);
     }
 

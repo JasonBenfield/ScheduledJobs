@@ -10,8 +10,14 @@ public class RecurringController : Controller
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> TimeoutTasks()
+    public Task<ResultContainer<EmptyActionResult>> TimeoutTasks(CancellationToken ct)
     {
-        return api.Group("Recurring").Action<EmptyRequest, EmptyActionResult>("TimeoutTasks").Execute(new EmptyRequest());
+        return api.Group("Recurring").Action<EmptyRequest, EmptyActionResult>("TimeoutTasks").Execute(new EmptyRequest(), ct);
+    }
+
+    [HttpPost]
+    public Task<ResultContainer<EmptyActionResult>> PurgeJobsAndEvents(CancellationToken ct)
+    {
+        return api.Group("Recurring").Action<EmptyRequest, EmptyActionResult>("PurgeJobsAndEvents").Execute(new EmptyRequest(), ct);
     }
 }

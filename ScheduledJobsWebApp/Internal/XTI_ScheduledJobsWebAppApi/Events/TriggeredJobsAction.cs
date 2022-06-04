@@ -9,6 +9,6 @@ internal sealed class TriggeredJobsAction : AppAction<TriggeredJobsRequest, Trig
         this.db = db;
     }
 
-    public Task<TriggeredJobDetailModel[]> Execute(TriggeredJobsRequest model) =>
+    public Task<TriggeredJobDetailModel[]> Execute(TriggeredJobsRequest model, CancellationToken ct) =>
         db.TriggeredJobs(model.EventNotificationID);
 }

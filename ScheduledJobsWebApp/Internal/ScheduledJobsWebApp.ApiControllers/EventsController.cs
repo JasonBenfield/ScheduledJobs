@@ -10,20 +10,20 @@ public class EventsController : Controller
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> AddOrUpdateRegisteredEvents([FromBody] RegisteredEvent[] model)
+    public Task<ResultContainer<EmptyActionResult>> AddOrUpdateRegisteredEvents([FromBody] RegisteredEvent[] model, CancellationToken ct)
     {
-        return api.Group("Events").Action<RegisteredEvent[], EmptyActionResult>("AddOrUpdateRegisteredEvents").Execute(model);
+        return api.Group("Events").Action<RegisteredEvent[], EmptyActionResult>("AddOrUpdateRegisteredEvents").Execute(model, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EventNotificationModel[]>> AddNotifications([FromBody] AddNotificationsRequest model)
+    public Task<ResultContainer<EventNotificationModel[]>> AddNotifications([FromBody] AddNotificationsRequest model, CancellationToken ct)
     {
-        return api.Group("Events").Action<AddNotificationsRequest, EventNotificationModel[]>("AddNotifications").Execute(model);
+        return api.Group("Events").Action<AddNotificationsRequest, EventNotificationModel[]>("AddNotifications").Execute(model, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobDetailModel[]>> TriggeredJobs([FromBody] TriggeredJobsRequest model)
+    public Task<ResultContainer<TriggeredJobDetailModel[]>> TriggeredJobs([FromBody] TriggeredJobsRequest model, CancellationToken ct)
     {
-        return api.Group("Events").Action<TriggeredJobsRequest, TriggeredJobDetailModel[]>("TriggeredJobs").Execute(model);
+        return api.Group("Events").Action<TriggeredJobsRequest, TriggeredJobDetailModel[]>("TriggeredJobs").Execute(model, ct);
     }
 }

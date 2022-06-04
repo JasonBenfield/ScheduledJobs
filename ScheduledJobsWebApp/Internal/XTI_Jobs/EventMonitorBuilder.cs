@@ -3,23 +3,44 @@
 public sealed class EventMonitorBuilder
 {
     private readonly IJobDb db;
-    private readonly IJobActionFactory jobActionFactory;
-    private readonly EventKey eventKey;
+    private EventKey eventKey = new EventKey("");
+    private JobKey jobKey = new JobKey("");
+    private IJobActionFactory? jobActionFactory;
     private DateTimeOffset eventRaisedStartTime = DateTimeOffset.MinValue;
 
-    internal EventMonitorBuilder(IJobDb db, IJobActionFactory jobActionFactory, EventKey eventKey)
+    public EventMonitorBuilder(IJobDb db)
     {
         this.db = db;
-        this.jobActionFactory = jobActionFactory;
-        this.eventKey = eventKey;
     }
 
-    public EventMonitorBuilder HandleEventsRaisedOnOrAfter(DateTimeOffset eventRaisedStartTime)
+    public EventMonitorBuilder1 When(EventKey eventKey)
+    {
+        this.eventKey = eventKey;
+        return new EventMonitorBuilder1(this);
+    }
+
+    internal void HandleEventsRaisedOnOrAfter(DateTimeOffset eventRaisedStartTime)
     {
         this.eventRaisedStartTime = eventRaisedStartTime;
-        return this;
     }
 
-    public EventMonitor Trigger(JobKey jobKey) => 
-        new EventMonitor(db, jobActionFactory, eventKey, jobKey, eventRaisedStartTime);
+    internal void Trigger(JobKey jobKey)
+    {
+        this.jobKey = jobKey;
+    }
+
+    internal void UseJobActionFactory(IJobActionFactory jobActionFactory)
+    {
+        this.jobActionFactory = jobActionFactory;
+    }
+
+    internal EventMonitor Build() =>
+        new EventMonitor
+        (
+            db,
+            jobActionFactory ?? throw new ArgumentNullException(nameof(jobActionFactory)),
+            eventKey,
+            jobKey,
+            eventRaisedStartTime
+        );
 }

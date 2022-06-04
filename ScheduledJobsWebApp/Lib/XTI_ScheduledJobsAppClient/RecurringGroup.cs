@@ -7,4 +7,5 @@ public sealed partial class RecurringGroup : AppClientGroup
     }
 
     public Task<EmptyActionResult> TimeoutTasks() => Post<EmptyActionResult, EmptyRequest>("TimeoutTasks", "", new EmptyRequest());
+    public Task<EmptyActionResult> PurgeJobsAndEvents() => Post<EmptyActionResult, EmptyRequest>("PurgeJobsAndEvents", "", new EmptyRequest());
 }

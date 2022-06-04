@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Internal\XTI_ScheduledJobsWebAppApi\XTI_ScheduledJobsWebAppApi.csproj" />
+		<ProjectReference Include="..\..\Internal\XTI_ScheduledJobsServiceAppApi\XTI_ScheduledJobsServiceAppApi.csproj" />
 	</ItemGroup>
 
 </Project>
