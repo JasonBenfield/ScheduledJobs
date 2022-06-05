@@ -103,21 +103,21 @@ public sealed class EfJobDb : IJobDb
     public async Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, EventSource[] sources)
     {
         var eventNotifications = new List<EventNotificationModel>();
-        var eventDefinition = await db.EventDefinitions.Retrieve()
+        var evtDefEntity = await db.EventDefinitions.Retrieve()
             .FirstOrDefaultAsync(ed => ed.EventKey == eventKey.Value);
-        if (eventDefinition == null)
+        if (evtDefEntity == null)
         {
             throw new ArgumentException($"Event '{eventKey.DisplayText}' not found");
         }
         var now = clock.Now();
-        if (now >= eventDefinition.TimeToStartNotifications)
+        if (now >= evtDefEntity.TimeToStartNotifications)
         {
-            var duplicateHandling = DuplicateHandling.Values.Value(eventDefinition.DuplicateHandling);
+            var duplicateHandling = DuplicateHandling.Values.Value(evtDefEntity.DuplicateHandling);
             foreach (var source in sources)
             {
-                var duplicateNotifications = await GetDuplicateNotifications(eventDefinition, duplicateHandling, source);
+                var duplicateNotifications = await GetDuplicateNotifications(evtDefEntity, duplicateHandling, source);
                 var timeActive = now;
-                var activeFor = eventDefinition.ActiveFor;
+                var activeFor = evtDefEntity.ActiveFor;
                 var timeInactive = activeFor == TimeSpan.MaxValue
                     ? DateTimeOffset.MaxValue
                     : now.Add(activeFor);
@@ -134,16 +134,28 @@ public sealed class EfJobDb : IJobDb
                 {
                     var notificationEntity = new EventNotificationEntity
                     {
-                        EventDefinitionID = eventDefinition.ID,
+                        EventDefinitionID = evtDefEntity.ID,
                         SourceKey = source.SourceKey,
                         SourceData = source.SourceData,
                         TimeAdded = now,
                         TimeActive = timeActive,
                         TimeInactive = timeInactive,
-                        TimeToDelete = now.Add(eventDefinition.DeleteAfter)
+                        TimeToDelete = now.Add(evtDefEntity.DeleteAfter)
                     };
                     await db.EventNotifications.Create(notificationEntity);
-                    eventNotifications.Add(new EventNotificationModel(notificationEntity.ID));
+                    eventNotifications.Add
+                    (
+                        new EventNotificationModel
+                        (
+                            notificationEntity.ID,
+                            new EventDefinitionModel(evtDefEntity.ID, new EventKey(evtDefEntity.DisplayText)),
+                            notificationEntity.SourceKey,
+                            notificationEntity.SourceData,
+                            notificationEntity.TimeAdded,
+                            notificationEntity.TimeActive,
+                            notificationEntity.TimeInactive
+                        )
+                    );
                 }
             }
         }

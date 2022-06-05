@@ -1,6 +1,6 @@
 ﻿import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
 import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
-import { ScheduledJobsAppApi } from "../../../ScheduledJobs/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppApi } from "../../ScheduledJobs/Api/ScheduledJobsAppApi";
 import { FormattedTimeSpan } from "../FormattedTimeSpan";
 import { JobSummaryListItemView } from "./JobSummaryListItemView";
 

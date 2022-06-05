@@ -6,7 +6,9 @@ const entry = {
     error: './Scripts/Internal/User/Error/MainPage.ts',
     home: './Scripts/Internal/Home/MainPage.ts',
     failedJobs: './Scripts/Internal/Jobs/FailedJobs/MainPage.ts',
-    jobDetail: './Scripts/Internal/Jobs/JobDetail/MainPage.ts'
+    jobDetail: './Scripts/Internal/Jobs/JobDetail/MainPage.ts',
+    eventNotifications: './Scripts/Internal/Events/Notifications/MainPage.ts',
+    eventNotificationDetail: './Scripts/Internal/Events/NotificationDetail/MainPage.ts'
 };
 const exportModule = {
     rules: [

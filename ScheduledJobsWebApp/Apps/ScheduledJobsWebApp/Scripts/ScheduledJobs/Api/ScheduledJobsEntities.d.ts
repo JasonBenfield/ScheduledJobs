@@ -10,6 +10,46 @@ interface ILogoutRequest {
 }
 interface IEmptyActionResult {
 }
+interface IEventSummaryModel {
+	Event: IEventNotificationModel;
+	TriggeredJobCount: number;
+}
+interface IEventNotificationModel {
+	ID: number;
+	Definition: IEventDefinitionModel;
+	SourceKey: string;
+	SourceData: string;
+	TimeAdded: Date;
+	TimeActive: Date;
+	TimeInactive: Date;
+}
+interface IEventDefinitionModel {
+	ID: number;
+	EventKey: IEventKey;
+}
+interface IEventKey {
+	Value: string;
+	DisplayText: string;
+}
+interface IGetNotificationDetailRequest {
+	NotificationID: number;
+}
+interface IEventNotificationDetailModel {
+	Event: IEventNotificationModel;
+	TriggeredJobs: IJobSummaryModel[];
+}
+interface IJobSummaryModel {
+	ID: number;
+	JobKey: IJobKey;
+	Status: IJobTaskStatus;
+	TimeStarted: Date;
+	TimeEnded: Date;
+	TaskCount: number;
+}
+interface IJobKey {
+	Value: string;
+	DisplayText: string;
+}
 interface IRegisteredEvent {
 	EventKey: IEventKey;
 	CompareSourceKeyAndDataForDuplication: boolean;
@@ -18,10 +58,6 @@ interface IRegisteredEvent {
 	ActiveFor: string;
 	DeleteAfter: string;
 }
-interface IEventKey {
-	Value: string;
-	DisplayText: string;
-}
 interface IAddNotificationsRequest {
 	EventKey: IEventKey;
 	Sources: IEventSource[];
@@ -29,9 +65,6 @@ interface IAddNotificationsRequest {
 interface IEventSource {
 	SourceKey: string;
 	SourceData: string;
-}
-interface IEventNotificationModel {
-	ID: number;
 }
 interface ITriggeredJobsRequest {
 	EventNotificationID: number;
@@ -47,10 +80,6 @@ interface ITriggeredJobModel {
 interface IJobDefinitionModel {
 	ID: number;
 	JobKey: IJobKey;
-}
-interface IJobKey {
-	Value: string;
-	DisplayText: string;
 }
 interface ITriggeredJobTaskModel {
 	ID: number;
@@ -76,14 +105,6 @@ interface ILogEntryModel {
 	Category: string;
 	Message: string;
 	Details: string;
-}
-interface IJobSummaryModel {
-	ID: number;
-	JobKey: IJobKey;
-	Status: IJobTaskStatus;
-	TimeStarted: Date;
-	TimeEnded: Date;
-	TaskCount: number;
 }
 interface IGetJobDetailRequest {
 	JobID: number;
@@ -143,11 +164,11 @@ interface ILogMessageRequest {
 	Message: string;
 	Details: string;
 }
-interface IDuplicateHandling {
+interface IJobTaskStatus {
 	Value: number;
 	DisplayText: string;
 }
-interface IJobTaskStatus {
+interface IDuplicateHandling {
 	Value: number;
 	DisplayText: string;
 }

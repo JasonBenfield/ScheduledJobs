@@ -3,7 +3,7 @@ import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
 import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
 import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
-import { FormattedTimeSpan } from "../FormattedTimeSpan";
+import { FormattedTimeSpan } from "../../FormattedTimeSpan";
 import { LogEntryItem } from "./LogEntryItem";
 import { LogEntryItemView } from "./LogEntryItemView";
 import { TaskDetailPanelView } from "./TaskDetailPanelView";

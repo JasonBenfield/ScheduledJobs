@@ -6,6 +6,7 @@ public static class ScheduledJobsAppApiExtensions
     {
         services.AddHomeGroupServices();
         services.AddRecurringGroupServices();
+        services.AddEventInquiryGroupServices();
         services.AddEventsGroupServices();
         services.AddJobInquiryGroupServices();
         services.AddJobsGroupServices();

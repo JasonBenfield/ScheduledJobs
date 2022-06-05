@@ -5,21 +5,21 @@ import { TextHeading1View } from '@jasonbenfield/sharedwebapp/Html/TextHeading1V
 import { ListGroupView } from '@jasonbenfield/sharedwebapp/ListGroup/ListGroupView';
 import { MessageAlertView } from '@jasonbenfield/sharedwebapp/MessageAlertView';
 import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
-import { JobSummaryListItemView } from '../JobSummaryListItemView';
+import { EventSummaryListItemView } from './EventSummaryListItemView';
 
 export class MainPageView {
     readonly heading: ITextComponentView;
     readonly alert: MessageAlertView;
-    readonly failedJobs: ListGroupView;
+    readonly recentEvents: ListGroupView;
 
     constructor(page: PageFrameView) {
         let flexColumn = page.addContent(new FlexColumn())
             .addContent(new FlexColumnFill());
         this.heading = flexColumn.addContent(new TextHeading1View());
         this.alert = flexColumn.addContent(new MessageAlertView());
-        this.failedJobs = flexColumn.addContent(
+        this.recentEvents = flexColumn.addContent(
             new ListGroupView(
-                () => new JobSummaryListItemView(),
+                () => new EventSummaryListItemView(),
                 new ListBlockViewModel()
             )
         );

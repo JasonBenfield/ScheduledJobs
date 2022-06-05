@@ -1,9 +1,8 @@
 ﻿import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
 import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
-import { FormattedTimeSpan } from "../FormattedTimeSpan";
-import { TaskListItemView } from "./TaskListItemView";
 import { JobTaskStatus } from "../../../ScheduledJobs/Api/JobTaskStatus";
-import { ContextualClass } from "@jasonbenfield/sharedwebapp/ContextualClass";
+import { FormattedTimeSpan } from "../../FormattedTimeSpan";
+import { TaskListItemView } from "./TaskListItemView";
 
 export class TaskListItem {
     constructor(readonly task: ITriggeredJobTaskModel, view: TaskListItemView) {

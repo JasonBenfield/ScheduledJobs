@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@jasonbenfield/sharedwebapp": "^1.9.6",
+    "@jasonbenfield/sharedwebapp": "^1.9.10",
     "@popperjs/core": "^2.6.0",
     "@types/jquery": "^3.5.1",
     "@types/lodash": "^4.14.175",
