@@ -15,7 +15,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var eventNotifications = await host.RaiseEvent
         (
@@ -34,7 +34,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var eventNotifications = await host.RaiseEvent
         (
@@ -53,7 +53,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData { ID = 2 };
         var eventNotifications = await host.RaiseEvent
@@ -73,7 +73,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData { ID = 2 };
         var eventNotifications = await host.RaiseEvent
@@ -93,7 +93,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -117,7 +117,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -142,7 +142,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -170,7 +170,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -199,7 +199,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -226,7 +226,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -253,7 +253,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -279,7 +279,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -307,7 +307,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -334,7 +334,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -361,7 +361,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -389,7 +389,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -417,7 +417,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -444,7 +444,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -475,7 +475,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -508,7 +508,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -540,7 +540,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -570,7 +570,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -600,7 +600,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -632,7 +632,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -667,7 +667,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -704,7 +704,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -739,7 +739,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -766,7 +766,7 @@ internal sealed class RunJobTest
         await host.Register
         (
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
-            jobs => BuildJobs(jobs)
+            jobs => jobs.BuildJobs()
         );
         var sourceData = new SomethingHappenedData
         {
@@ -785,17 +785,4 @@ internal sealed class RunJobTest
             .ToArray();
         Assert.That(itemIDs, Is.EqualTo(new[] { 0, 0, 0 }), "Should not preserve data");
     }
-
-    private static JobRegistration BuildJobs(JobRegistration jobs) =>
-        jobs.AddJob
-        (
-            DemoJobs.DoSomething.JobKey,
-            job => job
-                .TimeoutAfter(TimeSpan.FromHours(1))
-                .AddTask(DemoJobs.DoSomething.Task01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.Task02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskFinal).TimeoutAfter(TimeSpan.FromMinutes(5))
-        );
 }

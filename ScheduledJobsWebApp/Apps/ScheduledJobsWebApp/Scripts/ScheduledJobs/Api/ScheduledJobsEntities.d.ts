@@ -56,6 +56,8 @@ interface ITriggeredJobTaskModel {
 	ID: number;
 	TaskDefinition: IJobTaskDefinitionModel;
 	Status: IJobTaskStatus;
+	TimeStarted: Date;
+	TimeEnded: Date;
 	TaskData: string;
 	LogEntries: ILogEntryModel[];
 }
@@ -70,6 +72,7 @@ interface IJobTaskKey {
 interface ILogEntryModel {
 	ID: number;
 	Severity: IAppEventSeverity;
+	TimeOccurred: Date;
 	Category: string;
 	Message: string;
 	Details: string;
@@ -81,6 +84,9 @@ interface IJobSummaryModel {
 	TimeStarted: Date;
 	TimeEnded: Date;
 	TaskCount: number;
+}
+interface IGetJobDetailRequest {
+	JobID: number;
 }
 interface IRegisteredJob {
 	JobKey: IJobKey;

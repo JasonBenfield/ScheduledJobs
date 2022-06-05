@@ -20,4 +20,16 @@ public class JobInquiryController : Controller
     {
         return api.Group("JobInquiry").Action<EmptyRequest, JobSummaryModel[]>("GetFailedJobs").Execute(new EmptyRequest(), ct);
     }
+
+    public async Task<IActionResult> JobDetail(GetJobDetailRequest model, CancellationToken ct)
+    {
+        var result = await api.Group("JobInquiry").Action<GetJobDetailRequest, WebViewResult>("JobDetail").Execute(model, ct);
+        return View(result.Data.ViewName);
+    }
+
+    [HttpPost]
+    public Task<ResultContainer<TriggeredJobDetailModel>> GetJobDetail([FromBody] GetJobDetailRequest model, CancellationToken ct)
+    {
+        return api.Group("JobInquiry").Action<GetJobDetailRequest, TriggeredJobDetailModel>("GetJobDetail").Execute(model, ct);
+    }
 }

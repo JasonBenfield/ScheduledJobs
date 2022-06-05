@@ -27,7 +27,7 @@ class MainPage {
         let failedJobs = await this.getFailedJobs();
         this.failedJobsList.setItems(
             failedJobs,
-            (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(job, itemView)
+            (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
         );
         if (failedJobs.length === 0) {
             this.alert.success('No failed jobs were found.');

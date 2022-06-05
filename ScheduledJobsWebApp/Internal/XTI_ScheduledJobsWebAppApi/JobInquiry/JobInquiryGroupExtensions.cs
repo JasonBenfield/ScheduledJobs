@@ -8,5 +8,7 @@ internal static class JobInquiryGroupExtensions
     {
         services.AddScoped<FailedJobsView>();
         services.AddScoped<GetFailedJobsAction>();
+        services.AddScoped<JobDetailView>();
+        services.AddScoped<GetJobDetailAction>();
     }
 }

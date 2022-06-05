@@ -2,4 +2,4 @@
 
 namespace XTI_Jobs.Abstractions;
 
-public sealed record class LogEntryModel(int ID, AppEventSeverity Severity, string Category, string Message, string Details);
+public sealed record class LogEntryModel(int ID, AppEventSeverity Severity, DateTimeOffset TimeOccurred, string Category, string Message, string Details);

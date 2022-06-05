@@ -245,9 +245,9 @@ public sealed class EfJobDb : IJobDb
 
     public async Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime)
     {
-        var jobDefinitionEntity = await db.JobDefinitions.Retrieve()
+        var jobDefEntity = await db.JobDefinitions.Retrieve()
             .FirstOrDefaultAsync(jd => jd.JobKey == jobKey.Value);
-        if (jobDefinitionEntity == null)
+        if (jobDefEntity == null)
         {
             throw new ArgumentException($"Job '{jobKey.DisplayText}' was not found");
         }
@@ -255,10 +255,10 @@ public sealed class EfJobDb : IJobDb
             .Where(ed => ed.EventKey == eventKey.Value)
             .Select(ed => ed.ID);
         var triggeredJobEventNotificationIDs = db.TriggeredJobs.Retrieve()
-            .Where(tj => tj.JobDefinitionID == jobDefinitionEntity.ID)
+            .Where(tj => tj.JobDefinitionID == jobDefEntity.ID)
             .Select(tj => tj.EventNotificationID);
         var now = clock.Now();
-        var eventNotifications = await db.EventNotifications.Retrieve()
+        var notificationEntities = await db.EventNotifications.Retrieve()
             .Where
             (
                 en =>
@@ -270,21 +270,24 @@ public sealed class EfJobDb : IJobDb
             )
             .ToArrayAsync();
         var pendingJobs = new List<PendingJobModel>();
-        foreach (var eventNotification in eventNotifications)
+        foreach (var notificationEntity in notificationEntities)
         {
-            var triggeredJobEntity = new TriggeredJobEntity
+            var jobEntity = new TriggeredJobEntity
             {
-                EventNotificationID = eventNotification.ID,
-                JobDefinitionID = jobDefinitionEntity.ID
+                EventNotificationID = notificationEntity.ID,
+                JobDefinitionID = jobDefEntity.ID
             };
-            await db.TriggeredJobs.Create(triggeredJobEntity);
-            var triggeredJob = CreateTriggeredJobDetailModel
+            await db.TriggeredJobs.Create(jobEntity);
+            var job = new TriggeredJobModel
             (
-                triggeredJobEntity, 
-                jobDefinitionEntity, 
-                new TriggeredJobTaskModel[0]
+                jobEntity.ID,
+                new JobDefinitionModel
+                (
+                    jobEntity.ID,
+                    new JobKey(jobDefEntity.DisplayText)
+                )
             );
-            var pendingJob = new PendingJobModel(triggeredJob.Job, eventNotification.SourceData);
+            var pendingJob = new PendingJobModel(job, notificationEntity.SourceData);
             pendingJobs.Add(pendingJob);
         }
         return pendingJobs.ToArray();
@@ -312,70 +315,11 @@ public sealed class EfJobDb : IJobDb
         return triggeredJobModels.ToArray();
     }
 
-    private sealed record TriggeredJobWithDefinitionEntity(TriggeredJobEntity Job, JobDefinitionEntity Definition);
+    private Task<TriggeredJobDetailModel> GetTriggeredJob(int jobID) =>
+        new EfTriggeredJobDetail(db, jobID).Value();
 
-    private async Task<TriggeredJobDetailModel> GetTriggeredJob(int jobID)
-    {
-        var jobWithDef = await
-            db.TriggeredJobs.Retrieve()
-                .Where(tj => tj.ID == jobID)
-                .Join
-                (
-                    db.JobDefinitions.Retrieve(),
-                    tj => tj.JobDefinitionID,
-                    jd => jd.ID,
-                    (tj, jd) => new TriggeredJobWithDefinitionEntity(tj, jd)
-                )
-                .FirstAsync();
-        var jobModel = await GetTriggeredJob(jobWithDef);
-        return jobModel;
-    }
-
-    private async Task<TriggeredJobDetailModel> GetTriggeredJob(TriggeredJobWithDefinitionEntity jobWithDef)
-    {
-        var tasks = await TaskModels(jobWithDef.Job.ID);
-        var jobModel = CreateTriggeredJobDetailModel(jobWithDef.Job, jobWithDef.Definition, tasks);
-        return jobModel;
-    }
-
-    private async Task<TriggeredJobTaskModel[]> TaskModels(int jobID)
-    {
-        var taskModels = new List<TriggeredJobTaskModel>();
-        var taskEntities = await db.TriggeredJobTasks.Retrieve()
-            .Where(t => t.TriggeredJobID == jobID)
-            .Join
-            (
-                db.JobTaskDefinitions.Retrieve(),
-                t => t.TaskDefinitionID,
-                td => td.ID,
-                (t, td) => new { Task = t, Definition = td }
-            )
-            .OrderBy(grouped => grouped.Task.Sequence)
-            .ToArrayAsync();
-        foreach (var t in taskEntities)
-        {
-            var entries = await db.LogEntries.Retrieve()
-                .Where(e => e.TaskID == t.Task.ID)
-                .ToArrayAsync();
-            taskModels.Add(CreateTriggeredJobTaskModel(t.Definition, t.Task, entries));
-        }
-        return taskModels.ToArray();
-    }
-
-    private static TriggeredJobDetailModel CreateTriggeredJobDetailModel(TriggeredJobEntity jobEntity, JobDefinitionEntity jobDefEntity, TriggeredJobTaskModel[] tasks) =>
-        new TriggeredJobDetailModel
-        (
-            new TriggeredJobModel
-            (
-                jobEntity.ID,
-                new JobDefinitionModel
-                (
-                    jobDefEntity.ID,
-                    new JobKey(jobDefEntity.DisplayText)
-                )
-            ),
-            tasks
-        );
+    private Task<TriggeredJobDetailModel> GetTriggeredJob(TriggeredJobWithDefinitionEntity jobWithDef) =>
+        new EfTriggeredJobDetail(db, jobWithDef).Value();
 
     public async Task<TriggeredJobDetailModel> StartJob(int jobID, NextTaskModel[] nextTasks)
     {
@@ -520,6 +464,8 @@ public sealed class EfJobDb : IJobDb
             taskEntity.ID,
             new JobTaskDefinitionModel(taskDefEntity.ID, new JobTaskKey(taskDefEntity.DisplayText)),
             JobTaskStatus.Values.Value(taskEntity.Status),
+            taskEntity.TimeStarted,
+            taskEntity.TimeEnded,
             taskEntity.TaskData,
             entries
                 .Select
@@ -528,6 +474,7 @@ public sealed class EfJobDb : IJobDb
                     (
                         e.ID,
                         AppEventSeverity.Values.Value(e.Severity),
+                        e.TimeOccurred,
                         e.Category,
                         e.Message,
                         e.Details

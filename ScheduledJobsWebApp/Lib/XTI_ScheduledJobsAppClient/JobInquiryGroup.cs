@@ -10,4 +10,5 @@ public sealed partial class JobInquiryGroup : AppClientGroup
     public JobInquiryActions Actions { get; }
 
     public Task<JobSummaryModel[]> GetFailedJobs() => Post<JobSummaryModel[], EmptyRequest>("GetFailedJobs", "", new EmptyRequest());
+    public Task<TriggeredJobDetailModel> GetJobDetail(GetJobDetailRequest model) => Post<TriggeredJobDetailModel, GetJobDetailRequest>("GetJobDetail", "", model);
 }

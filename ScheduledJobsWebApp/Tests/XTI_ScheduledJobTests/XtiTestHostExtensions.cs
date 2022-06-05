@@ -47,4 +47,17 @@ internal static class XtiTestHostExtensions
 
     public static DateTimeOffset CurrentTime(this XtiHost host) =>
         host.GetRequiredService<IClock>().Now();
+
+    public static JobRegistration BuildJobs(this JobRegistration jobs) =>
+        jobs.AddJob
+        (
+            DemoJobs.DoSomething.JobKey,
+            job => job
+                .TimeoutAfter(TimeSpan.FromHours(1))
+                .AddTask(DemoJobs.DoSomething.Task01).TimeoutAfter(TimeSpan.FromMinutes(5))
+                .AddTask(DemoJobs.DoSomething.Task02).TimeoutAfter(TimeSpan.FromMinutes(5))
+                .AddTask(DemoJobs.DoSomething.TaskItem01).TimeoutAfter(TimeSpan.FromMinutes(5))
+                .AddTask(DemoJobs.DoSomething.TaskItem02).TimeoutAfter(TimeSpan.FromMinutes(5))
+                .AddTask(DemoJobs.DoSomething.TaskFinal).TimeoutAfter(TimeSpan.FromMinutes(5))
+        );
 }
