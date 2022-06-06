@@ -25,6 +25,7 @@ public sealed partial class ScheduledJobsAppApi : WebAppApiWrapper
         createEventsGroup(sp);
         createJobInquiryGroup(sp);
         createJobsGroup(sp);
+        createTasksGroup(sp);
     }
 
     partial void createHomeGroup(IServiceProvider sp);
@@ -38,6 +39,8 @@ public sealed partial class ScheduledJobsAppApi : WebAppApiWrapper
     partial void createJobInquiryGroup(IServiceProvider sp);
 
     partial void createJobsGroup(IServiceProvider sp);
+
+    partial void createTasksGroup(IServiceProvider sp);
 
     protected override void ConfigureTemplate(AppApiTemplate template)
     {

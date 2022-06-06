@@ -8,5 +8,5 @@ public sealed partial class EventsGroup : AppClientGroup
 
     public Task<EmptyActionResult> AddOrUpdateRegisteredEvents(RegisteredEvent[] model) => Post<EmptyActionResult, RegisteredEvent[]>("AddOrUpdateRegisteredEvents", "", model);
     public Task<EventNotificationModel[]> AddNotifications(AddNotificationsRequest model) => Post<EventNotificationModel[], AddNotificationsRequest>("AddNotifications", "", model);
-    public Task<TriggeredJobDetailModel[]> TriggeredJobs(TriggeredJobsRequest model) => Post<TriggeredJobDetailModel[], TriggeredJobsRequest>("TriggeredJobs", "", model);
+    public Task<TriggeredJobWithTasksModel[]> TriggeredJobs(TriggeredJobsRequest model) => Post<TriggeredJobWithTasksModel[], TriggeredJobsRequest>("TriggeredJobs", "", model);
 }

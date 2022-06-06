@@ -1,19 +1,25 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
+import { AsyncCommand } from "@jasonbenfield/sharedwebapp/Command/AsyncCommand";
 import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
 import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
 import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
+import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
+import { JobTaskStatus } from "../../../ScheduledJobs/Api/JobTaskStatus";
+import { ScheduledJobsAppApi } from "../../../ScheduledJobs/Api/ScheduledJobsAppApi";
 import { FormattedTimeSpan } from "../../FormattedTimeSpan";
 import { LogEntryItem } from "./LogEntryItem";
 import { LogEntryItemView } from "./LogEntryItemView";
 import { TaskDetailPanelView } from "./TaskDetailPanelView";
 
 interface Results {
-    backRequested?: {};
+    backRequested?: { refreshRequired: boolean; };
 }
 
 export class TaskDetailPanelResult {
-    static get backRequested() { return new TaskDetailPanelResult({ backRequested: {} }); }
+    static backRequested(refreshRequired: boolean) {
+        return new TaskDetailPanelResult({ backRequested: { refreshRequired: refreshRequired } });
+    }
 
     private constructor(private readonly results: Results) { }
 
@@ -28,24 +34,54 @@ export class TaskDetailPanel implements IPanel {
     private readonly timeElapsed: TextBlock;
     private readonly taskData: TextBlock;
     private readonly logEntries: ListGroup;
+    private readonly alert: MessageAlert;
     private tasks: ITriggeredJobTaskModel[];
     private currentTask: ITriggeredJobTaskModel;
+    private readonly cancelTaskCommand: AsyncCommand;
+    private readonly retryTaskCommand: AsyncCommand;
 
-    constructor(private view: TaskDetailPanelView) {
+    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
         this.displayText = new TextBlock('', this.view.displayText);
         this.status = new TextBlock('', this.view.status);
         this.timeStarted = new TextBlock('', this.view.timeStarted);
         this.timeElapsed = new TextBlock('', this.view.timeElapsed);
         this.taskData = new TextBlock('', this.view.taskData);
         this.logEntries = new ListGroup(this.view.logEntries);
+        this.alert = new MessageAlert(this.view.alert);
         new Command(this.previousTask.bind(this)).add(view.previousTaskButton);
         new Command(this.nextTask.bind(this)).add(view.nextTaskButton);
         new Command(this.back.bind(this)).add(view.backButton);
+        this.cancelTaskCommand = new AsyncCommand(this.cancelTask.bind(this));
+        this.cancelTaskCommand.hide();
+        this.cancelTaskCommand.add(view.cancelTaskButton);
+        this.retryTaskCommand = new AsyncCommand(this.retryTask.bind(this));
+        this.retryTaskCommand.hide();
+        this.retryTaskCommand.add(view.retryTaskButton);
+    }
+
+    private async cancelTask() {
+        await this.alert.infoAction(
+            'Canceling task...',
+            () => this.schdJobsApi.Tasks.CancelTask({ TaskID: this.currentTask.ID })
+        );
+        this.awaitable.resolve(
+            TaskDetailPanelResult.backRequested(true)
+        );
+    }
+
+    private async retryTask() {
+        await this.alert.infoAction(
+            'Retrying task...',
+            () => this.schdJobsApi.Tasks.RetryTask({ TaskID: this.currentTask.ID })
+        );
+        this.awaitable.resolve(
+            TaskDetailPanelResult.backRequested(true)
+        );
     }
 
     private back() {
         this.awaitable.resolve(
-            TaskDetailPanelResult.backRequested
+            TaskDetailPanelResult.backRequested(false)
         );
     }
 
@@ -98,6 +134,15 @@ export class TaskDetailPanel implements IPanel {
             currentTask.LogEntries,
             (entry, itemView: LogEntryItemView) => new LogEntryItem(entry, itemView)
         );
+        let status = JobTaskStatus.values.value(currentTask.Status.Value);
+        if (status.equals(JobTaskStatus.values.Failed)) {
+            this.cancelTaskCommand.show();
+            this.retryTaskCommand.show();
+        }
+        else {
+            this.cancelTaskCommand.hide();
+            this.retryTaskCommand.hide();
+        }
     }
 
     start() {

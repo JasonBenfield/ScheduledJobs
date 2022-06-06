@@ -37,7 +37,7 @@ public sealed class SjcJobDb : IJobDb
             }
         );
 
-    public Task<TriggeredJobDetailModel[]> RetryJobs(JobKey jobKey) =>
+    public Task<TriggeredJobWithTasksModel[]> RetryJobs(JobKey jobKey) =>
         schdJobClient.Jobs.RetryJobs
         (
             new RetryJobsRequest
@@ -46,7 +46,7 @@ public sealed class SjcJobDb : IJobDb
             }
         );
 
-    public Task<TriggeredJobDetailModel> StartJob(int jobID, NextTaskModel[] nextTasks) =>
+    public Task<TriggeredJobWithTasksModel> StartJob(int jobID, NextTaskModel[] nextTasks) =>
         schdJobClient.Jobs.StartJob
         (
             new StartJobRequest
@@ -65,7 +65,7 @@ public sealed class SjcJobDb : IJobDb
             }
         );
 
-    public Task<TriggeredJobDetailModel> TaskCompleted
+    public Task<TriggeredJobWithTasksModel> TaskCompleted
     (
         int jobID,
         int completedTaskID,
@@ -83,7 +83,7 @@ public sealed class SjcJobDb : IJobDb
             }
         );
 
-    public Task<TriggeredJobDetailModel> TaskFailed
+    public Task<TriggeredJobWithTasksModel> TaskFailed
     (
         int jobID,
         int failedTaskID,
@@ -109,7 +109,7 @@ public sealed class SjcJobDb : IJobDb
             }
         );
 
-    public Task<TriggeredJobDetailModel[]> TriggeredJobs(int notificationID) =>
+    public Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID) =>
         schdJobClient.Events.TriggeredJobs
         (
             new TriggeredJobsRequest

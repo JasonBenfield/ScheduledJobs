@@ -22,8 +22,8 @@ public class EventsController : Controller
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobDetailModel[]>> TriggeredJobs([FromBody] TriggeredJobsRequest model, CancellationToken ct)
+    public Task<ResultContainer<TriggeredJobWithTasksModel[]>> TriggeredJobs([FromBody] TriggeredJobsRequest model, CancellationToken ct)
     {
-        return api.Group("Events").Action<TriggeredJobsRequest, TriggeredJobDetailModel[]>("TriggeredJobs").Execute(model, ct);
+        return api.Group("Events").Action<TriggeredJobsRequest, TriggeredJobWithTasksModel[]>("TriggeredJobs").Execute(model, ct);
     }
 }

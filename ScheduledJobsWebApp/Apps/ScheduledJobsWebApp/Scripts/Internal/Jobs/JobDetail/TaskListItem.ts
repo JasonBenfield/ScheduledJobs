@@ -6,6 +6,13 @@ import { TaskListItemView } from "./TaskListItemView";
 
 export class TaskListItem {
     constructor(readonly task: ITriggeredJobTaskModel, view: TaskListItemView) {
+        let generation = '';
+        if (task.Generation > 1) {
+            for (let i = 0; i < task.Generation - 1; i++) {
+                generation += '&nbsp;&nbsp;';
+            }
+        }
+        view.generation.setHtml(generation);
         new TextBlock(task.TaskDefinition.TaskKey.DisplayText, view.displayText);
         new TextBlock(
             task.TimeStarted.getFullYear() < 9999 ?

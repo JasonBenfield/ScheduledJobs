@@ -69,13 +69,14 @@ interface IEventSource {
 interface ITriggeredJobsRequest {
 	EventNotificationID: number;
 }
-interface ITriggeredJobDetailModel {
+interface ITriggeredJobWithTasksModel {
 	Job: ITriggeredJobModel;
 	Tasks: ITriggeredJobTaskModel[];
 }
 interface ITriggeredJobModel {
 	ID: number;
 	JobDefinition: IJobDefinitionModel;
+	EventNotificationID: number;
 }
 interface IJobDefinitionModel {
 	ID: number;
@@ -85,6 +86,7 @@ interface ITriggeredJobTaskModel {
 	ID: number;
 	TaskDefinition: IJobTaskDefinitionModel;
 	Status: IJobTaskStatus;
+	Generation: number;
 	TimeStarted: Date;
 	TimeEnded: Date;
 	TaskData: string;
@@ -108,6 +110,11 @@ interface ILogEntryModel {
 }
 interface IGetJobDetailRequest {
 	JobID: number;
+}
+interface ITriggeredJobDetailModel {
+	Job: ITriggeredJobModel;
+	TriggeredBy: IEventNotificationModel;
+	Tasks: ITriggeredJobTaskModel[];
 }
 interface IRegisteredJob {
 	JobKey: IJobKey;
@@ -163,6 +170,9 @@ interface ILogMessageRequest {
 	Category: string;
 	Message: string;
 	Details: string;
+}
+interface IGetTaskRequest {
+	TaskID: number;
 }
 interface IJobTaskStatus {
 	Value: number;

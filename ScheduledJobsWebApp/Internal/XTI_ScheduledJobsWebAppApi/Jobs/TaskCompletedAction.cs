@@ -1,6 +1,6 @@
 ﻿namespace XTI_ScheduledJobsWebAppApi.Jobs;
 
-internal class TaskCompletedAction : AppAction<TaskCompletedRequest, TriggeredJobDetailModel>
+internal class TaskCompletedAction : AppAction<TaskCompletedRequest, TriggeredJobWithTasksModel>
 {
     private readonly IJobDb db;
 
@@ -9,6 +9,6 @@ internal class TaskCompletedAction : AppAction<TaskCompletedRequest, TriggeredJo
         this.db = db;
     }
 
-    public Task<TriggeredJobDetailModel> Execute(TaskCompletedRequest model, CancellationToken ct) =>
+    public Task<TriggeredJobWithTasksModel> Execute(TaskCompletedRequest model, CancellationToken ct) =>
         db.TaskCompleted(model.JobID, model.CompletedTaskID, model.PreserveData, model.NextTasks);
 }

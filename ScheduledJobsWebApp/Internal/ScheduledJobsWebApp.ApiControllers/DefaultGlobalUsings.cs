@@ -6,4 +6,5 @@ global using XTI_ScheduledJobsWebAppApi.EventInquiry;
 global using XTI_ScheduledJobsWebAppApi.Events;
 global using XTI_ScheduledJobsWebAppApi.JobInquiry;
 global using XTI_ScheduledJobsWebAppApi.Jobs;
+global using XTI_ScheduledJobsWebAppApi.Tasks;
 global using XTI_WebApp.Api;

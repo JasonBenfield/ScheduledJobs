@@ -1,6 +1,6 @@
 ﻿namespace XTI_ScheduledJobsWebAppApi.Jobs;
 
-internal sealed class RetryJobsAction : AppAction<RetryJobsRequest, TriggeredJobDetailModel[]>
+internal sealed class RetryJobsAction : AppAction<RetryJobsRequest, TriggeredJobWithTasksModel[]>
 {
     private readonly IJobDb db;
 
@@ -9,6 +9,6 @@ internal sealed class RetryJobsAction : AppAction<RetryJobsRequest, TriggeredJob
         this.db = db;
     }
 
-    public Task<TriggeredJobDetailModel[]> Execute(RetryJobsRequest model, CancellationToken ct) =>
+    public Task<TriggeredJobWithTasksModel[]> Execute(RetryJobsRequest model, CancellationToken ct) =>
         db.RetryJobs(model.JobKey);
 }

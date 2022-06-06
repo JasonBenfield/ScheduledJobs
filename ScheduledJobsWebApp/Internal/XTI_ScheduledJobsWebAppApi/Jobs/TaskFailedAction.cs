@@ -1,6 +1,6 @@
 ﻿namespace XTI_ScheduledJobsWebAppApi.Jobs;
 
-internal sealed class TaskFailedAction : AppAction<TaskFailedRequest, TriggeredJobDetailModel>
+internal sealed class TaskFailedAction : AppAction<TaskFailedRequest, TriggeredJobWithTasksModel>
 {
     private readonly IJobDb db;
 
@@ -9,7 +9,7 @@ internal sealed class TaskFailedAction : AppAction<TaskFailedRequest, TriggeredJ
         this.db = db;
     }
 
-    public Task<TriggeredJobDetailModel> Execute(TaskFailedRequest model, CancellationToken ct) =>
+    public Task<TriggeredJobWithTasksModel> Execute(TaskFailedRequest model, CancellationToken ct) =>
         db.TaskFailed
         (
             model.JobID,

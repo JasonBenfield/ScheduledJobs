@@ -16,4 +16,19 @@
 	  <ProjectReference Include="..\..\Lib\XTI_Jobs\XTI_Jobs.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Tasks\TaskErrors.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>TaskErrors.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Tasks\TaskErrors.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>TaskErrors.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>

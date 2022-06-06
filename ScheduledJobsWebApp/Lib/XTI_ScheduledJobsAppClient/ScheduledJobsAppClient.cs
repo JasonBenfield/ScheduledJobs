@@ -12,6 +12,7 @@ public sealed partial class ScheduledJobsAppClient : AppClient
         Events = GetGroup((_clientFactory, _tokenAccessor, _url) => new EventsGroup(_clientFactory, _tokenAccessor, _url));
         JobInquiry = GetGroup((_clientFactory, _tokenAccessor, _url) => new JobInquiryGroup(_clientFactory, _tokenAccessor, _url));
         Jobs = GetGroup((_clientFactory, _tokenAccessor, _url) => new JobsGroup(_clientFactory, _tokenAccessor, _url));
+        Tasks = GetGroup((_clientFactory, _tokenAccessor, _url) => new TasksGroup(_clientFactory, _tokenAccessor, _url));
     }
 
     public ScheduledJobsRoleNames RoleNames { get; } = ScheduledJobsRoleNames.Instance;
@@ -31,4 +32,6 @@ public sealed partial class ScheduledJobsAppClient : AppClient
     public JobInquiryGroup JobInquiry { get; }
 
     public JobsGroup Jobs { get; }
+
+    public TasksGroup Tasks { get; }
 }

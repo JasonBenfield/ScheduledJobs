@@ -5,20 +5,25 @@ public sealed class TriggeredJob
     private readonly IJobDb db;
     private TriggeredJobTask[] tasks = new TriggeredJobTask[0];
 
-    internal TriggeredJob(IJobDb db, PendingJobModel job)
+    internal TriggeredJob(IJobDb db, PendingJobModel pendingJob)
         : this
         (
             db,
-            new TriggeredJobDetailModel
+            new TriggeredJobWithTasksModel
             (
-                new TriggeredJobModel(job.Job.ID, job.Job.JobDefinition),
+                new TriggeredJobModel
+                (
+                    pendingJob.Job.ID, 
+                    pendingJob.Job.JobDefinition, 
+                    pendingJob.Job.EventNotificationID
+                ),
                 new TriggeredJobTaskModel[0]
             )
         )
     {
     }
 
-    public TriggeredJob(IJobDb db, TriggeredJobDetailModel jobDetail)
+    public TriggeredJob(IJobDb db, TriggeredJobWithTasksModel jobDetail)
     {
         this.db = db;
         Model = jobDetail.Job;
@@ -108,7 +113,7 @@ public sealed class TriggeredJob
         UpdateJob(updatedJob);
     }
 
-    private void UpdateJob(TriggeredJobDetailModel jobDetail)
+    private void UpdateJob(TriggeredJobWithTasksModel jobDetail)
     {
         Model = jobDetail.Job;
         tasks = jobDetail.Tasks.Select(t => new TriggeredJobTask(this, t)).ToArray();

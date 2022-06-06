@@ -8,13 +8,13 @@ public interface IJobDb
 
     Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, EventSource[] sources);
 
-    Task<TriggeredJobDetailModel[]> TriggeredJobs(int notificationID);
+    Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID);
 
     Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime);
 
-    Task<TriggeredJobDetailModel[]> RetryJobs(JobKey jobKey);
+    Task<TriggeredJobWithTasksModel[]> RetryJobs(JobKey jobKey);
 
-    Task<TriggeredJobDetailModel> StartJob
+    Task<TriggeredJobWithTasksModel> StartJob
     (
         int jobID, 
         NextTaskModel[] nextTasks
@@ -22,7 +22,7 @@ public interface IJobDb
 
     Task StartTask(int taskID);
 
-    Task<TriggeredJobDetailModel> TaskCompleted
+    Task<TriggeredJobWithTasksModel> TaskCompleted
     (
         int jobID,
         int completedTaskID, 
@@ -30,7 +30,7 @@ public interface IJobDb
         NextTaskModel[] nextTasks
     );
 
-    Task<TriggeredJobDetailModel> TaskFailed
+    Task<TriggeredJobWithTasksModel> TaskFailed
     (
         int jobID, 
         int failedTaskID, 

@@ -313,7 +313,7 @@ END
             migrationBuilder.Sql
             (
                 @"
-CREATE or ALTER FUNCTION [TimeElapsedDisplayText](
+CREATE OR ALTER   FUNCTION [TimeElapsedDisplayText](
     @timestarted datetimeoffset,
 	@timeended datetimeoffset
 )
@@ -322,7 +322,7 @@ AS
 BEGIN
     RETURN 
 	case 
-	when @timeended >= '9999-12-31' then null
+	when @timeended < '1-1-2' or @timeended >= '9999-12-31' or @timestarted < '1-1-2' or @timestarted >= '9999-12-31' then null
 	when datediff(year,@timestarted,@timeended) > 1 then cast(datediff(month, @TimeStarted, @TimeEnded) as varchar) + ' month'
 	when datediff(day,@timestarted,@timeended) > 7 then format((datediff(hour, @TimeStarted, @TimeEnded) / 24.0), 'F2') + ' day'
 	when datediff(hour,@timestarted,@timeended) > 1 then format((datediff(minute, @TimeStarted, @TimeEnded) / 60.0), 'F2') + ' hr'

@@ -11,6 +11,7 @@ export class LogEntryItemView extends ListGroupItemView {
         let row = this.addContent(new Row());
         let col1 = row.addColumn();
         col1.setColumnCss(ColumnCss.xs(2));
+        col1.setTextCss(new TextCss().truncate());
         this.category = col1.addContent(new TextSpanView());
         let col2 = row.addColumn();
         this.message = col2.addContent(new TextBlockView());

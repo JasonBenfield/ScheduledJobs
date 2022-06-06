@@ -11,12 +11,12 @@ export class EventsGroup extends AppApiGroup {
 		super(events, resourceUrl, 'Events');
 		this.AddOrUpdateRegisteredEventsAction = this.createAction<IRegisteredEvent[],IEmptyActionResult>('AddOrUpdateRegisteredEvents', 'Add Or Update Registered Events');
 		this.AddNotificationsAction = this.createAction<IAddNotificationsRequest,IEventNotificationModel[]>('AddNotifications', 'Add Notifications');
-		this.TriggeredJobsAction = this.createAction<ITriggeredJobsRequest,ITriggeredJobDetailModel[]>('TriggeredJobs', 'Triggered Jobs');
+		this.TriggeredJobsAction = this.createAction<ITriggeredJobsRequest,ITriggeredJobWithTasksModel[]>('TriggeredJobs', 'Triggered Jobs');
 	}
 	
 	readonly AddOrUpdateRegisteredEventsAction: AppApiAction<IRegisteredEvent[],IEmptyActionResult>;
 	readonly AddNotificationsAction: AppApiAction<IAddNotificationsRequest,IEventNotificationModel[]>;
-	readonly TriggeredJobsAction: AppApiAction<ITriggeredJobsRequest,ITriggeredJobDetailModel[]>;
+	readonly TriggeredJobsAction: AppApiAction<ITriggeredJobsRequest,ITriggeredJobWithTasksModel[]>;
 	
 	AddOrUpdateRegisteredEvents(model: IRegisteredEvent[], errorOptions?: IActionErrorOptions) {
 		return this.AddOrUpdateRegisteredEventsAction.execute(model, errorOptions || {});

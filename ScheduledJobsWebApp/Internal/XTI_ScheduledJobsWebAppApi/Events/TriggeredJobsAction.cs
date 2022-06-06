@@ -1,6 +1,6 @@
 ﻿namespace XTI_ScheduledJobsWebAppApi.Events;
 
-internal sealed class TriggeredJobsAction : AppAction<TriggeredJobsRequest, TriggeredJobDetailModel[]>
+internal sealed class TriggeredJobsAction : AppAction<TriggeredJobsRequest, TriggeredJobWithTasksModel[]>
 {
     private readonly IJobDb db;
 
@@ -9,6 +9,6 @@ internal sealed class TriggeredJobsAction : AppAction<TriggeredJobsRequest, Trig
         this.db = db;
     }
 
-    public Task<TriggeredJobDetailModel[]> Execute(TriggeredJobsRequest model, CancellationToken ct) =>
+    public Task<TriggeredJobWithTasksModel[]> Execute(TriggeredJobsRequest model, CancellationToken ct) =>
         db.TriggeredJobs(model.EventNotificationID);
 }

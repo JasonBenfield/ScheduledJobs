@@ -22,15 +22,15 @@ public class JobsController : Controller
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobDetailModel[]>> RetryJobs([FromBody] RetryJobsRequest model, CancellationToken ct)
+    public Task<ResultContainer<TriggeredJobWithTasksModel[]>> RetryJobs([FromBody] RetryJobsRequest model, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<RetryJobsRequest, TriggeredJobDetailModel[]>("RetryJobs").Execute(model, ct);
+        return api.Group("Jobs").Action<RetryJobsRequest, TriggeredJobWithTasksModel[]>("RetryJobs").Execute(model, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobDetailModel>> StartJob([FromBody] StartJobRequest model, CancellationToken ct)
+    public Task<ResultContainer<TriggeredJobWithTasksModel>> StartJob([FromBody] StartJobRequest model, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<StartJobRequest, TriggeredJobDetailModel>("StartJob").Execute(model, ct);
+        return api.Group("Jobs").Action<StartJobRequest, TriggeredJobWithTasksModel>("StartJob").Execute(model, ct);
     }
 
     [HttpPost]
@@ -40,15 +40,15 @@ public class JobsController : Controller
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobDetailModel>> TaskCompleted([FromBody] TaskCompletedRequest model, CancellationToken ct)
+    public Task<ResultContainer<TriggeredJobWithTasksModel>> TaskCompleted([FromBody] TaskCompletedRequest model, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<TaskCompletedRequest, TriggeredJobDetailModel>("TaskCompleted").Execute(model, ct);
+        return api.Group("Jobs").Action<TaskCompletedRequest, TriggeredJobWithTasksModel>("TaskCompleted").Execute(model, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobDetailModel>> TaskFailed([FromBody] TaskFailedRequest model, CancellationToken ct)
+    public Task<ResultContainer<TriggeredJobWithTasksModel>> TaskFailed([FromBody] TaskFailedRequest model, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<TaskFailedRequest, TriggeredJobDetailModel>("TaskFailed").Execute(model, ct);
+        return api.Group("Jobs").Action<TaskFailedRequest, TriggeredJobWithTasksModel>("TaskFailed").Execute(model, ct);
     }
 
     [HttpPost]

@@ -42,10 +42,10 @@ public sealed class JobsGroup : AppApiGroupWrapper
 
     public AppApiAction<RegisteredJob[], EmptyActionResult> AddOrUpdateRegisteredJobs { get; }
     public AppApiAction<TriggerJobsRequest, PendingJobModel[]> TriggerJobs { get; }
-    public AppApiAction<RetryJobsRequest, TriggeredJobDetailModel[]> RetryJobs { get; }
-    public AppApiAction<StartJobRequest, TriggeredJobDetailModel> StartJob { get; }
+    public AppApiAction<RetryJobsRequest, TriggeredJobWithTasksModel[]> RetryJobs { get; }
+    public AppApiAction<StartJobRequest, TriggeredJobWithTasksModel> StartJob { get; }
     public AppApiAction<StartTaskRequest, EmptyActionResult> StartTask { get; }
-    public AppApiAction<TaskCompletedRequest, TriggeredJobDetailModel> TaskCompleted { get; }
-    public AppApiAction<TaskFailedRequest, TriggeredJobDetailModel> TaskFailed { get; }
+    public AppApiAction<TaskCompletedRequest, TriggeredJobWithTasksModel> TaskCompleted { get; }
+    public AppApiAction<TaskFailedRequest, TriggeredJobWithTasksModel> TaskFailed { get; }
     public AppApiAction<LogMessageRequest, EmptyActionResult> LogMessage { get; }
 }

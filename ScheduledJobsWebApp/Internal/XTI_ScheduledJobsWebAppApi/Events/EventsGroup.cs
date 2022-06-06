@@ -26,5 +26,5 @@ public sealed class EventsGroup : AppApiGroupWrapper
 
     public AppApiAction<RegisteredEvent[], EmptyActionResult> AddOrUpdateRegisteredEvents { get; }
     public AppApiAction<AddNotificationsRequest, EventNotificationModel[]> AddNotifications { get; }
-    public AppApiAction<TriggeredJobsRequest, TriggeredJobDetailModel[]> TriggeredJobs { get; }
+    public AppApiAction<TriggeredJobsRequest, TriggeredJobWithTasksModel[]> TriggeredJobs { get; }
 }

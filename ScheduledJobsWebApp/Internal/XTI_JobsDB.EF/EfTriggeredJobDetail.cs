@@ -26,7 +26,7 @@ public sealed class EfTriggeredJobDetail
         this.jobID = jobID;
     }
 
-    public async Task<TriggeredJobDetailModel> Value()
+    public async Task<TriggeredJobWithTasksModel> Value()
     {
         if(jobWithDef == null)
         {
@@ -46,7 +46,7 @@ public sealed class EfTriggeredJobDetail
         return jobModel;
     }
 
-    private async Task<TriggeredJobDetailModel> GetTriggeredJob(TriggeredJobWithDefinitionEntity jobWithDef)
+    private async Task<TriggeredJobWithTasksModel> GetTriggeredJob(TriggeredJobWithDefinitionEntity jobWithDef)
     {
         var tasks = await TaskModels(jobWithDef.Job.ID);
         var jobModel = CreateTriggeredJobDetailModel(jobWithDef.Job, jobWithDef.Definition, tasks);
@@ -77,8 +77,8 @@ public sealed class EfTriggeredJobDetail
         return taskModels.ToArray();
     }
 
-    private static TriggeredJobDetailModel CreateTriggeredJobDetailModel(TriggeredJobEntity jobEntity, JobDefinitionEntity jobDefEntity, TriggeredJobTaskModel[] tasks) =>
-        new TriggeredJobDetailModel
+    private static TriggeredJobWithTasksModel CreateTriggeredJobDetailModel(TriggeredJobEntity jobEntity, JobDefinitionEntity jobDefEntity, TriggeredJobTaskModel[] tasks) =>
+        new TriggeredJobWithTasksModel
         (
             new TriggeredJobModel
             (
@@ -87,7 +87,8 @@ public sealed class EfTriggeredJobDetail
                 (
                     jobDefEntity.ID,
                     new JobKey(jobDefEntity.DisplayText)
-                )
+                ),
+                jobEntity.EventNotificationID
             ),
             tasks
         );
@@ -98,6 +99,7 @@ public sealed class EfTriggeredJobDetail
             taskEntity.ID,
             new JobTaskDefinitionModel(taskDefEntity.ID, new JobTaskKey(taskDefEntity.DisplayText)),
             JobTaskStatus.Values.Value(taskEntity.Status),
+            taskEntity.Generation,
             taskEntity.TimeStarted,
             taskEntity.TimeEnded,
             taskEntity.TaskData,
