@@ -1,53 +1,45 @@
-﻿import { TextBlock } from '@jasonbenfield/sharedwebapp/Html/TextBlock';
-import { ListGroup } from '@jasonbenfield/sharedwebapp/ListGroup/ListGroup';
-import { MessageAlert } from '@jasonbenfield/sharedwebapp/MessageAlert';
-import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+﻿import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
 import { Startup } from '@jasonbenfield/sharedwebapp/Startup';
 import { Url } from '@jasonbenfield/sharedwebapp/Url';
-import { ScheduledJobsAppApi } from '../../../ScheduledJobs/Api/ScheduledJobsAppApi';
 import { Apis } from '../../Apis';
-import { JobSummaryListItem } from '../../Jobs/JobSummaryListItem';
-import { JobSummaryListItemView } from '../../Jobs/JobSummaryListItemView';
+import { MainMenuPanel } from '../../MainMenuPanel';
 import { MainPageView } from './MainPageView';
+import { NotificationDetailPanel } from './NotificationDetailPanel';
 
 class MainPage {
-    private readonly schdJobsApi: ScheduledJobsAppApi;
-    private readonly view: MainPageView;
-    private readonly triggeredJobs: ListGroup;
-    private readonly alert: MessageAlert;
+    private readonly panels = new SingleActivePanel();
+    private readonly notificationDetailPanel: NotificationDetailPanel;
+    private readonly menuPanel: MainMenuPanel;
 
     constructor(page: PageFrameView) {
-        this.view = new MainPageView(page);
-        this.schdJobsApi = new Apis(page.modalError).ScheduledJobs();
-        this.alert = new MessageAlert(this.view.alert);
-        this.view.hideJobDetail();
-        new TextBlock('Triggered Jobs', this.view.triggeredJobsTitle);
-        this.triggeredJobs = new ListGroup(this.view.triggeredJobs);
-        this.load();
+        let view = new MainPageView(page);
+        let schdJobsApi = new Apis(page.modalError).ScheduledJobs();
+        this.notificationDetailPanel = this.panels.add(
+            new NotificationDetailPanel(schdJobsApi, view.notificationDetailPanel)
+        );
+        this.menuPanel = this.panels.add(new MainMenuPanel(schdJobsApi, view.menuPanel));
+        this.notificationDetailPanel.setNotificationID(
+            Number(Url.current().getQueryValue('NotificationID'))
+        );
+        this.notificationDetailPanel.refresh();
+        this.activateNotificationDetailPanel();
     }
 
-    private async load() {
-        let jobID = Number(Url.current().getQueryValue('NotificationID'));
-        let notificationDetail = await this.getNotificationDetail(jobID);
-        new TextBlock(notificationDetail.Event.Definition.EventKey.DisplayText, this.view.eventDisplayText);
-        this.triggeredJobs.setItems(
-            notificationDetail.TriggeredJobs,
-            (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
-        );
-        this.view.showJobDetail();
+    private async activateNotificationDetailPanel() {
+        this.panels.activate(this.notificationDetailPanel);
+        let result = await this.notificationDetailPanel.start();
+        if (result.menuRequested) {
+            this.activateMenuPanel();
+        }
     }
 
-    private async getNotificationDetail(notificationID: number) {
-        let notificationDetail: IEventNotificationDetailModel;
-        await this.alert.infoAction(
-            'Loading...',
-            async () => {
-                notificationDetail = await this.schdJobsApi.EventInquiry.GetNotificationDetail(
-                    { NotificationID: notificationID }
-                );
-            }
-        );
-        return notificationDetail;
+    private async activateMenuPanel() {
+        this.panels.activate(this.menuPanel);
+        let result = await this.menuPanel.start();
+        if (result.done) {
+            this.activateNotificationDetailPanel();
+        }
     }
 }
 new MainPage(new Startup().build());

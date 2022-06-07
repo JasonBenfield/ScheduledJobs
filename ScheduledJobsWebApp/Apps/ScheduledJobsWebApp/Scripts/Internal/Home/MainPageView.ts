@@ -1,10 +1,11 @@
-﻿import { TextHeading1View } from '@jasonbenfield/sharedwebapp/Html/TextHeading1View';
-import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+﻿import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+import { MainMenuPanelView } from '../MainMenuPanelVIew';
 
 export class MainPageView {
-    readonly heading: ITextComponentView;
+    readonly menuPanel: MainMenuPanelView;
 
     constructor(page: PageFrameView) {
-        this.heading = page.addContent(new TextHeading1View());
+        this.menuPanel = page.addContent(new MainMenuPanelView());
+        this.menuPanel.hideToolbar();
     }
 }

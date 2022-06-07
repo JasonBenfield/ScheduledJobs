@@ -1,48 +1,37 @@
-﻿import { Startup } from '@jasonbenfield/sharedwebapp/Startup';
-import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
-import { MainPageView } from './MainPageView';
-import { TextBlock } from '@jasonbenfield/sharedwebapp/Html/TextBlock';
-import { ScheduledJobsAppApi } from '../../../ScheduledJobs/Api/ScheduledJobsAppApi';
+﻿import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
+import { Startup } from '@jasonbenfield/sharedwebapp/Startup';
 import { Apis } from '../../Apis';
-import { MessageAlert } from '@jasonbenfield/sharedwebapp/MessageAlert';
-import { ListGroup } from '@jasonbenfield/sharedwebapp/ListGroup/ListGroup';
-import { JobSummaryListItem } from '../JobSummaryListItem';
-import { JobSummaryListItemView } from '../JobSummaryListItemView';
+import { MainMenuPanel } from '../../MainMenuPanel';
+import { FailedJobsPanel } from './FailedJobsPanel';
+import { MainPageView } from './MainPageView';
 
 class MainPage {
-    private readonly alert: MessageAlert;
-    private readonly failedJobsList: ListGroup;
-    private readonly schdJobsApi: ScheduledJobsAppApi;
+    private readonly panels = new SingleActivePanel();
+    private readonly failedJobsPanel: FailedJobsPanel;
+    private readonly menuPanel: MainMenuPanel;
 
     constructor(page: PageFrameView) {
-        this.schdJobsApi = new Apis(page.modalError).ScheduledJobs();
+        let schdJobsApi = new Apis(page.modalError).ScheduledJobs();
         let view = new MainPageView(page);
-        this.alert = new MessageAlert(view.alert);
-        this.failedJobsList = new ListGroup(view.failedJobs);
-        new TextBlock('Failed Jobs', view.heading);
-        this.load();
+        this.failedJobsPanel = this.panels.add(new FailedJobsPanel(schdJobsApi, view.jobListPanel));
+        this.failedJobsPanel.refresh();
     }
 
-    private async load() {
-        let failedJobs = await this.getFailedJobs();
-        this.failedJobsList.setItems(
-            failedJobs,
-            (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
-        );
-        if (failedJobs.length === 0) {
-            this.alert.success('No failed jobs were found.');
+    private async activateFailedJobsPanel() {
+        this.panels.activate(this.failedJobsPanel);
+        let result = await this.failedJobsPanel.start();
+        if (result.menuRequested) {
+            this.activateMenuPanel();
         }
     }
 
-    private async getFailedJobs() {
-        let failedJobs: IJobSummaryModel[];
-        await this.alert.infoAction(
-            'Loading...',
-            async () => {
-                failedJobs = await this.schdJobsApi.JobInquiry.GetFailedJobs();
-            }
-        );
-        return failedJobs;
+    private async activateMenuPanel() {
+        this.panels.activate(this.menuPanel);
+        let result = await this.menuPanel.start();
+        if (result.done) {
+            this.activateFailedJobsPanel();
+        }
     }
 }
 new MainPage(new Startup().build());

@@ -51,6 +51,26 @@ export class ScheduledJobsTheme {
                     t.setPadding(PaddingCss.xs(3));
                 });
         },
+        menuButton() {
+            return new ButtonCommandItem()
+                .configure(b => {
+                    b.icon.setName('bars');
+                    b.setText('');
+                    b.setTitle('Menu');
+                    b.setContext(ContextualClass.light);
+                    b.useOutlineStyle();
+                });
+        },
+        refreshButton() {
+            return new ButtonCommandItem()
+                .configure(b => {
+                    b.icon.setName('sync-alt');
+                    b.setText('');
+                    b.setTitle('Refresh');
+                    b.setContext(ContextualClass.light);
+                    b.useOutlineStyle();
+                });
+        },
         backButton() {
             return new ButtonCommandItem()
                 .configure(b => {

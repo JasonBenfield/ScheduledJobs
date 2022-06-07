@@ -1,48 +1,39 @@
-﻿import { Startup } from '@jasonbenfield/sharedwebapp/Startup';
-import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
-import { MainPageView } from './MainPageView';
-import { TextBlock } from '@jasonbenfield/sharedwebapp/Html/TextBlock';
-import { ScheduledJobsAppApi } from '../../../ScheduledJobs/Api/ScheduledJobsAppApi';
+﻿import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
+import { Startup } from '@jasonbenfield/sharedwebapp/Startup';
 import { Apis } from '../../Apis';
-import { MessageAlert } from '@jasonbenfield/sharedwebapp/MessageAlert';
-import { ListGroup } from '@jasonbenfield/sharedwebapp/ListGroup/ListGroup';
-import { EventListItem } from './EventSummaryListItem';
-import { EventSummaryListItemView } from './EventSummaryListItemView';
+import { MainMenuPanel } from '../../MainMenuPanel';
+import { MainPageView } from './MainPageView';
+import { NotificationListPanel } from './NotificationListPanel';
 
 class MainPage {
-    private readonly alert: MessageAlert;
-    private readonly recentEventsList: ListGroup;
-    private readonly schdJobsApi: ScheduledJobsAppApi;
+    private readonly panels = new SingleActivePanel();
+    private readonly notificationListPanel: NotificationListPanel;
+    private readonly menuPanel: MainMenuPanel;
 
     constructor(page: PageFrameView) {
-        this.schdJobsApi = new Apis(page.modalError).ScheduledJobs();
+        let schdJobsApi = new Apis(page.modalError).ScheduledJobs();
         let view = new MainPageView(page);
-        this.alert = new MessageAlert(view.alert);
-        this.recentEventsList = new ListGroup(view.recentEvents);
-        new TextBlock('Events', view.heading);
-        this.load();
+        this.notificationListPanel = this.panels.add(new NotificationListPanel(schdJobsApi, view.notificationListPanel));
+        this.menuPanel = this.panels.add(new MainMenuPanel(schdJobsApi, view.menuPanel));
+        this.notificationListPanel.refresh();
+        this.activateNotificationListPanel();
     }
 
-    private async load() {
-        let recentEvents = await this.getRecentEvents();
-        this.recentEventsList.setItems(
-            recentEvents,
-            (evt, itemView: EventSummaryListItemView) => new EventListItem(this.schdJobsApi, evt, itemView)
-        );
-        if (recentEvents.length === 0) {
-            this.alert.danger('No events were found.');
+    private async activateNotificationListPanel() {
+        this.panels.activate(this.notificationListPanel);
+        let result = await this.notificationListPanel.start();
+        if (result.menuRequested) {
+            this.activateMenuPanel();
         }
     }
 
-    private async getRecentEvents() {
-        let recentEvents: IEventSummaryModel[];
-        await this.alert.infoAction(
-            'Loading...',
-            async () => {
-                recentEvents = await this.schdJobsApi.EventInquiry.GetRecentNotifications();
-            }
-        );
-        return recentEvents;
+    private async activateMenuPanel() {
+        this.panels.activate(this.menuPanel);
+        let result = await this.menuPanel.start();
+        if (result.done) {
+            this.activateNotificationListPanel();
+        }
     }
 }
 new MainPage(new Startup().build());
