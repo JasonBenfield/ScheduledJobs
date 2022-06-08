@@ -10,6 +10,13 @@ import { Toolbar } from "@jasonbenfield/sharedwebapp/Html/Toolbar";
 import { ScheduledJobsTheme } from "./ScheduledJobsTheme";
 
 export class MainMenuPanelView extends Block {
+    readonly doneButton: ButtonCommandItem;
+    readonly eventDefinitionsLink: NavLinkView;
+    readonly notificationsLink: NavLinkView;
+    readonly jobDefinitionsLink: NavLinkView;
+    readonly failedJobsLink: NavLinkView;
+    private readonly toolbar: Toolbar;
+
     constructor() {
         super();
         this.height100();
@@ -18,6 +25,9 @@ export class MainMenuPanelView extends Block {
         let navView = flexFill.addContent(new NavView());
         navView.pills();
         navView.setFlexCss(new FlexCss().column());
+        this.eventDefinitionsLink = navView.addLink();
+        this.eventDefinitionsLink.addContent(new TextSpanView())
+            .configure(ts => ts.setText('Event Definitions'));
         this.notificationsLink = navView.addLink();
         this.notificationsLink.addContent(new TextSpanView())
             .configure(ts => ts.setText('Event Notifications'));
@@ -31,12 +41,6 @@ export class MainMenuPanelView extends Block {
         this.doneButton = this.toolbar.columnStart.addContent(ScheduledJobsTheme.instance.commandToolbar.backButton());
         this.doneButton.setText('Back');
     }
-
-    readonly doneButton: ButtonCommandItem;
-    readonly notificationsLink: NavLinkView;
-    readonly jobDefinitionsLink: NavLinkView;
-    readonly failedJobsLink: NavLinkView;
-    private readonly toolbar: Toolbar;
 
     hideToolbar() { this.toolbar.hide(); }
 }

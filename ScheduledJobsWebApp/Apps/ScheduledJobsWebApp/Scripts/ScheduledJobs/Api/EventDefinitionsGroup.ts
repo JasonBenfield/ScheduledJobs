@@ -11,17 +11,17 @@ export class EventDefinitionsGroup extends AppApiGroup {
 		super(events, resourceUrl, 'EventDefinitions');
 		this.Index = this.createView<IEmptyRequest>('Index');
 		this.GetEventDefinitionsAction = this.createAction<IEmptyRequest,IEventDefinitionModel[]>('GetEventDefinitions', 'Get Event Definitions');
-		this.GetRecentNotificationsActionAction = this.createAction<IGetRecentEventNotificationsByEventDefinitionRequest,IEventSummaryModel[]>('GetRecentNotificationsAction', 'Get Recent Notifications Action');
+		this.GetRecentNotificationsAction = this.createAction<IGetRecentEventNotificationsByEventDefinitionRequest,IEventSummaryModel[]>('GetRecentNotifications', 'Get Recent Notifications');
 	}
 	
 	readonly Index: AppApiView<IEmptyRequest>;
 	readonly GetEventDefinitionsAction: AppApiAction<IEmptyRequest,IEventDefinitionModel[]>;
-	readonly GetRecentNotificationsActionAction: AppApiAction<IGetRecentEventNotificationsByEventDefinitionRequest,IEventSummaryModel[]>;
+	readonly GetRecentNotificationsAction: AppApiAction<IGetRecentEventNotificationsByEventDefinitionRequest,IEventSummaryModel[]>;
 	
 	GetEventDefinitions(errorOptions?: IActionErrorOptions) {
 		return this.GetEventDefinitionsAction.execute({}, errorOptions || {});
 	}
-	GetRecentNotificationsAction(model: IGetRecentEventNotificationsByEventDefinitionRequest, errorOptions?: IActionErrorOptions) {
-		return this.GetRecentNotificationsActionAction.execute(model, errorOptions || {});
+	GetRecentNotifications(model: IGetRecentEventNotificationsByEventDefinitionRequest, errorOptions?: IActionErrorOptions) {
+		return this.GetRecentNotificationsAction.execute(model, errorOptions || {});
 	}
 }

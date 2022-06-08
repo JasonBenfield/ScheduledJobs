@@ -1,5 +1,6 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
 import { AsyncCommand } from "@jasonbenfield/sharedwebapp/Command/AsyncCommand";
+import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
 import { ScheduledJobsAppApi } from "../../ScheduledJobs/Api/ScheduledJobsAppApi";
@@ -37,10 +38,18 @@ export class EventDefinitionListPanel implements IPanel {
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: EventDefinitionListPanelView) {
         this.alert = new MessageAlert(view.alert);
         this.eventDefinitions = new ListGroup(view.eventDefinitions);
+        this.eventDefinitions.itemClicked.register(this.onDefinitionClicked.bind(this));
+        new Command(this.menu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
         this.refreshCommand.animateIconWhenInProgress('spin');
     }
+
+    private onDefinitionClicked(defItem: EventDefinitionListItem) {
+        this.awaitable.resolve(EventDefinitionListPanelResult.eventDefinitionSelected(defItem.evtDef.ID));
+    }
+
+    private menu() { this.awaitable.resolve(EventDefinitionListPanelResult.menuRequested()); }
 
     private async doRefresh() {
         let evtDefs = await this.getEventDefinitions();

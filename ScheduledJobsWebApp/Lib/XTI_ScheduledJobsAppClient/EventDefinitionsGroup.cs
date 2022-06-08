@@ -10,5 +10,5 @@ public sealed partial class EventDefinitionsGroup : AppClientGroup
     public EventDefinitionsActions Actions { get; }
 
     public Task<EventDefinitionModel[]> GetEventDefinitions() => Post<EventDefinitionModel[], EmptyRequest>("GetEventDefinitions", "", new EmptyRequest());
-    public Task<EventSummaryModel[]> GetRecentNotificationsAction(GetRecentEventNotificationsByEventDefinitionRequest model) => Post<EventSummaryModel[], GetRecentEventNotificationsByEventDefinitionRequest>("GetRecentNotificationsAction", "", model);
+    public Task<EventSummaryModel[]> GetRecentNotifications(GetRecentEventNotificationsByEventDefinitionRequest model) => Post<EventSummaryModel[], GetRecentEventNotificationsByEventDefinitionRequest>("GetRecentNotifications", "", model);
 }

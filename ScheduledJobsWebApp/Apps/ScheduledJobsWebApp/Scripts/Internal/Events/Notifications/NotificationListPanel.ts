@@ -5,7 +5,7 @@ import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
 import { ScheduledJobsAppApi } from "../../../ScheduledJobs/Api/ScheduledJobsAppApi";
-import { EventListItem } from "./EventSummaryListItem";
+import { EventSummaryListItem } from "./EventSummaryListItem";
 import { EventSummaryListItemView } from "./EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
 
@@ -48,7 +48,7 @@ export class NotificationListPanel implements IPanel {
         let recentEvents = await this.getRecentEvents();
         this.recentEventsList.setItems(
             recentEvents,
-            (evt, itemView: EventSummaryListItemView) => new EventListItem(this.schdJobsApi, evt, itemView)
+            (evt, itemView: EventSummaryListItemView) => new EventSummaryListItem(this.schdJobsApi, evt, itemView)
         );
         if (recentEvents.length === 0) {
             this.alert.danger('No events were found.');

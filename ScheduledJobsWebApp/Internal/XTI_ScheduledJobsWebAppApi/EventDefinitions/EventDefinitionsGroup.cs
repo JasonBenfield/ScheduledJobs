@@ -16,7 +16,7 @@ public sealed class EventDefinitionsGroup : AppApiGroupWrapper
         );
         GetRecentNotifications = source.AddAction
         (
-            actions.Action(nameof(GetRecentNotificationsAction), () => sp.GetRequiredService<GetRecentNotificationsAction>())
+            actions.Action(nameof(GetRecentNotifications), () => sp.GetRequiredService<GetRecentNotificationsAction>())
         );
     }
 

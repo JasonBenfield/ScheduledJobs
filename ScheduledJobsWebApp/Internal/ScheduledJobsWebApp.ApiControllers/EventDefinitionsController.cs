@@ -22,8 +22,8 @@ public class EventDefinitionsController : Controller
     }
 
     [HttpPost]
-    public Task<ResultContainer<EventSummaryModel[]>> GetRecentNotificationsAction([FromBody] GetRecentEventNotificationsByEventDefinitionRequest model, CancellationToken ct)
+    public Task<ResultContainer<EventSummaryModel[]>> GetRecentNotifications([FromBody] GetRecentEventNotificationsByEventDefinitionRequest model, CancellationToken ct)
     {
-        return api.Group("EventDefinitions").Action<GetRecentEventNotificationsByEventDefinitionRequest, EventSummaryModel[]>("GetRecentNotificationsAction").Execute(model, ct);
+        return api.Group("EventDefinitions").Action<GetRecentEventNotificationsByEventDefinitionRequest, EventSummaryModel[]>("GetRecentNotifications").Execute(model, ct);
     }
 }
