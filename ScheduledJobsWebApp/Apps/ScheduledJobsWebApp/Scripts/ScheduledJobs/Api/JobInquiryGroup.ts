@@ -11,17 +11,24 @@ export class JobInquiryGroup extends AppApiGroup {
 		super(events, resourceUrl, 'JobInquiry');
 		this.FailedJobs = this.createView<IEmptyRequest>('FailedJobs');
 		this.GetFailedJobsAction = this.createAction<IEmptyRequest,IJobSummaryModel[]>('GetFailedJobs', 'Get Failed Jobs');
+		this.RecentJobs = this.createView<IEmptyRequest>('RecentJobs');
+		this.GetRecentJobsAction = this.createAction<IEmptyRequest,IJobSummaryModel[]>('GetRecentJobs', 'Get Recent Jobs');
 		this.JobDetail = this.createView<IGetJobDetailRequest>('JobDetail');
 		this.GetJobDetailAction = this.createAction<IGetJobDetailRequest,ITriggeredJobDetailModel>('GetJobDetail', 'Get Job Detail');
 	}
 	
 	readonly FailedJobs: AppApiView<IEmptyRequest>;
 	readonly GetFailedJobsAction: AppApiAction<IEmptyRequest,IJobSummaryModel[]>;
+	readonly RecentJobs: AppApiView<IEmptyRequest>;
+	readonly GetRecentJobsAction: AppApiAction<IEmptyRequest,IJobSummaryModel[]>;
 	readonly JobDetail: AppApiView<IGetJobDetailRequest>;
 	readonly GetJobDetailAction: AppApiAction<IGetJobDetailRequest,ITriggeredJobDetailModel>;
 	
 	GetFailedJobs(errorOptions?: IActionErrorOptions) {
 		return this.GetFailedJobsAction.execute({}, errorOptions || {});
+	}
+	GetRecentJobs(errorOptions?: IActionErrorOptions) {
+		return this.GetRecentJobsAction.execute({}, errorOptions || {});
 	}
 	GetJobDetail(model: IGetJobDetailRequest, errorOptions?: IActionErrorOptions) {
 		return this.GetJobDetailAction.execute(model, errorOptions || {});

@@ -24,6 +24,7 @@ export class MainMenuPanel implements IPanel {
         this.view.notificationsLink.setHref(schdJobsApi.EventInquiry.Notifications.getUrl({}).value());
         this.view.jobDefinitionsLink.setHref(schdJobsApi.JobDefinitions.Index.getUrl({}).value());
         this.view.failedJobsLink.setHref(schdJobsApi.JobInquiry.FailedJobs.getUrl({}).value());
+        this.view.recentJobsLink.setHref(schdJobsApi.JobInquiry.RecentJobs.getUrl({}).value());
     }
 
     private done() {

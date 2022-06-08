@@ -21,6 +21,18 @@ public class JobInquiryController : Controller
         return api.Group("JobInquiry").Action<EmptyRequest, JobSummaryModel[]>("GetFailedJobs").Execute(new EmptyRequest(), ct);
     }
 
+    public async Task<IActionResult> RecentJobs(CancellationToken ct)
+    {
+        var result = await api.Group("JobInquiry").Action<EmptyRequest, WebViewResult>("RecentJobs").Execute(new EmptyRequest(), ct);
+        return View(result.Data.ViewName);
+    }
+
+    [HttpPost]
+    public Task<ResultContainer<JobSummaryModel[]>> GetRecentJobs(CancellationToken ct)
+    {
+        return api.Group("JobInquiry").Action<EmptyRequest, JobSummaryModel[]>("GetRecentJobs").Execute(new EmptyRequest(), ct);
+    }
+
     public async Task<IActionResult> JobDetail(GetJobDetailRequest model, CancellationToken ct)
     {
         var result = await api.Group("JobInquiry").Action<GetJobDetailRequest, WebViewResult>("JobDetail").Execute(model, ct);

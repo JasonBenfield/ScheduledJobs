@@ -15,6 +15,7 @@ export class MainMenuPanelView extends Block {
     readonly notificationsLink: NavLinkView;
     readonly jobDefinitionsLink: NavLinkView;
     readonly failedJobsLink: NavLinkView;
+    readonly recentJobsLink: NavLinkView;
     private readonly toolbar: Toolbar;
 
     constructor() {
@@ -37,6 +38,9 @@ export class MainMenuPanelView extends Block {
         this.failedJobsLink = navView.addLink();
         this.failedJobsLink.addContent(new TextSpanView())
             .configure(ts => ts.setText('Failed Jobs'));
+        this.recentJobsLink = navView.addLink();
+        this.recentJobsLink.addContent(new TextSpanView())
+            .configure(ts => ts.setText('Recent Jobs'));
         this.toolbar = flexColumn.addContent(ScheduledJobsTheme.instance.commandToolbar.toolbar());
         this.doneButton = this.toolbar.columnStart.addContent(ScheduledJobsTheme.instance.commandToolbar.backButton());
         this.doneButton.setText('Back');

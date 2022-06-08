@@ -7,6 +7,7 @@ const entry = {
     home: './Scripts/Internal/Home/MainPage.ts',
     jobDefinitions: './Scripts/Internal/JobDefinitions/MainPage.ts',
     failedJobs: './Scripts/Internal/Jobs/FailedJobs/MainPage.ts',
+    recentJobs: './Scripts/Internal/Jobs/RecentJobs/MainPage.ts',
     jobDetail: './Scripts/Internal/Jobs/JobDetail/MainPage.ts',
     eventDefinitions: './Scripts/Internal/EventDefinitions/MainPage.ts',
     eventNotifications: './Scripts/Internal/Events/Notifications/MainPage.ts',
