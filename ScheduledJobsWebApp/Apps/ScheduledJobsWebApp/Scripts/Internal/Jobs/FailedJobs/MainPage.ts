@@ -15,7 +15,9 @@ class MainPage {
         let schdJobsApi = new Apis(page.modalError).ScheduledJobs();
         let view = new MainPageView(page);
         this.failedJobsPanel = this.panels.add(new FailedJobsPanel(schdJobsApi, view.jobListPanel));
+        this.menuPanel = this.panels.add(new MainMenuPanel(schdJobsApi, view.menuPanel));
         this.failedJobsPanel.refresh();
+        this.activateFailedJobsPanel();
     }
 
     private async activateFailedJobsPanel() {

@@ -2,8 +2,11 @@
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using XTI_App.Api;
+global using XTI_ScheduledJobsWebAppApi;
+global using XTI_ScheduledJobsWebAppApi.EventDefinitions;
 global using XTI_ScheduledJobsWebAppApi.EventInquiry;
 global using XTI_ScheduledJobsWebAppApi.Events;
+global using XTI_ScheduledJobsWebAppApi.JobDefinitions;
 global using XTI_ScheduledJobsWebAppApi.JobInquiry;
 global using XTI_ScheduledJobsWebAppApi.Jobs;
 global using XTI_ScheduledJobsWebAppApi.Tasks;

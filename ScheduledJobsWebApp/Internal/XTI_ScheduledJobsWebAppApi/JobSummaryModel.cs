@@ -1,4 +1,4 @@
-﻿namespace XTI_ScheduledJobsWebAppApi.JobInquiry;
+﻿namespace XTI_ScheduledJobsWebAppApi;
 
 public sealed record JobSummaryModel
 (

@@ -5,6 +5,7 @@ import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
 import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
+import { ModalConfirmComponent } from "@jasonbenfield/sharedwebapp/Modal/ModalConfirmComponent";
 import { JobTaskStatus } from "../../../ScheduledJobs/Api/JobTaskStatus";
 import { ScheduledJobsAppApi } from "../../../ScheduledJobs/Api/ScheduledJobsAppApi";
 import { FormattedTimeSpan } from "../../FormattedTimeSpan";
@@ -39,6 +40,7 @@ export class TaskDetailPanel implements IPanel {
     private currentTask: ITriggeredJobTaskModel;
     private readonly cancelTaskCommand: AsyncCommand;
     private readonly retryTaskCommand: AsyncCommand;
+    private readonly modalConfirm: ModalConfirmComponent;
 
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
         this.displayText = new TextBlock('', this.view.displayText);
@@ -57,26 +59,33 @@ export class TaskDetailPanel implements IPanel {
         this.retryTaskCommand = new AsyncCommand(this.retryTask.bind(this));
         this.retryTaskCommand.hide();
         this.retryTaskCommand.add(view.retryTaskButton);
+        this.modalConfirm = new ModalConfirmComponent(view.modalConfirm);
     }
 
     private async cancelTask() {
-        await this.alert.infoAction(
-            'Canceling task...',
-            () => this.schdJobsApi.Tasks.CancelTask({ TaskID: this.currentTask.ID })
-        );
-        this.awaitable.resolve(
-            TaskDetailPanelResult.backRequested(true)
-        );
+        let confirmed = await this.modalConfirm.confirm('Cancel this task?', 'Confirm cancel');
+        if (confirmed) {
+            await this.alert.infoAction(
+                'Canceling task...',
+                () => this.schdJobsApi.Tasks.CancelTask({ TaskID: this.currentTask.ID })
+            );
+            this.awaitable.resolve(
+                TaskDetailPanelResult.backRequested(true)
+            );
+        }
     }
 
     private async retryTask() {
-        await this.alert.infoAction(
-            'Retrying task...',
-            () => this.schdJobsApi.Tasks.RetryTask({ TaskID: this.currentTask.ID })
-        );
-        this.awaitable.resolve(
-            TaskDetailPanelResult.backRequested(true)
-        );
+        let confirmed = await this.modalConfirm.confirm('Retry this task?', 'Confirm retry');
+        if (confirmed) {
+            await this.alert.infoAction(
+                'Retrying task...',
+                () => this.schdJobsApi.Tasks.RetryTask({ TaskID: this.currentTask.ID })
+            );
+            this.awaitable.resolve(
+                TaskDetailPanelResult.backRequested(true)
+            );
+        }
     }
 
     private back() {

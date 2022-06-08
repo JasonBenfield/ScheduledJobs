@@ -21,6 +21,9 @@ export class MainMenuPanelView extends Block {
         this.notificationsLink = navView.addLink();
         this.notificationsLink.addContent(new TextSpanView())
             .configure(ts => ts.setText('Event Notifications'));
+        this.jobDefinitionsLink = navView.addLink();
+        this.jobDefinitionsLink.addContent(new TextSpanView())
+            .configure(ts => ts.setText('Job Definitions'));
         this.failedJobsLink = navView.addLink();
         this.failedJobsLink.addContent(new TextSpanView())
             .configure(ts => ts.setText('Failed Jobs'));
@@ -31,6 +34,7 @@ export class MainMenuPanelView extends Block {
 
     readonly doneButton: ButtonCommandItem;
     readonly notificationsLink: NavLinkView;
+    readonly jobDefinitionsLink: NavLinkView;
     readonly failedJobsLink: NavLinkView;
     private readonly toolbar: Toolbar;
 

@@ -1,0 +1,3 @@
+﻿namespace XTI_ScheduledJobsWebAppApi.EventDefinitions;
+
+public sealed record GetRecentEventNotificationsByEventDefinitionRequest(int EventDefinitionID, string SourceKey);

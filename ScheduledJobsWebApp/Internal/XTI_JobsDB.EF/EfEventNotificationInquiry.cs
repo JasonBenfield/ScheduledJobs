@@ -34,6 +34,37 @@ public sealed class EfEventNotificationInquiry
         return evtNotModels.ToArray();
     }
 
+    public async Task<EventNotificationModel[]> Recent(int evtDefID, string sourceKey)
+    {
+        IQueryable<EventWithDefinitionEntity> query;
+        if (string.IsNullOrWhiteSpace(sourceKey))
+        {
+            query = Query()
+                .Where(evtWithDef => evtWithDef.Definition.ID == evtDefID);
+        }
+        else
+        {
+            query = Query()
+                .Where
+                (
+                    evtWithDef =>
+                        evtWithDef.Definition.ID == evtDefID &&
+                        evtWithDef.Event.SourceKey.Contains(sourceKey)
+                );
+        }
+        var evtWithDefs = await query
+            .OrderByDescending(evtWithDef => evtWithDef.Event.TimeAdded)
+            .Take(50)
+            .ToArrayAsync();
+        var evtNotModels = new List<EventNotificationModel>();
+        foreach (var evtWithDef in evtWithDefs)
+        {
+            var evtModel = CreateEventNotificationModel(evtWithDef);
+            evtNotModels.Add(evtModel);
+        }
+        return evtNotModels.ToArray();
+    }
+
     private static EventNotificationModel CreateEventNotificationModel(EventWithDefinitionEntity evtWithDef) =>
         new EventNotificationModel
         (
@@ -59,6 +90,11 @@ public sealed class EfEventNotificationInquiry
                 d => d.ID,
                 (n, d) => new EventWithDefinitionEntity { Event = n, Definition = d }
             );
+
+    public Task<int> JobCount(int eventID) =>
+        db.TriggeredJobs.Retrieve()
+            .Where(j => j.EventNotificationID == eventID)
+            .CountAsync();
 
     private sealed class EventWithDefinitionEntity
     {

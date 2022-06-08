@@ -6,6 +6,7 @@ public sealed class ExpandedTriggeredJobEntity
 {
     public int JobID { get; set; }
     public int EventNotificationID { get; set; }
+    public int JobDefinitionID { get; set; }
     public string JobDisplayText { get; set; } = "";
     public int JobStatus { get; set; } = JobTaskStatus.Values.GetDefault().Value;
     public DateTimeOffset TimeJobStarted { get; set; }

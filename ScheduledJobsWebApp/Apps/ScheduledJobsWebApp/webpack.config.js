@@ -5,6 +5,7 @@ const entry = {
     accessDenied: './Scripts/Internal/User/AccessDenied/MainPage.ts',
     error: './Scripts/Internal/User/Error/MainPage.ts',
     home: './Scripts/Internal/Home/MainPage.ts',
+    jobDefinitions: './Scripts/Internal/JobDefinitions/MainPage.ts',
     failedJobs: './Scripts/Internal/Jobs/FailedJobs/MainPage.ts',
     jobDetail: './Scripts/Internal/Jobs/JobDetail/MainPage.ts',
     eventNotifications: './Scripts/Internal/Events/Notifications/MainPage.ts',

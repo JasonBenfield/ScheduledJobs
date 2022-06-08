@@ -11,6 +11,7 @@ import { TextSpanView } from "@jasonbenfield/sharedwebapp/Html/TextSpanView";
 import { ListGroupView } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroupView";
 import { MarginCss } from "@jasonbenfield/sharedwebapp/MarginCss";
 import { MessageAlertView } from "@jasonbenfield/sharedwebapp/MessageAlertView";
+import { ModalConfirmComponentView } from "@jasonbenfield/sharedwebapp/Modal/ModalConfirmComponentView";
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
 import { ScheduledJobsTheme } from "../../ScheduledJobsTheme";
 import { LogEntryItemView } from "./LogEntryItemView";
@@ -20,7 +21,9 @@ export class TaskDetailPanelView extends Block {
         super();
         this.height100();
         let flexColumn = this.addContent(new FlexColumn());
-        let navBar = flexColumn.addContent(new Block());
+        let flexFill = flexColumn.addContent(new FlexColumnFill());
+        let navBar = flexFill.addContent(new Block());
+        navBar.setMargin(MarginCss.bottom(3));
         let row = navBar.addContent(new Row());
         let col1 = row.addColumn();
         col1.setColumnCss(ColumnCss.xs(1));
@@ -52,7 +55,6 @@ export class TaskDetailPanelView extends Block {
                     b.useOutlineStyle();
                 })
         );
-        let flexFill = flexColumn.addContent(new FlexColumnFill());
         let topBlock = flexFill.addContent(new Block());
         topBlock.setMargin(MarginCss.bottom(3));
         this.status = topBlock.addContent(new TextSpanView())
@@ -86,6 +88,8 @@ export class TaskDetailPanelView extends Block {
         let toolbar = flexColumn.addContent(ScheduledJobsTheme.instance.commandToolbar.toolbar());
         this.backButton = toolbar.columnStart.addContent(ScheduledJobsTheme.instance.commandToolbar.backButton());
         this.backButton.setText('Back');
+
+        this.modalConfirm = this.addContent(new ModalConfirmComponentView());
     }
 
     readonly previousTaskButton: ButtonCommandItem;
@@ -100,5 +104,6 @@ export class TaskDetailPanelView extends Block {
     readonly retryTaskButton: ButtonCommandItem;
     readonly cancelTaskButton: ButtonCommandItem;
     readonly backButton: ButtonCommandItem;
+    readonly modalConfirm: ModalConfirmComponentView;
 
 }

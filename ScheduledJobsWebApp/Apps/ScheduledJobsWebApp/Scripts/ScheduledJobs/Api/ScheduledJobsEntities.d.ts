@@ -10,6 +10,18 @@ interface ILogoutRequest {
 }
 interface IEmptyActionResult {
 }
+interface IEventDefinitionModel {
+	ID: number;
+	EventKey: IEventKey;
+}
+interface IEventKey {
+	Value: string;
+	DisplayText: string;
+}
+interface IGetRecentEventNotificationsByEventDefinitionRequest {
+	EventDefinitionID: number;
+	SourceKey: string;
+}
 interface IEventSummaryModel {
 	Event: IEventNotificationModel;
 	TriggeredJobCount: number;
@@ -22,14 +34,6 @@ interface IEventNotificationModel {
 	TimeAdded: Date;
 	TimeActive: Date;
 	TimeInactive: Date;
-}
-interface IEventDefinitionModel {
-	ID: number;
-	EventKey: IEventKey;
-}
-interface IEventKey {
-	Value: string;
-	DisplayText: string;
 }
 interface IGetNotificationDetailRequest {
 	NotificationID: number;
@@ -107,6 +111,9 @@ interface ILogEntryModel {
 	Category: string;
 	Message: string;
 	Details: string;
+}
+interface IGetRecentTriggeredJobsByDefinitionRequest {
+	JobDefinitionID: number;
 }
 interface IGetJobDetailRequest {
 	JobID: number;

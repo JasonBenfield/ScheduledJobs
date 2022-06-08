@@ -21,6 +21,7 @@ export class MainMenuPanel implements IPanel {
     constructor(schdJobsApi: ScheduledJobsAppApi, private readonly view: MainMenuPanelView) {
         new Command(this.done.bind(this)).add(this.view.doneButton);
         this.view.notificationsLink.setHref(schdJobsApi.EventInquiry.Notifications.getUrl({}).value());
+        this.view.jobDefinitionsLink.setHref(schdJobsApi.JobDefinitions.Index.getUrl({}).value());
         this.view.failedJobsLink.setHref(schdJobsApi.JobInquiry.FailedJobs.getUrl({}).value());
     }
 
