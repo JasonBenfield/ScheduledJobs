@@ -81,6 +81,16 @@ export class ScheduledJobsTheme {
                     b.useOutlineStyle();
                 });
         },
+        nextButton() {
+            return new ButtonCommandItem()
+                .configure(b => {
+                    b.icon.setName('caret-right');
+                    b.setText('Next');
+                    b.setTitle('Next');
+                    b.setContext(ContextualClass.light);
+                    b.useOutlineStyle();
+                });
+        },
         cancelButton() {
             return new ButtonCommandItem()
                 .configure(b => {

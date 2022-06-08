@@ -6,10 +6,12 @@ import { NotificationListPanel } from './NotificationListPanel';
 import { MainMenuPanel } from '../MainMenuPanel';
 import { EventDefinitionListPanel } from './EventDefinitionListPanel';
 import { MainPageView } from './MainPageView';
+import { SelectSourceKeyPanel } from './SelectSourceKeyPanel';
 
 class MainPage {
     private readonly panels = new SingleActivePanel();
     private readonly eventDefinitionsPanel: EventDefinitionListPanel;
+    private readonly selectSourceKeyPanel: SelectSourceKeyPanel;
     private readonly notificationsPanel: NotificationListPanel;
     private readonly menuPanel: MainMenuPanel;
 
@@ -18,6 +20,9 @@ class MainPage {
         let view = new MainPageView(page);
         this.eventDefinitionsPanel = this.panels.add(
             new EventDefinitionListPanel(schdJobsApi, view.eventDefinitionsPanel)
+        );
+        this.selectSourceKeyPanel = this.panels.add(
+            new SelectSourceKeyPanel(view.selectSourceKeyPanel)
         );
         this.notificationsPanel = this.panels.add(
             new NotificationListPanel(schdJobsApi, view.notificationsPanel)
@@ -34,11 +39,23 @@ class MainPage {
         let result = await this.eventDefinitionsPanel.start();
         if (result.eventDefinitionSelected) {
             this.notificationsPanel.setEventDefinitionID(result.eventDefinitionSelected.eventDefinitionID);
-            this.notificationsPanel.refresh();
-            this.activateNotificationsPanel();
+            this.activateSelectSourceKeyPanel();
         }
         else if (result.menuRequested) {
             this.activateMenuPanel();
+        }
+    }
+
+    private async activateSelectSourceKeyPanel() {
+        this.panels.activate(this.selectSourceKeyPanel);
+        let result = await this.selectSourceKeyPanel.start();
+        if (result.back) {
+            this.activateEventDefinitionsPanel();
+        }
+        else if (result.next) {
+            this.notificationsPanel.setSourceKey(result.next.sourceKey);
+            this.notificationsPanel.refresh();
+            this.activateNotificationsPanel();
         }
     }
 

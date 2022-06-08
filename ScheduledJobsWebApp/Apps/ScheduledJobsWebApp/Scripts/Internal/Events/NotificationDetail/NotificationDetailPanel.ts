@@ -2,6 +2,7 @@
 import { AsyncCommand } from "@jasonbenfield/sharedwebapp/Command/AsyncCommand";
 import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
 import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
+import { TextValueFormGroup } from "@jasonbenfield/sharedwebapp/Html/TextValueFormGroup";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
 import { ScheduledJobsAppApi } from "../../../ScheduledJobs/Api/ScheduledJobsAppApi";
@@ -23,6 +24,8 @@ export class NotificationDetailPanelResult {
 
 export class NotificationDetailPanel implements IPanel {
     private readonly awaitable = new Awaitable<NotificationDetailPanelResult>();
+    private readonly sourceKey: TextValueFormGroup;
+    private readonly sourceData: TextValueFormGroup;
     private readonly triggeredJobs: ListGroup;
     private readonly alert: MessageAlert;
     private readonly refreshCommand: AsyncCommand;
@@ -30,11 +33,15 @@ export class NotificationDetailPanel implements IPanel {
 
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: NotificationDetailPanelView) {
         this.alert = new MessageAlert(this.view.alert);
+        this.sourceKey = new TextValueFormGroup(view.sourceKey);
+        this.sourceKey.setCaption('Source Key');
+        this.sourceData = new TextValueFormGroup(view.sourceData);
         this.view.hideJobDetail();
         new TextBlock('Triggered Jobs', this.view.triggeredJobsTitle);
         this.triggeredJobs = new ListGroup(this.view.triggeredJobs);
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
+        this.refreshCommand.add(view.refreshButton);
         this.refreshCommand.animateIconWhenInProgress('spin');
     }
 
@@ -45,6 +52,8 @@ export class NotificationDetailPanel implements IPanel {
     private async doRefresh() {
         let notificationDetail = await this.getNotificationDetail(this.notificationID);
         new TextBlock(notificationDetail.Event.Definition.EventKey.DisplayText, this.view.eventDisplayText);
+        this.sourceKey.setValue(notificationDetail.Event.SourceKey);
+        this.sourceData.setValue(notificationDetail.Event.SourceData);
         this.triggeredJobs.setItems(
             notificationDetail.TriggeredJobs,
             (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)

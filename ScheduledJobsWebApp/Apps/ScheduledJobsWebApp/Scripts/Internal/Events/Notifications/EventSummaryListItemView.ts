@@ -6,6 +6,11 @@ import { LinkListItemViewModel } from "@jasonbenfield/sharedwebapp/ListGroup/Lin
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
 
 export class EventSummaryListItemView extends LinkListGroupItemView {
+    readonly displayText: ITextComponentView;
+    readonly timeActive: ITextComponentView;
+    readonly sourceKey: ITextComponentView;
+    readonly sourceData: ITextComponentView;
+    readonly triggeredJobCount: ITextComponentView;
 
     constructor() {
         super(new LinkListItemViewModel());
@@ -16,15 +21,17 @@ export class EventSummaryListItemView extends LinkListGroupItemView {
         let col2 = row.addColumn();
         this.timeActive = col2
             .addContent(new TextSpanView());
-        let col3 = row.addColumn();
-        col3.setTextCss(new TextCss().end());
-        this.triggeredJobCount = col3
-            .addContent(new TextSpanView());
-        this.triggeredJobCount.addCssName('badge');
-        this.triggeredJobCount.setBackgroundContext(ContextualClass.secondary);
+        let col3 = row.addColumn()
+            .configure(c => c.setTextCss(new TextCss().truncate()));
+        this.sourceKey = col3.addContent(new TextSpanView());
+        this.sourceData = col3.addContent(new TextSpanView());
+        let col4 = row.addColumn();
+        col4.setTextCss(new TextCss().end());
+        this.triggeredJobCount = col4
+            .addContent(new TextSpanView())
+            .configure(ts => {
+                ts.addCssName('badge');
+                ts.setBackgroundContext(ContextualClass.secondary);
+            });
     }
-
-    readonly displayText: TextSpanView;
-    readonly timeActive: TextSpanView;
-    readonly triggeredJobCount: TextSpanView;
 }
