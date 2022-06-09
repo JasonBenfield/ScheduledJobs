@@ -65,9 +65,19 @@ public sealed class SjcJobDb : IJobDb
             }
         );
 
+    public Task JobCancelled(int taskID, string reason, DeletionTime deletionTime) =>
+        schdJobClient.Jobs.JobCancelled
+        (
+            new JobCancelledRequest
+            {
+                TaskID = taskID,
+                Reason = reason,
+                DeletionTime = deletionTime
+            }
+        );
+
     public Task<TriggeredJobWithTasksModel> TaskCompleted
     (
-        int jobID,
         int completedTaskID,
         bool preserveData,
         NextTaskModel[] nextTasks
@@ -76,7 +86,6 @@ public sealed class SjcJobDb : IJobDb
         (
             new TaskCompletedRequest
             {
-                JobID = jobID,
                 CompletedTaskID = completedTaskID,
                 PreserveData = preserveData,
                 NextTasks = nextTasks
@@ -85,7 +94,6 @@ public sealed class SjcJobDb : IJobDb
 
     public Task<TriggeredJobWithTasksModel> TaskFailed
     (
-        int jobID,
         int failedTaskID,
         JobTaskStatus errorStatus,
         TimeSpan retryAfter,
@@ -98,7 +106,6 @@ public sealed class SjcJobDb : IJobDb
         (
             new TaskFailedRequest
             {
-                JobID = jobID,
                 FailedTaskID = failedTaskID,
                 ErrorStatus = errorStatus,
                 RetryAfter = retryAfter,

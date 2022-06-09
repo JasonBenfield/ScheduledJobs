@@ -14,6 +14,7 @@ export class JobsGroup extends AppApiGroup {
 		this.RetryJobsAction = this.createAction<IRetryJobsRequest,ITriggeredJobWithTasksModel[]>('RetryJobs', 'Retry Jobs');
 		this.StartJobAction = this.createAction<IStartJobRequest,ITriggeredJobWithTasksModel>('StartJob', 'Start Job');
 		this.StartTaskAction = this.createAction<IStartTaskRequest,IEmptyActionResult>('StartTask', 'Start Task');
+		this.JobCancelledAction = this.createAction<IJobCancelledRequest,IEmptyActionResult>('JobCancelled', 'Job Cancelled');
 		this.TaskCompletedAction = this.createAction<ITaskCompletedRequest,ITriggeredJobWithTasksModel>('TaskCompleted', 'Task Completed');
 		this.TaskFailedAction = this.createAction<ITaskFailedRequest,ITriggeredJobWithTasksModel>('TaskFailed', 'Task Failed');
 		this.LogMessageAction = this.createAction<ILogMessageRequest,IEmptyActionResult>('LogMessage', 'Log Message');
@@ -24,6 +25,7 @@ export class JobsGroup extends AppApiGroup {
 	readonly RetryJobsAction: AppApiAction<IRetryJobsRequest,ITriggeredJobWithTasksModel[]>;
 	readonly StartJobAction: AppApiAction<IStartJobRequest,ITriggeredJobWithTasksModel>;
 	readonly StartTaskAction: AppApiAction<IStartTaskRequest,IEmptyActionResult>;
+	readonly JobCancelledAction: AppApiAction<IJobCancelledRequest,IEmptyActionResult>;
 	readonly TaskCompletedAction: AppApiAction<ITaskCompletedRequest,ITriggeredJobWithTasksModel>;
 	readonly TaskFailedAction: AppApiAction<ITaskFailedRequest,ITriggeredJobWithTasksModel>;
 	readonly LogMessageAction: AppApiAction<ILogMessageRequest,IEmptyActionResult>;
@@ -42,6 +44,9 @@ export class JobsGroup extends AppApiGroup {
 	}
 	StartTask(model: IStartTaskRequest, errorOptions?: IActionErrorOptions) {
 		return this.StartTaskAction.execute(model, errorOptions || {});
+	}
+	JobCancelled(model: IJobCancelledRequest, errorOptions?: IActionErrorOptions) {
+		return this.JobCancelledAction.execute(model, errorOptions || {});
 	}
 	TaskCompleted(model: ITaskCompletedRequest, errorOptions?: IActionErrorOptions) {
 		return this.TaskCompletedAction.execute(model, errorOptions || {});

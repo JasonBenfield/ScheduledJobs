@@ -156,14 +156,17 @@ interface INextTaskModel {
 interface IStartTaskRequest {
 	TaskID: number;
 }
+interface IJobCancelledRequest {
+	TaskID: number;
+	Reason: string;
+	DeletionTime: IDeletionTime;
+}
 interface ITaskCompletedRequest {
-	JobID: number;
 	CompletedTaskID: number;
 	PreserveData: boolean;
 	NextTasks: INextTaskModel[];
 }
 interface ITaskFailedRequest {
-	JobID: number;
 	FailedTaskID: number;
 	ErrorStatus: IJobTaskStatus;
 	RetryAfter: string;
@@ -190,6 +193,10 @@ interface IDuplicateHandling {
 	DisplayText: string;
 }
 interface IAppEventSeverity {
+	Value: number;
+	DisplayText: string;
+}
+interface IDeletionTime {
 	Value: number;
 	DisplayText: string;
 }

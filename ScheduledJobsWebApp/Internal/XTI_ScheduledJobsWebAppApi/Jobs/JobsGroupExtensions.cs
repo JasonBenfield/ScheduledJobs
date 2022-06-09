@@ -11,6 +11,7 @@ internal static class JobsGroupExtensions
         services.AddScoped<RetryJobsAction>();
         services.AddScoped<StartJobAction>();
         services.AddScoped<StartTaskAction>();
+        services.AddScoped<JobCancelledAction>();
         services.AddScoped<TaskCompletedAction>();
         services.AddScoped<TaskFailedAction>();
         services.AddScoped<LogMessageAction>();

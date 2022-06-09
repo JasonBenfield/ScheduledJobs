@@ -40,6 +40,12 @@ public class JobsController : Controller
     }
 
     [HttpPost]
+    public Task<ResultContainer<EmptyActionResult>> JobCancelled([FromBody] JobCancelledRequest model, CancellationToken ct)
+    {
+        return api.Group("Jobs").Action<JobCancelledRequest, EmptyActionResult>("JobCancelled").Execute(model, ct);
+    }
+
+    [HttpPost]
     public Task<ResultContainer<TriggeredJobWithTasksModel>> TaskCompleted([FromBody] TaskCompletedRequest model, CancellationToken ct)
     {
         return api.Group("Jobs").Action<TaskCompletedRequest, TriggeredJobWithTasksModel>("TaskCompleted").Execute(model, ct);

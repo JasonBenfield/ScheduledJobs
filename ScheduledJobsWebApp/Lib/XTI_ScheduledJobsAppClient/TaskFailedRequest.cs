@@ -2,8 +2,6 @@
 namespace XTI_ScheduledJobsAppClient;
 public sealed partial class TaskFailedRequest
 {
-    public int JobID { get; set; }
-
     public int FailedTaskID { get; set; }
 
     public JobTaskStatus ErrorStatus { get; set; } = JobTaskStatus.Values.GetDefault();

@@ -26,6 +26,10 @@ public sealed class JobsGroup : AppApiGroupWrapper
         (
             actions.Action(nameof(StartTask), () => sp.GetRequiredService<StartTaskAction>())
         );
+        JobCancelled = source.AddAction
+        (
+            actions.Action(nameof(JobCancelled), () => sp.GetRequiredService<JobCancelledAction>())
+        );
         TaskCompleted = source.AddAction
         (
             actions.Action(nameof(TaskCompleted), () => sp.GetRequiredService<TaskCompletedAction>())
@@ -45,6 +49,7 @@ public sealed class JobsGroup : AppApiGroupWrapper
     public AppApiAction<RetryJobsRequest, TriggeredJobWithTasksModel[]> RetryJobs { get; }
     public AppApiAction<StartJobRequest, TriggeredJobWithTasksModel> StartJob { get; }
     public AppApiAction<StartTaskRequest, EmptyActionResult> StartTask { get; }
+    public AppApiAction<JobCancelledRequest, EmptyActionResult> JobCancelled { get; }
     public AppApiAction<TaskCompletedRequest, TriggeredJobWithTasksModel> TaskCompleted { get; }
     public AppApiAction<TaskFailedRequest, TriggeredJobWithTasksModel> TaskFailed { get; }
     public AppApiAction<LogMessageRequest, EmptyActionResult> LogMessage { get; }
