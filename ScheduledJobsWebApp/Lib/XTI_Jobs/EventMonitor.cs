@@ -55,6 +55,11 @@ public sealed class EventMonitor
             await currentTask.Completed(result.PreserveData, result.NextTasks);
             nextTask = await triggeredJob.StartNextTask();
         }
+        catch(CancelJobException cancelJobEx)
+        {
+            await currentTask.CancelJob(cancelJobEx.Reason, cancelJobEx.DeletionTime);
+            nextTask = null;
+        }
         catch (Exception ex)
         {
             JobErrorResult errorResult;

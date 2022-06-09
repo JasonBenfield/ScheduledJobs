@@ -12,7 +12,6 @@ internal sealed class TaskFailedAction : AppAction<TaskFailedRequest, TriggeredJ
     public Task<TriggeredJobWithTasksModel> Execute(TaskFailedRequest model, CancellationToken ct) =>
         db.TaskFailed
         (
-            model.JobID,
             model.FailedTaskID,
             model.ErrorStatus,
             model.RetryAfter,

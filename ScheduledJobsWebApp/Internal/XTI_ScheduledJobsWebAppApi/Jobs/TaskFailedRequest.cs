@@ -2,7 +2,6 @@
 
 public sealed class TaskFailedRequest
 {
-    public int JobID { get; set; }
     public int FailedTaskID { get; set; }
     public JobTaskStatus ErrorStatus { get; set; } = JobTaskStatus.Values.NotSet;
     public TimeSpan RetryAfter { get; set; }

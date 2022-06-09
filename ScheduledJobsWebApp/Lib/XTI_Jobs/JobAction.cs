@@ -21,6 +21,8 @@ public abstract class JobAction<T> : IJobAction
 
     protected abstract Task<T> Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder next, T data);
 
+    protected CancelJobExceptionBuilder CancelJob() => new CancelJobExceptionBuilder();
+
     public async Task<JobErrorResult> OnError(Exception ex)
     {
         var resultBuilder = new JobErrorResultBuilder(task.Model);

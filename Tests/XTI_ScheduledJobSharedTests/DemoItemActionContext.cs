@@ -13,15 +13,32 @@ public sealed class DemoItemActionContext<T>
 
     public void AddValue(string value) => values.Add(value);
 
-    private Func<DoSomethingItemData, bool> when = (_) => false;
+    private Func<DoSomethingItemData, bool> isError = (_) => false;
     private string error = "";
 
     public void DontThrowError() => ThrowErrorWhen("", (_) => false);
 
-    public void ThrowErrorWhen(string error, Func<DoSomethingItemData, bool> when)
+    public void ThrowErrorWhen(string error, Func<DoSomethingItemData, bool> isError)
     {
         this.error = error;
-        this.when = when;
+        this.isError = isError;
+    }
+
+    private Func<DoSomethingItemData, bool> isCanceled = (_) => false;
+    private Action<CancelJobExceptionBuilder> throwError = (_) => { };
+
+    public void CancelWhen(Func<DoSomethingItemData, bool> isCanceled, Action<CancelJobExceptionBuilder> throwError)
+    {
+        this.isCanceled = isCanceled;
+        this.throwError = throwError;
+    }
+
+    public void MaybeCancel(DoSomethingItemData itemData, CancelJobExceptionBuilder cancelExceptionBuilder)
+    {
+        if (isCanceled(itemData))
+        {
+            throwError(cancelExceptionBuilder);
+        }
     }
 
     private JobTaskStatus errorStatus = JobTaskStatus.Values.Failed;
@@ -40,13 +57,13 @@ public sealed class DemoItemActionContext<T>
 
     public void RetryAfterError(TimeSpan retryAfter)
     {
-        this.RetryAfter = retryAfter;
+        RetryAfter = retryAfter;
         errorStatus = JobTaskStatus.Values.Retry;
     }
 
     public void MaybeThrowError(DoSomethingItemData data)
     {
-        if (when(data))
+        if (isError(data))
         {
             throw new DemoItemActionException(error);
         }

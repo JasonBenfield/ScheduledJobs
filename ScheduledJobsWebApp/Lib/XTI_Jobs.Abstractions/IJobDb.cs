@@ -16,37 +16,37 @@ public interface IJobDb
 
     Task<TriggeredJobWithTasksModel> StartJob
     (
-        int jobID, 
+        int jobID,
         NextTaskModel[] nextTasks
     );
 
     Task StartTask(int taskID);
 
+    Task JobCancelled(int taskID, string reason, DeletionTime deletionTime);
+
     Task<TriggeredJobWithTasksModel> TaskCompleted
     (
-        int jobID,
-        int completedTaskID, 
+        int completedTaskID,
         bool preserveData,
         NextTaskModel[] nextTasks
     );
 
     Task<TriggeredJobWithTasksModel> TaskFailed
     (
-        int jobID, 
-        int failedTaskID, 
-        JobTaskStatus errorStatus, 
-        TimeSpan retryAfter, 
-        NextTaskModel[] nextTasks, 
-        string category, 
-        string message, 
+        int failedTaskID,
+        JobTaskStatus errorStatus,
+        TimeSpan retryAfter,
+        NextTaskModel[] nextTasks,
+        string category,
+        string message,
         string detail
     );
 
     Task LogMessage
     (
-        int taskID, 
-        string category, 
-        string message, 
+        int taskID,
+        string category,
+        string message,
         string details
     );
 }

@@ -57,6 +57,9 @@ public sealed class TriggeredJob
         .FirstOrDefault()
         ?? JobTaskStatus.Values.NotSet;
 
+    internal Task CancelJob(TriggeredJobTask triggeredJobTask, string reason, DeletionTime deletionTime) =>
+        db.JobCancelled(triggeredJobTask.Model.ID, reason, deletionTime);
+
     internal async Task<TriggeredJobTask?> Start(NextTaskModel[] firstTasks)
     {
         var startedJob = await db.StartJob(Model.ID, firstTasks);
@@ -93,7 +96,6 @@ public sealed class TriggeredJob
     {
         var updatedJob = await db.TaskFailed
         (
-            Model.ID,
             task.Model.ID,
             errorStatus,
             retryAfter,
@@ -109,7 +111,7 @@ public sealed class TriggeredJob
 
     internal async Task TaskCompleted(TriggeredJobTask task, bool preserveData, NextTaskModel[] nextTasks)
     {
-        var updatedJob = await db.TaskCompleted(Model.ID, task.Model.ID, preserveData, nextTasks);
+        var updatedJob = await db.TaskCompleted(task.Model.ID, preserveData, nextTasks);
         UpdateJob(updatedJob);
     }
 

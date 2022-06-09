@@ -19,7 +19,11 @@ internal sealed class PurgeJobsAndEventsTest
             events => events.AddEvent(DemoEventKeys.SomethingHappened),
             jobs => BuildJobs(jobs)
         );
-        var somethingHappenedData = new SomethingHappenedData { ID = 2, Items = Enumerable.Range(1, 3).ToArray() };
+        var somethingHappenedData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,

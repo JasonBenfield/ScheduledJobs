@@ -46,4 +46,7 @@ public sealed class TriggeredJobTask
 
     internal Task Completed(bool preserveData, NextTaskModel[] nextTasks) => 
         job.TaskCompleted(this, preserveData, nextTasks);
+
+    internal Task CancelJob(string reason, DeletionTime deletionTime) =>
+        job.CancelJob(this, reason, deletionTime);
 }

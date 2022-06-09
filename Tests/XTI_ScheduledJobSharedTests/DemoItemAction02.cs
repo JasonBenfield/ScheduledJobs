@@ -14,6 +14,7 @@ public sealed class DemoItemAction02 : JobAction<DoSomethingItemData>
     protected override Task<DoSomethingItemData> Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder nextTasks, DoSomethingItemData data)
     {
         context.MaybeThrowError(data);
+        context.MaybeCancel(data, CancelJob());
         data.Value = $"Value{data.ItemID}";
         context.AddValue(data.Value);
         return Task.FromResult(data);
