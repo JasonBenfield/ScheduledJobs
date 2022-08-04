@@ -1,29 +1,29 @@
-﻿import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+﻿import { BasicPage } from '@jasonbenfield/sharedwebapp/Components/BasicPage';
 import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
-import { Startup } from '@jasonbenfield/sharedwebapp/Startup';
 import { Apis } from '../Apis';
 import { MainMenuPanel } from '../MainMenuPanel';
 import { JobDefinitionListPanel } from './JobDefinitionListPanel';
 import { JobListPanel } from './JobListPanel';
 import { MainPageView } from './MainPageView';
 
-class MainPage {
+class MainPage extends BasicPage {
+    protected readonly view: MainPageView;
     private readonly panels = new SingleActivePanel();
     private readonly jobDefinitionsPanel: JobDefinitionListPanel;
     private readonly jobsPanel: JobListPanel;
     private readonly menuPanel: MainMenuPanel;
 
-    constructor(page: PageFrameView) {
-        let schdJobsApi = new Apis(page.modalError).ScheduledJobs();
-        let view = new MainPageView(page);
+    constructor() {
+        super(new MainPageView());
+        const schdJobsApi = new Apis(this.view.modalError).ScheduledJobs();
         this.jobDefinitionsPanel = this.panels.add(
-            new JobDefinitionListPanel(schdJobsApi, view.jobDefinitionsPanel)
+            new JobDefinitionListPanel(schdJobsApi, this.view.jobDefinitionsPanel)
         );
         this.jobsPanel = this.panels.add(
-            new JobListPanel(schdJobsApi, view.jobsPanel)
+            new JobListPanel(schdJobsApi, this.view.jobsPanel)
         );
         this.menuPanel = this.panels.add(
-            new MainMenuPanel(schdJobsApi, view.menuPanel)
+            new MainMenuPanel(schdJobsApi, this.view.menuPanel)
         );
         this.jobDefinitionsPanel.refresh();
         this.activateJobDefinitionsPanel();
@@ -31,7 +31,7 @@ class MainPage {
 
     private async activateJobDefinitionsPanel() {
         this.panels.activate(this.jobDefinitionsPanel);
-        let result = await this.jobDefinitionsPanel.start();
+        const result = await this.jobDefinitionsPanel.start();
         if (result.jobDefinitionSelected) {
             this.jobsPanel.setJobDefinitionID(result.jobDefinitionSelected.jobDefinitionID);
             this.jobsPanel.refresh();
@@ -44,7 +44,7 @@ class MainPage {
 
     private async activateJobsPanel() {
         this.panels.activate(this.jobsPanel);
-        let result = await this.jobsPanel.start();
+        const result = await this.jobsPanel.start();
         if (result.back) {
             this.activateJobDefinitionsPanel();
         }
@@ -52,10 +52,10 @@ class MainPage {
 
     private async activateMenuPanel() {
         this.panels.activate(this.menuPanel);
-        let result = await this.menuPanel.start();
+        const result = await this.menuPanel.start();
         if (result.done) {
             this.activateJobDefinitionsPanel();
         }
     }
 }
-new MainPage(new Startup().build());
+new MainPage();

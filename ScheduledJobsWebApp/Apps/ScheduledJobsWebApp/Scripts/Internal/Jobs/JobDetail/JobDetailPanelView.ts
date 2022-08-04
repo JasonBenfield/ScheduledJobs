@@ -1,54 +1,54 @@
-﻿import { ColumnCss } from "@jasonbenfield/sharedwebapp/ColumnCss";
-import { ButtonCommandItem } from "@jasonbenfield/sharedwebapp/Command/ButtonCommandItem";
-import { Block } from "@jasonbenfield/sharedwebapp/Html/Block";
-import { Container } from "@jasonbenfield/sharedwebapp/Html/Container";
-import { FlexColumn } from "@jasonbenfield/sharedwebapp/Html/FlexColumn";
-import { FlexColumnFill } from "@jasonbenfield/sharedwebapp/Html/FlexColumnFill";
-import { FormGroupView } from "@jasonbenfield/sharedwebapp/Html/FormGroupView";
-import { ListBlockViewModel } from "@jasonbenfield/sharedwebapp/Html/ListBlockViewModel";
-import { TextHeading1View } from "@jasonbenfield/sharedwebapp/Html/TextHeading1View";
-import { TextLinkView } from "@jasonbenfield/sharedwebapp/Html/TextLinkView";
-import { ListGroupView } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroupView";
-import { MessageAlertView } from "@jasonbenfield/sharedwebapp/MessageAlertView";
+﻿import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
 import { PaddingCss } from "@jasonbenfield/sharedwebapp/PaddingCss";
+import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
+import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicTextComponentView";
+import { BlockView } from "@jasonbenfield/sharedwebapp/Views/BlockView";
+import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
+import { FormGroupView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
+import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
+import { ButtonListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
+import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
+import { TextHeading1View } from "@jasonbenfield/sharedwebapp/Views/TextHeadings";
+import { TextLinkView } from "@jasonbenfield/sharedwebapp/Views/TextLinkView";
+import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { ScheduledJobsTheme } from "../../ScheduledJobsTheme";
 import { TaskListItemView } from "./TaskListItemView";
 
-export class JobDetailPanelView extends Block {
+export class JobDetailPanelView extends GridView {
     readonly alert: MessageAlertView;
-    private readonly jobBlock: Container;
-    readonly jobDisplayText: ITextComponentView;
-    readonly triggeredByFormGroup: FormGroupView;
+    private readonly jobBlock: BlockView;
+    readonly jobDisplayText: BasicTextComponentView;
+    private readonly triggeredByFormGroup: FormGroupView;
     readonly triggeredByLink: TextLinkView;
-    readonly tasks: ListGroupView;
-    readonly menuButton: ButtonCommandItem;
-    readonly refreshButton: ButtonCommandItem;
+    readonly tasks: ButtonListGroupView;
+    readonly menuButton: ButtonCommandView;
+    readonly refreshButton: ButtonCommandView;
 
-    constructor() {
-        super();
+    constructor(container: BasicComponentView) {
+        super(container);
         this.height100();
-        let flexColumn = this.addContent(new FlexColumn());
-        let flexFill = flexColumn.addContent(new FlexColumnFill());
-        this.alert = flexFill.addContent(new MessageAlertView());
-        this.jobBlock = flexFill.addContent(new Container());
-        this.jobDisplayText = this.jobBlock.addContent(new TextHeading1View());
-        this.triggeredByFormGroup = this.jobBlock.addContent(new FormGroupView());
-        this.triggeredByFormGroup.captionColumn.setColumnCss(ColumnCss.xs('auto'));
-        this.triggeredByFormGroup.valueColumn.addCssName('form-control-plaintext');
-        this.triggeredByLink = this.triggeredByFormGroup.valueColumn.addContent(new TextLinkView());
+        this.layout();
+        this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
+        const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
+        this.alert = mainContent.addView(MessageAlertView);
+        this.jobBlock = mainContent.addView(BlockView);
+        this.jobBlock.addCssName('container');
+        this.jobDisplayText = this.jobBlock.addView(TextHeading1View);
+        this.triggeredByFormGroup = this.jobBlock.addView(FormGroupView);
+        this.triggeredByFormGroup.caption.setText('Triggered By');
+        this.triggeredByFormGroup.valueCell.addCssName('form-control-plaintext');
+        this.triggeredByLink = this.triggeredByFormGroup.valueCell.addView(TextLinkView);
         this.jobBlock.setPadding(PaddingCss.xs({ top: 3, bottom: 3 }));
-        this.tasks = flexFill.addContent(
-            new ListGroupView(
-                () => new TaskListItemView(),
-                new ListBlockViewModel()
-            )
+        this.tasks = mainContent.addView(ButtonListGroupView);
+        this.tasks.setItemViewType(TaskListItemView);
+        const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
+            this.addCell().addView(ToolbarView)
         );
-        let toolbar = flexColumn.addContent(ScheduledJobsTheme.instance.commandToolbar.toolbar());
-        this.menuButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.menuButton()
+        this.menuButton = ScheduledJobsTheme.instance.commandToolbar.menuButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
-        this.refreshButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.refreshButton()
+        this.refreshButton = ScheduledJobsTheme.instance.commandToolbar.refreshButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
     }
 

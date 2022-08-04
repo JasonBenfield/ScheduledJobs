@@ -1,10 +1,9 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
-import { AsyncCommand } from "@jasonbenfield/sharedwebapp/Command/AsyncCommand";
-import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
-import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
-import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
-import { ScheduledJobsAppApi } from "../../../ScheduledJobs/Api/ScheduledJobsAppApi";
+import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
+import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
+import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
 import { JobListPanelView } from "../JobListPanelView";
 import { JobSummaryListItem } from "../JobSummaryListItem";
 import { JobSummaryListItemView } from "../JobSummaryListItemView";
@@ -30,7 +29,7 @@ export class FailedJobsPanel implements IPanel {
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobListPanelView) {
         this.alert = new MessageAlert(view.alert);
         this.failedJobsList = new ListGroup(view.jobs);
-        new TextBlock('Failed Jobs', view.heading);
+        new TextComponent(view.heading).setText('Failed Jobs');
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
@@ -40,7 +39,7 @@ export class FailedJobsPanel implements IPanel {
     private requestMenu() { return FailedJobsPanelResult.menuRequested(); }
 
     private async doRefresh() {
-        let failedJobs = await this.getFailedJobs();
+        const failedJobs = await this.getFailedJobs();
         this.failedJobsList.setItems(
             failedJobs,
             (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)

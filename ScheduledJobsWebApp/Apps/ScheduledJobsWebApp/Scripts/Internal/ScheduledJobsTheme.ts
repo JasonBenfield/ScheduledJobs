@@ -1,19 +1,36 @@
-﻿import { ButtonCommandItem } from "@jasonbenfield/sharedwebapp/Command/ButtonCommandItem";
+﻿import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
 import { ContextualClass } from "@jasonbenfield/sharedwebapp/ContextualClass";
-import { Toolbar } from "@jasonbenfield/sharedwebapp/Html/Toolbar";
+import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { PaddingCss } from "@jasonbenfield/sharedwebapp/PaddingCss";
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
+import { BlockView } from "@jasonbenfield/sharedwebapp/Views/BlockView";
+import { GridCellView } from "@jasonbenfield/sharedwebapp/Views/Grid";
 
 export class ScheduledJobsTheme {
     public static readonly instance = new ScheduledJobsTheme();
 
+    mainContent(cell: GridCellView) {
+        return cell
+            .configure(c => c.positionRelative())
+            .addView(BlockView)
+            .configure(b => {
+                b.positionAbsoluteFill();
+                b.scrollable();
+            })
+            .addView(BlockView)
+            .configure(b => {
+                b.addCssName('container');
+                b.setPadding(PaddingCss.top(3));
+            });
+    }
+
     readonly listItem = {
-        deleteButton() {
-            return new ButtonCommandItem()
+        deleteButton(button: ButtonCommandView) {
+            return button
                 .configure(b => {
-                    b.icon.setName('times');
+                    b.icon.solidStyle('times');
                     b.icon.addCssFrom(new TextCss().context(ContextualClass.danger).cssClass());
-                    b.useOutlineStyle();
+                    b.useOutlineStyle(ContextualClass.secondary);
                     b.setText('');
                     b.setTitle('Delete');
                 });
@@ -21,22 +38,20 @@ export class ScheduledJobsTheme {
     }
 
     readonly cardHeader = {
-        editButton() {
-            return new ButtonCommandItem()
+        editButton(button: ButtonCommandView) {
+            return button
                 .configure(b => {
-                    b.icon.setName('edit');
-                    b.setContext(ContextualClass.primary);
-                    b.useOutlineStyle();
+                    b.icon.solidStyle('edit');
+                    b.useOutlineStyle(ContextualClass.primary);
                     b.setText('Edit');
                     b.setTitle('Edit');
                 });
         },
-        addButton() {
-            return new ButtonCommandItem()
+        addButton(button: ButtonCommandView) {
+            return button
                 .configure(b => {
-                    b.icon.setName('plus');
-                    b.setContext(ContextualClass.primary);
-                    b.useOutlineStyle();
+                    b.icon.solidStyle('plus');
+                    b.useOutlineStyle(ContextualClass.primary);
                     b.setText('Add');
                     b.setTitle('Add');
                 });
@@ -44,66 +59,63 @@ export class ScheduledJobsTheme {
     }
 
     readonly commandToolbar = {
-        toolbar() {
-            return new Toolbar()
+        toolbar(toolbar: ToolbarView) {
+            return toolbar
                 .configure(t => {
                     t.setBackgroundContext(ContextualClass.secondary);
+                    t.addCssName('bg-opacity-50');
                     t.setPadding(PaddingCss.xs(3));
                 });
         },
-        menuButton() {
-            return new ButtonCommandItem()
+        menuButton(button: ButtonCommandView) {
+            return button
                 .configure(b => {
-                    b.icon.setName('bars');
+                    b.icon.solidStyle('bars');
                     b.setText('');
                     b.setTitle('Menu');
-                    b.setContext(ContextualClass.light);
-                    b.useOutlineStyle();
+                    b.useOutlineStyle(ContextualClass.secondary);
                 });
         },
-        refreshButton() {
-            return new ButtonCommandItem()
+        refreshButton(button: ButtonCommandView) {
+            return button
                 .configure(b => {
-                    b.icon.setName('sync-alt');
+                    b.icon.solidStyle('sync-alt');
                     b.setText('');
                     b.setTitle('Refresh');
-                    b.setContext(ContextualClass.light);
-                    b.useOutlineStyle();
+                    b.useOutlineStyle(ContextualClass.secondary);
                 });
         },
-        backButton() {
-            return new ButtonCommandItem()
+        backButton(button: ButtonCommandView) {
+            return button
                 .configure(b => {
-                    b.icon.setName('caret-left');
+                    b.icon.solidStyle('caret-left');
                     b.setText('Back');
                     b.setTitle('Back');
-                    b.setContext(ContextualClass.light);
-                    b.useOutlineStyle();
+                    b.useOutlineStyle(ContextualClass.secondary);
                 });
         },
-        nextButton() {
-            return new ButtonCommandItem()
+        nextButton(button: ButtonCommandView) {
+            return button
                 .configure(b => {
-                    b.icon.setName('caret-right');
+                    b.icon.solidStyle('caret-right');
                     b.setText('Next');
                     b.setTitle('Next');
-                    b.setContext(ContextualClass.light);
-                    b.useOutlineStyle();
+                    b.useOutlineStyle(ContextualClass.secondary);
                 });
         },
-        cancelButton() {
-            return new ButtonCommandItem()
+        cancelButton(button: ButtonCommandView) {
+            return button
                 .configure(b => {
-                    b.icon.setName('times');
+                    b.icon.solidStyle('times');
                     b.setText('Cancel');
                     b.setTitle('Cancel');
                     b.setContext(ContextualClass.danger);
                 });
         },
-        saveButton() {
-            return new ButtonCommandItem()
+        saveButton(button: ButtonCommandView) {
+            return button
                 .configure(b => {
-                    b.icon.setName('check');
+                    b.icon.solidStyle('check');
                     b.setText('Save');
                     b.setTitle('Save');
                     b.setContext(ContextualClass.primary);

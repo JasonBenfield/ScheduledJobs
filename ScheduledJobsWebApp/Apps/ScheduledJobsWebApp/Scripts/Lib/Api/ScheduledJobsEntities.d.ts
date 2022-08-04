@@ -1,7 +1,13 @@
 // Generated code
 
-interface IUserStartRequest {
-	ReturnUrl: string;
+interface IResourcePath {
+	Group: string;
+	Action: string;
+	ModKey: string;
+}
+interface IResourcePathAccess {
+	Path: IResourcePath;
+	HasAccess: boolean;
 }
 interface IEmptyRequest {
 }

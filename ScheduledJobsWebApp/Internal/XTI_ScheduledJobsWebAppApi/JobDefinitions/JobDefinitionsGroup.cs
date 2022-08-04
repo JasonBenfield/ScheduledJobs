@@ -5,15 +5,14 @@ public sealed class JobDefinitionsGroup : AppApiGroupWrapper
     public JobDefinitionsGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        var actions = new AppApiActionFactory(source);
-        Index = source.AddAction(actions.Action(nameof(Index), () => sp.GetRequiredService<IndexView>()));
+        Index = source.AddAction(nameof(Index), () => sp.GetRequiredService<IndexView>());
         GetJobDefinitions = source.AddAction
         (
-            actions.Action(nameof(GetJobDefinitions), () => sp.GetRequiredService<GetJobDefinitionsAction>())
+            nameof(GetJobDefinitions), () => sp.GetRequiredService<GetJobDefinitionsAction>()
         );
         GetRecentTriggeredJobs = source.AddAction
         (
-            actions.Action(nameof(GetRecentTriggeredJobs), () => sp.GetRequiredService<GetRecentTriggeredJobsAction>())
+            nameof(GetRecentTriggeredJobs), () => sp.GetRequiredService<GetRecentTriggeredJobsAction>()
         );
     }
 

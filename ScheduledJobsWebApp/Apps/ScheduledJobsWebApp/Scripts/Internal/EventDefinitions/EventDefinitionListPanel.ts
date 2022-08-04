@@ -1,9 +1,8 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
-import { AsyncCommand } from "@jasonbenfield/sharedwebapp/Command/AsyncCommand";
-import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
-import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
-import { ScheduledJobsAppApi } from "../../ScheduledJobs/Api/ScheduledJobsAppApi";
+import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
+import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
+import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
 import { EventDefinitionListItem } from "./EventDefinitionListItem";
 import { EventDefinitionListItemView } from "./EventDefinitionListItemView";
 import { EventDefinitionListPanelView } from "./EventDefinitionListPanelView";
@@ -38,7 +37,7 @@ export class EventDefinitionListPanel implements IPanel {
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: EventDefinitionListPanelView) {
         this.alert = new MessageAlert(view.alert);
         this.eventDefinitions = new ListGroup(view.eventDefinitions);
-        this.eventDefinitions.itemClicked.register(this.onDefinitionClicked.bind(this));
+        this.eventDefinitions.registerItemClicked(this.onDefinitionClicked.bind(this));
         new Command(this.menu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
@@ -52,7 +51,7 @@ export class EventDefinitionListPanel implements IPanel {
     private menu() { this.awaitable.resolve(EventDefinitionListPanelResult.menuRequested()); }
 
     private async doRefresh() {
-        let evtDefs = await this.getEventDefinitions();
+        const evtDefs = await this.getEventDefinitions();
         this.eventDefinitions.setItems(
             evtDefs,
             (evtDef, itemView: EventDefinitionListItemView) => new EventDefinitionListItem(evtDef, itemView)

@@ -5,42 +5,41 @@ public sealed class JobsGroup : AppApiGroupWrapper
     public JobsGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        var actions = new AppApiActionFactory(source);
         AddOrUpdateRegisteredJobs = source.AddAction
         (
-            actions.Action(nameof(AddOrUpdateRegisteredJobs), () => sp.GetRequiredService<AddOrUpdateRegisteredJobsAction>())
+            nameof(AddOrUpdateRegisteredJobs), () => sp.GetRequiredService<AddOrUpdateRegisteredJobsAction>()
         );
         TriggerJobs = source.AddAction
         (
-            actions.Action(nameof(TriggerJobs), () => sp.GetRequiredService<TriggerJobsAction>())
+            nameof(TriggerJobs), () => sp.GetRequiredService<TriggerJobsAction>()
         );
         RetryJobs = source.AddAction
         (
-            actions.Action(nameof(RetryJobs), () => sp.GetRequiredService<RetryJobsAction>())
+            nameof(RetryJobs), () => sp.GetRequiredService<RetryJobsAction>()
         );
         StartJob = source.AddAction
         (
-            actions.Action(nameof(StartJob), () => sp.GetRequiredService<StartJobAction>())
+            nameof(StartJob), () => sp.GetRequiredService<StartJobAction>()
         );
         StartTask = source.AddAction
         (
-            actions.Action(nameof(StartTask), () => sp.GetRequiredService<StartTaskAction>())
+            nameof(StartTask), () => sp.GetRequiredService<StartTaskAction>()
         );
         JobCancelled = source.AddAction
         (
-            actions.Action(nameof(JobCancelled), () => sp.GetRequiredService<JobCancelledAction>())
+            nameof(JobCancelled), () => sp.GetRequiredService<JobCancelledAction>()
         );
         TaskCompleted = source.AddAction
         (
-            actions.Action(nameof(TaskCompleted), () => sp.GetRequiredService<TaskCompletedAction>())
+            nameof(TaskCompleted), () => sp.GetRequiredService<TaskCompletedAction>()
         );
         TaskFailed = source.AddAction
         (
-            actions.Action(nameof(TaskFailed), () => sp.GetRequiredService<TaskFailedAction>())
+            nameof(TaskFailed), () => sp.GetRequiredService<TaskFailedAction>()
         );
         LogMessage = source.AddAction
         (
-            actions.Action(nameof(LogMessage), () => sp.GetRequiredService<LogMessageAction>())
+            nameof(LogMessage), () => sp.GetRequiredService<LogMessageAction>()
         );
     }
 

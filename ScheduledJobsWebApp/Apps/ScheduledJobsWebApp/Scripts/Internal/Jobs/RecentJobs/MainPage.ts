@@ -1,21 +1,21 @@
-﻿import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+﻿import { BasicPage } from '@jasonbenfield/sharedwebapp/Components/BasicPage';
 import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
-import { Startup } from '@jasonbenfield/sharedwebapp/Startup';
 import { Apis } from '../../Apis';
 import { MainMenuPanel } from '../../MainMenuPanel';
-import { RecentJobsPanel } from './RecentJobsPanel';
 import { MainPageView } from './MainPageView';
+import { RecentJobsPanel } from './RecentJobsPanel';
 
-class MainPage {
+class MainPage extends BasicPage {
+    protected readonly view: MainPageView;
     private readonly panels = new SingleActivePanel();
     private readonly jobsPanel: RecentJobsPanel;
     private readonly menuPanel: MainMenuPanel;
 
-    constructor(page: PageFrameView) {
-        let schdJobsApi = new Apis(page.modalError).ScheduledJobs();
-        let view = new MainPageView(page);
-        this.jobsPanel = this.panels.add(new RecentJobsPanel(schdJobsApi, view.jobsPanel));
-        this.menuPanel = this.panels.add(new MainMenuPanel(schdJobsApi, view.menuPanel));
+    constructor() {
+        super(new MainPageView());
+        const schdJobsApi = new Apis(this.view.modalError).ScheduledJobs();
+        this.jobsPanel = this.panels.add(new RecentJobsPanel(schdJobsApi, this.view.jobsPanel));
+        this.menuPanel = this.panels.add(new MainMenuPanel(schdJobsApi, this.view.menuPanel));
         this.jobsPanel.refresh();
         this.activateFailedJobsPanel();
     }
@@ -36,4 +36,4 @@ class MainPage {
         }
     }
 }
-new MainPage(new Startup().build());
+new MainPage();

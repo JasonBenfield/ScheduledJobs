@@ -1,30 +1,26 @@
 ﻿import { ContextualClass } from "@jasonbenfield/sharedwebapp/ContextualClass";
-import { Row } from "@jasonbenfield/sharedwebapp/Grid/Row";
-import { TextSpanView } from "@jasonbenfield/sharedwebapp/Html/TextSpanView";
-import { LinkListGroupItemView } from "@jasonbenfield/sharedwebapp/ListGroup/LinkListGroupItemView";
-import { LinkListItemViewModel } from "@jasonbenfield/sharedwebapp/ListGroup/LinkListItemViewModel";
+import { RowView } from "@jasonbenfield/sharedwebapp/Views/RowView";
+import { TextSpanView } from "@jasonbenfield/sharedwebapp/Views/TextSpanView";
+import { LinkListGroupItemView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
+import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
 
 export class JobSummaryListItemView extends LinkListGroupItemView {
 
-    constructor() {
-        super(new LinkListItemViewModel());
-        let row = this.addContent(new Row());
-        let col1 = row.addColumn();
-        this.displayText = col1
-            .addContent(new TextSpanView());
-        let col2 = row.addColumn();
+    constructor(container: BasicComponentView) {
+        super(container);
+        const row = this.addView(RowView);
+        const col1 = row.addColumn();
+        this.displayText = col1.addView(TextSpanView);
+        const col2 = row.addColumn();
         this.timeStarted = col2
-            .addContent(new TextSpanView());
-        this.timeElapsed = col2
-            .addContent(new TextSpanView());
-        let col3 = row.addColumn();
-        this.status = col3
-            .addContent(new TextSpanView());
-        let col4 = row.addColumn();
+            .addView(TextSpanView);
+        this.timeElapsed = col2.addView(TextSpanView);
+        const col3 = row.addColumn();
+        this.status = col3.addView(TextSpanView);
+        const col4 = row.addColumn();
         col4.setTextCss(new TextCss().end());
-        this.taskCount = col4
-            .addContent(new TextSpanView());
+        this.taskCount = col4.addView(TextSpanView);
         this.taskCount.addCssName('badge');
         this.taskCount.setBackgroundContext(ContextualClass.secondary);
     }

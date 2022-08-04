@@ -2,13 +2,14 @@
 namespace XTI_ScheduledJobsAppClient;
 public sealed partial class JobDefinitionsGroup : AppClientGroup
 {
-    public JobDefinitionsGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl) : base(httpClientFactory, xtiTokenAccessor, clientUrl, "JobDefinitions")
+    public JobDefinitionsGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "JobDefinitions")
     {
-        Actions = new JobDefinitionsActions(clientUrl);
+        Actions = new JobDefinitionsGroupActions(Index: CreateGetAction<EmptyRequest>("Index"), GetJobDefinitions: CreatePostAction<EmptyRequest, JobDefinitionModel[]>("GetJobDefinitions"), GetRecentTriggeredJobs: CreatePostAction<GetRecentTriggeredJobsByDefinitionRequest, JobSummaryModel[]>("GetRecentTriggeredJobs"));
     }
 
-    public JobDefinitionsActions Actions { get; }
+    public JobDefinitionsGroupActions Actions { get; }
 
-    public Task<JobDefinitionModel[]> GetJobDefinitions() => Post<JobDefinitionModel[], EmptyRequest>("GetJobDefinitions", "", new EmptyRequest());
-    public Task<JobSummaryModel[]> GetRecentTriggeredJobs(GetRecentTriggeredJobsByDefinitionRequest model) => Post<JobSummaryModel[], GetRecentTriggeredJobsByDefinitionRequest>("GetRecentTriggeredJobs", "", model);
+    public Task<JobDefinitionModel[]> GetJobDefinitions() => Actions.GetJobDefinitions.Post("", new EmptyRequest());
+    public Task<JobSummaryModel[]> GetRecentTriggeredJobs(GetRecentTriggeredJobsByDefinitionRequest model) => Actions.GetRecentTriggeredJobs.Post("", model);
+    public sealed record JobDefinitionsGroupActions(AppClientGetAction<EmptyRequest> Index, AppClientPostAction<EmptyRequest, JobDefinitionModel[]> GetJobDefinitions, AppClientPostAction<GetRecentTriggeredJobsByDefinitionRequest, JobSummaryModel[]> GetRecentTriggeredJobs);
 }

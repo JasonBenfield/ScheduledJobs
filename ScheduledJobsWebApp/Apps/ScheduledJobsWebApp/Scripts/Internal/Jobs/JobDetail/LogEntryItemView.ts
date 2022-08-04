@@ -1,24 +1,26 @@
 ﻿import { ColumnCss } from "@jasonbenfield/sharedwebapp/ColumnCss";
-import { Row } from "@jasonbenfield/sharedwebapp/Grid/Row";
-import { TextBlockView } from "@jasonbenfield/sharedwebapp/Html/TextBlockView";
-import { TextSpanView } from "@jasonbenfield/sharedwebapp/Html/TextSpanView";
-import { ListGroupItemView } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroupItemView";
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
+import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
+import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicTextComponentView";
+import { ListGroupItemView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
+import { RowView } from "@jasonbenfield/sharedwebapp/Views/RowView";
+import { TextBlockView } from "@jasonbenfield/sharedwebapp/Views/TextBlockView";
+import { TextSpanView } from "@jasonbenfield/sharedwebapp/Views/TextSpanView";
 
 export class LogEntryItemView extends ListGroupItemView {
-    constructor() {
-        super();
-        let row = this.addContent(new Row());
-        let col1 = row.addColumn();
+    constructor(container: BasicComponentView) {
+        super(container);
+        const row = this.addView(RowView);
+        const col1 = row.addColumn();
         col1.setColumnCss(ColumnCss.xs(2));
         col1.setTextCss(new TextCss().truncate());
-        this.category = col1.addContent(new TextSpanView());
-        let col2 = row.addColumn();
-        this.message = col2.addContent(new TextBlockView());
-        this.details = col2.addContent(new TextBlockView());
+        this.category = col1.addView(TextSpanView);
+        const col2 = row.addColumn();
+        this.message = col2.addView(TextBlockView);
+        this.details = col2.addView(TextBlockView);
     }
 
-    readonly category: ITextComponentView;
-    readonly message: ITextComponentView;
-    readonly details: ITextComponentView;
+    readonly category: BasicTextComponentView;
+    readonly message: BasicTextComponentView;
+    readonly details: BasicTextComponentView;
 }

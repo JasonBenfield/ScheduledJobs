@@ -5,18 +5,17 @@ public sealed class EventDefinitionsGroup : AppApiGroupWrapper
     public EventDefinitionsGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        var actions = new AppApiActionFactory(source);
         Index = source.AddAction
         (
-            actions.Action(nameof(Index), () => sp.GetRequiredService<IndexView>())
+            nameof(Index), () => sp.GetRequiredService<IndexView>()
         );
         GetEventDefinitions = source.AddAction
         (
-            actions.Action(nameof(GetEventDefinitions), () => sp.GetRequiredService<GetEventDefinitionsAction>())
+            nameof(GetEventDefinitions), () => sp.GetRequiredService<GetEventDefinitionsAction>()
         );
         GetRecentNotifications = source.AddAction
         (
-            actions.Action(nameof(GetRecentNotifications), () => sp.GetRequiredService<GetRecentNotificationsAction>())
+            nameof(GetRecentNotifications), () => sp.GetRequiredService<GetRecentNotificationsAction>()
         );
     }
 

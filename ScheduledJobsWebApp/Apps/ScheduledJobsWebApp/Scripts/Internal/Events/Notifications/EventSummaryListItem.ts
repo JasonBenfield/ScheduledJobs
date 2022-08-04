@@ -1,16 +1,19 @@
-﻿import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
-import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
-import { ScheduledJobsAppApi } from "../../../ScheduledJobs/Api/ScheduledJobsAppApi";
+﻿import { BasicComponent } from "@jasonbenfield/sharedwebapp/Components/BasicComponent";
+import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
+import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
 import { EventSummaryListItemView } from "./EventSummaryListItemView";
 
-export class EventSummaryListItem {
+export class EventSummaryListItem extends BasicComponent {
     constructor(schdJobsApp: ScheduledJobsAppApi, evt: IEventSummaryModel, view: EventSummaryListItemView) {
+        super(view);
         view.setHref(schdJobsApp.EventInquiry.NotificationDetail.getUrl({ NotificationID: evt.Event.ID }).value());
-        new TextBlock(evt.Event.Definition.EventKey.DisplayText, view.displayText);
-        new TextBlock(new FormattedDate(evt.Event.TimeActive).formatDateTime(), view.timeActive);
-        new TextBlock(evt.Event.SourceKey, view.sourceKey);
-        let sourceData = new TextBlock(evt.Event.SourceData, view.sourceData);
+        new TextComponent(view.displayText).setText(evt.Event.Definition.EventKey.DisplayText);
+        new TextComponent(view.timeActive).setText(new FormattedDate(evt.Event.TimeActive).formatDateTime());
+        new TextComponent(view.sourceKey).setText(evt.Event.SourceKey);
+        const sourceData = new TextComponent(view.sourceData);
+        sourceData.setText(evt.Event.SourceData);
         sourceData.syncTitleWithText();
-        new TextBlock(evt.TriggeredJobCount.toString(), view.triggeredJobCount);
+        new TextComponent(view.triggeredJobCount).setText(evt.TriggeredJobCount.toString());
     }
 }

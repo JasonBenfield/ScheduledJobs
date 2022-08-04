@@ -1,17 +1,13 @@
 ﻿import { AppApiFactory } from "@jasonbenfield/sharedwebapp/Api/AppApiFactory";
-import { ModalErrorComponent } from "@jasonbenfield/sharedwebapp/Error/ModalErrorComponent";
-import { ModalErrorComponentView } from "@jasonbenfield/sharedwebapp/Error/ModalErrorComponentView";
-import { ScheduledJobsAppApi } from "../ScheduledJobs/Api/ScheduledJobsAppApi";
+import { ModalErrorView } from "@jasonbenfield/sharedwebapp/Views/ModalError";
+import { ScheduledJobsAppApi } from "../Lib/Api/ScheduledJobsAppApi";
 
 export class Apis {
-    private readonly modalError: ModalErrorComponent;
-
-    constructor(modalError: ModalErrorComponentView) {
-        this.modalError = new ModalErrorComponent(modalError);
+    constructor(private readonly modalError: ModalErrorView) {
     }
 
     ScheduledJobs() {
-        let apiFactory = new AppApiFactory(this.modalError)
+        const apiFactory = new AppApiFactory(this.modalError)
         return apiFactory.api(ScheduledJobsAppApi);
     }
 }

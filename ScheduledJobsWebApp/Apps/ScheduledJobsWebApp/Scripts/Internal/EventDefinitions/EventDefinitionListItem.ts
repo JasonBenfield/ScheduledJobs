@@ -1,8 +1,10 @@
-﻿import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
+﻿import { BasicComponent } from "@jasonbenfield/sharedwebapp/Components/BasicComponent";
+import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
 import { EventDefinitionListItemView } from "./EventDefinitionListItemView";
 
-export class EventDefinitionListItem {
+export class EventDefinitionListItem extends BasicComponent {
     constructor(readonly evtDef: IEventDefinitionModel, view: EventDefinitionListItemView) {
-        new TextBlock(evtDef.EventKey.DisplayText, view.displayText);
+        super(view);
+        new TextComponent(view.displayText).setText(evtDef.EventKey.DisplayText);
     }
 }

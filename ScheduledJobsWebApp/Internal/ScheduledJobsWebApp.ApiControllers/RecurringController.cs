@@ -1,7 +1,7 @@
 // Generated Code
 namespace ScheduledJobsWebApp.ApiControllers;
 [Authorize]
-public class RecurringController : Controller
+public sealed partial class RecurringController : Controller
 {
     private readonly ScheduledJobsAppApi api;
     public RecurringController(ScheduledJobsAppApi api)

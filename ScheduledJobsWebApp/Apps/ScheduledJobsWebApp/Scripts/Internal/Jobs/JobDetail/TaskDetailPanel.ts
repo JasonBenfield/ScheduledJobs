@@ -1,13 +1,12 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
-import { AsyncCommand } from "@jasonbenfield/sharedwebapp/Command/AsyncCommand";
-import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
+import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
+import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
+import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { ModalConfirm } from "@jasonbenfield/sharedwebapp/Components/ModalConfirm";
+import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
 import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
-import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
-import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
-import { ModalConfirmComponent } from "@jasonbenfield/sharedwebapp/Modal/ModalConfirmComponent";
-import { JobTaskStatus } from "../../../ScheduledJobs/Api/JobTaskStatus";
-import { ScheduledJobsAppApi } from "../../../ScheduledJobs/Api/ScheduledJobsAppApi";
+import { JobTaskStatus } from "../../../Lib/Api/JobTaskStatus";
+import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
 import { FormattedTimeSpan } from "../../FormattedTimeSpan";
 import { LogEntryItem } from "./LogEntryItem";
 import { LogEntryItemView } from "./LogEntryItemView";
@@ -29,25 +28,25 @@ export class TaskDetailPanelResult {
 
 export class TaskDetailPanel implements IPanel {
     private readonly awaitable = new Awaitable<TaskDetailPanelResult>();
-    private readonly displayText: TextBlock;
-    private readonly status: TextBlock;
-    private readonly timeStarted: TextBlock;
-    private readonly timeElapsed: TextBlock;
-    private readonly taskData: TextBlock;
+    private readonly displayText: TextComponent;
+    private readonly status: TextComponent;
+    private readonly timeStarted: TextComponent;
+    private readonly timeElapsed: TextComponent;
+    private readonly taskData: TextComponent;
     private readonly logEntries: ListGroup;
     private readonly alert: MessageAlert;
     private tasks: ITriggeredJobTaskModel[];
     private currentTask: ITriggeredJobTaskModel;
     private readonly cancelTaskCommand: AsyncCommand;
     private readonly retryTaskCommand: AsyncCommand;
-    private readonly modalConfirm: ModalConfirmComponent;
+    private readonly modalConfirm: ModalConfirm;
 
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
-        this.displayText = new TextBlock('', this.view.displayText);
-        this.status = new TextBlock('', this.view.status);
-        this.timeStarted = new TextBlock('', this.view.timeStarted);
-        this.timeElapsed = new TextBlock('', this.view.timeElapsed);
-        this.taskData = new TextBlock('', this.view.taskData);
+        this.displayText = new TextComponent(this.view.displayText);
+        this.status = new TextComponent(this.view.status);
+        this.timeStarted = new TextComponent(this.view.timeStarted);
+        this.timeElapsed = new TextComponent(this.view.timeElapsed);
+        this.taskData = new TextComponent(this.view.taskData);
         this.logEntries = new ListGroup(this.view.logEntries);
         this.alert = new MessageAlert(this.view.alert);
         new Command(this.previousTask.bind(this)).add(view.previousTaskButton);
@@ -59,11 +58,11 @@ export class TaskDetailPanel implements IPanel {
         this.retryTaskCommand = new AsyncCommand(this.retryTask.bind(this));
         this.retryTaskCommand.hide();
         this.retryTaskCommand.add(view.retryTaskButton);
-        this.modalConfirm = new ModalConfirmComponent(view.modalConfirm);
+        this.modalConfirm = new ModalConfirm(view.modalConfirm);
     }
 
     private async cancelTask() {
-        let confirmed = await this.modalConfirm.confirm('Cancel this task?', 'Confirm cancel');
+        const confirmed = await this.modalConfirm.confirm('Cancel this task?', 'Confirm cancel');
         if (confirmed) {
             await this.alert.infoAction(
                 'Canceling task...',
@@ -76,7 +75,7 @@ export class TaskDetailPanel implements IPanel {
     }
 
     private async retryTask() {
-        let confirmed = await this.modalConfirm.confirm('Retry this task?', 'Confirm retry');
+        const confirmed = await this.modalConfirm.confirm('Retry this task?', 'Confirm retry');
         if (confirmed) {
             await this.alert.infoAction(
                 'Retrying task...',

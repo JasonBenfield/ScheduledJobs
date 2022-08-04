@@ -2,17 +2,21 @@
 namespace XTI_ScheduledJobsAppClient;
 public sealed partial class JobsGroup : AppClientGroup
 {
-    public JobsGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl) : base(httpClientFactory, xtiTokenAccessor, clientUrl, "Jobs")
+    public JobsGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "Jobs")
     {
+        Actions = new JobsGroupActions(AddOrUpdateRegisteredJobs: CreatePostAction<RegisteredJob[], EmptyActionResult>("AddOrUpdateRegisteredJobs"), TriggerJobs: CreatePostAction<TriggerJobsRequest, PendingJobModel[]>("TriggerJobs"), RetryJobs: CreatePostAction<RetryJobsRequest, TriggeredJobWithTasksModel[]>("RetryJobs"), StartJob: CreatePostAction<StartJobRequest, TriggeredJobWithTasksModel>("StartJob"), StartTask: CreatePostAction<StartTaskRequest, EmptyActionResult>("StartTask"), JobCancelled: CreatePostAction<JobCancelledRequest, EmptyActionResult>("JobCancelled"), TaskCompleted: CreatePostAction<TaskCompletedRequest, TriggeredJobWithTasksModel>("TaskCompleted"), TaskFailed: CreatePostAction<TaskFailedRequest, TriggeredJobWithTasksModel>("TaskFailed"), LogMessage: CreatePostAction<LogMessageRequest, EmptyActionResult>("LogMessage"));
     }
 
-    public Task<EmptyActionResult> AddOrUpdateRegisteredJobs(RegisteredJob[] model) => Post<EmptyActionResult, RegisteredJob[]>("AddOrUpdateRegisteredJobs", "", model);
-    public Task<PendingJobModel[]> TriggerJobs(TriggerJobsRequest model) => Post<PendingJobModel[], TriggerJobsRequest>("TriggerJobs", "", model);
-    public Task<TriggeredJobWithTasksModel[]> RetryJobs(RetryJobsRequest model) => Post<TriggeredJobWithTasksModel[], RetryJobsRequest>("RetryJobs", "", model);
-    public Task<TriggeredJobWithTasksModel> StartJob(StartJobRequest model) => Post<TriggeredJobWithTasksModel, StartJobRequest>("StartJob", "", model);
-    public Task<EmptyActionResult> StartTask(StartTaskRequest model) => Post<EmptyActionResult, StartTaskRequest>("StartTask", "", model);
-    public Task<EmptyActionResult> JobCancelled(JobCancelledRequest model) => Post<EmptyActionResult, JobCancelledRequest>("JobCancelled", "", model);
-    public Task<TriggeredJobWithTasksModel> TaskCompleted(TaskCompletedRequest model) => Post<TriggeredJobWithTasksModel, TaskCompletedRequest>("TaskCompleted", "", model);
-    public Task<TriggeredJobWithTasksModel> TaskFailed(TaskFailedRequest model) => Post<TriggeredJobWithTasksModel, TaskFailedRequest>("TaskFailed", "", model);
-    public Task<EmptyActionResult> LogMessage(LogMessageRequest model) => Post<EmptyActionResult, LogMessageRequest>("LogMessage", "", model);
+    public JobsGroupActions Actions { get; }
+
+    public Task<EmptyActionResult> AddOrUpdateRegisteredJobs(RegisteredJob[] model) => Actions.AddOrUpdateRegisteredJobs.Post("", model);
+    public Task<PendingJobModel[]> TriggerJobs(TriggerJobsRequest model) => Actions.TriggerJobs.Post("", model);
+    public Task<TriggeredJobWithTasksModel[]> RetryJobs(RetryJobsRequest model) => Actions.RetryJobs.Post("", model);
+    public Task<TriggeredJobWithTasksModel> StartJob(StartJobRequest model) => Actions.StartJob.Post("", model);
+    public Task<EmptyActionResult> StartTask(StartTaskRequest model) => Actions.StartTask.Post("", model);
+    public Task<EmptyActionResult> JobCancelled(JobCancelledRequest model) => Actions.JobCancelled.Post("", model);
+    public Task<TriggeredJobWithTasksModel> TaskCompleted(TaskCompletedRequest model) => Actions.TaskCompleted.Post("", model);
+    public Task<TriggeredJobWithTasksModel> TaskFailed(TaskFailedRequest model) => Actions.TaskFailed.Post("", model);
+    public Task<EmptyActionResult> LogMessage(LogMessageRequest model) => Actions.LogMessage.Post("", model);
+    public sealed record JobsGroupActions(AppClientPostAction<RegisteredJob[], EmptyActionResult> AddOrUpdateRegisteredJobs, AppClientPostAction<TriggerJobsRequest, PendingJobModel[]> TriggerJobs, AppClientPostAction<RetryJobsRequest, TriggeredJobWithTasksModel[]> RetryJobs, AppClientPostAction<StartJobRequest, TriggeredJobWithTasksModel> StartJob, AppClientPostAction<StartTaskRequest, EmptyActionResult> StartTask, AppClientPostAction<JobCancelledRequest, EmptyActionResult> JobCancelled, AppClientPostAction<TaskCompletedRequest, TriggeredJobWithTasksModel> TaskCompleted, AppClientPostAction<TaskFailedRequest, TriggeredJobWithTasksModel> TaskFailed, AppClientPostAction<LogMessageRequest, EmptyActionResult> LogMessage);
 }

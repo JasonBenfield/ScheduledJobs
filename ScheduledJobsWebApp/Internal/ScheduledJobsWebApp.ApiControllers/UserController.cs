@@ -1,7 +1,7 @@
 // Generated Code
 namespace ScheduledJobsWebApp.ApiControllers;
 [Authorize]
-public class UserController : Controller
+public sealed partial class UserController : Controller
 {
     private readonly ScheduledJobsAppApi api;
     public UserController(ScheduledJobsAppApi api)
@@ -9,10 +9,10 @@ public class UserController : Controller
         this.api = api;
     }
 
-    public async Task<IActionResult> Index(UserStartRequest model, CancellationToken ct)
+    [HttpPost]
+    public Task<ResultContainer<ResourcePathAccess[]>> GetUserAccess([FromBody] ResourcePath[] model, CancellationToken ct)
     {
-        var result = await api.Group("User").Action<UserStartRequest, WebViewResult>("Index").Execute(model, ct);
-        return View(result.Data.ViewName);
+        return api.Group("User").Action<ResourcePath[], ResourcePathAccess[]>("GetUserAccess").Execute(model, ct);
     }
 
     public async Task<IActionResult> AccessDenied(CancellationToken ct)

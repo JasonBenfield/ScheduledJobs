@@ -2,10 +2,12 @@
 namespace XTI_ScheduledJobsAppClient;
 public sealed partial class HomeGroup : AppClientGroup
 {
-    public HomeGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl) : base(httpClientFactory, xtiTokenAccessor, clientUrl, "Home")
+    public HomeGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "Home")
     {
-        Actions = new HomeActions(clientUrl);
+        Actions = new HomeGroupActions(Index: CreateGetAction<EmptyRequest>("Index"));
     }
 
-    public HomeActions Actions { get; }
+    public HomeGroupActions Actions { get; }
+
+    public sealed record HomeGroupActions(AppClientGetAction<EmptyRequest> Index);
 }

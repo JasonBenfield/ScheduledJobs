@@ -1,61 +1,58 @@
-﻿import { CardView } from "@jasonbenfield/sharedwebapp/Card/CardView";
-import { ColumnCss } from "@jasonbenfield/sharedwebapp/ColumnCss";
-import { ButtonCommandItem } from "@jasonbenfield/sharedwebapp/Command/ButtonCommandItem";
-import { Block } from "@jasonbenfield/sharedwebapp/Html/Block";
-import { Container } from "@jasonbenfield/sharedwebapp/Html/Container";
-import { FlexColumn } from "@jasonbenfield/sharedwebapp/Html/FlexColumn";
-import { FlexColumnFill } from "@jasonbenfield/sharedwebapp/Html/FlexColumnFill";
-import { PlainTextFormGroupView } from "@jasonbenfield/sharedwebapp/Html/PlainTextFormGroupView";
-import { TextBlockView } from "@jasonbenfield/sharedwebapp/Html/TextBlockView";
-import { TextHeading1View } from "@jasonbenfield/sharedwebapp/Html/TextHeading1View";
-import { TextValueFormGroupView } from "@jasonbenfield/sharedwebapp/Html/TextValueFormGroupView";
-import { ListGroupView } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroupView";
+﻿import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
 import { MarginCss } from "@jasonbenfield/sharedwebapp/MarginCss";
-import { MessageAlertView } from "@jasonbenfield/sharedwebapp/MessageAlertView";
-import { PaddingCss } from "@jasonbenfield/sharedwebapp/PaddingCss";
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
+import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
+import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicTextComponentView";
+import { BlockView } from "@jasonbenfield/sharedwebapp/Views/BlockView";
+import { CardView } from "@jasonbenfield/sharedwebapp/Views/Card";
+import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
+import { FormGroupTextView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
+import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
+import { LinkListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
+import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
+import { TextHeading1View } from "@jasonbenfield/sharedwebapp/Views/TextHeadings";
+import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { JobSummaryListItemView } from "../../Jobs/JobSummaryListItemView";
 import { ScheduledJobsTheme } from "../../ScheduledJobsTheme";
 
-export class NotificationDetailPanelView extends Block {
+export class NotificationDetailPanelView extends GridView {
     readonly alert: MessageAlertView;
-    private readonly detailBlock: Block;
-    readonly eventDisplayText: ITextComponentView;
-    readonly sourceKey: TextValueFormGroupView;
-    readonly sourceData: TextValueFormGroupView;
-    readonly triggeredJobsTitle: ITextComponentView;
-    readonly triggeredJobs: ListGroupView;
-    readonly menuButton: ButtonCommandItem;
-    readonly refreshButton: ButtonCommandItem;
+    private readonly detailBlock: BlockView;
+    readonly eventDisplayText: BasicTextComponentView;
+    readonly sourceKey: FormGroupTextView;
+    readonly sourceData: FormGroupTextView;
+    readonly triggeredJobsTitle: BasicTextComponentView;
+    readonly triggeredJobs: LinkListGroupView;
+    readonly menuButton: ButtonCommandView;
+    readonly refreshButton: ButtonCommandView;
 
-    constructor() {
-        super();
+    constructor(container: BasicComponentView) {
+        super(container);
         this.height100();
-        let flexColumn = this.addContent(new FlexColumn());
-        let flexFill = flexColumn.addContent(new FlexColumnFill());
-        flexFill.container.setPadding(PaddingCss.top(3));
-        this.alert = flexFill.addContent(new MessageAlertView());
-        this.detailBlock = flexFill.addContent(new Block());
-        this.eventDisplayText = this.detailBlock.addContent(new TextHeading1View())
+        this.layout();
+        this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
+        const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
+        this.alert = mainContent.addView(MessageAlertView);
+        this.detailBlock = mainContent.addView(BlockView);
+        this.eventDisplayText = this.detailBlock.addView(TextHeading1View)
             .configure(th => th.setMargin(MarginCss.bottom(3)));
-        this.sourceKey = this.detailBlock.addContent(new TextValueFormGroupView())
+        this.sourceKey = this.detailBlock.addView(FormGroupTextView)
             .configure(b => b.setMargin(MarginCss.bottom(3)));
-        this.sourceKey.captionColumn.setColumnCss(ColumnCss.xs(3));
-        this.sourceKey.captionColumn.setTextCss(new TextCss().end());
-        this.sourceData = this.detailBlock.addContent(new TextValueFormGroupView())
+        this.sourceKey.captionCell.setTextCss(new TextCss().end());
+        this.sourceData = this.detailBlock.addView(FormGroupTextView)
             .configure(b => b.setMargin(MarginCss.bottom(3)));
-        this.sourceData.captionColumn.setColumnCss(ColumnCss.xs(3));
-        let card = this.detailBlock.addContent(new CardView());
+        let card = this.detailBlock.addView(CardView);
         this.triggeredJobsTitle = card.addCardTitleHeader();
-        this.triggeredJobs = card.addBlockListGroup(
-            () => new JobSummaryListItemView()
+        this.triggeredJobs = card.addLinkListGroup();
+        this.triggeredJobs.setItemViewType(JobSummaryListItemView);
+        const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
+            this.addCell().addView(ToolbarView)
         );
-        let toolbar = flexColumn.addContent(ScheduledJobsTheme.instance.commandToolbar.toolbar());
-        this.menuButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.menuButton()
+        this.menuButton = ScheduledJobsTheme.instance.commandToolbar.menuButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
-        this.refreshButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.refreshButton()
+        this.refreshButton = ScheduledJobsTheme.instance.commandToolbar.refreshButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
     }
 

@@ -2,13 +2,14 @@
 namespace XTI_ScheduledJobsAppClient;
 public sealed partial class EventDefinitionsGroup : AppClientGroup
 {
-    public EventDefinitionsGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl) : base(httpClientFactory, xtiTokenAccessor, clientUrl, "EventDefinitions")
+    public EventDefinitionsGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "EventDefinitions")
     {
-        Actions = new EventDefinitionsActions(clientUrl);
+        Actions = new EventDefinitionsGroupActions(Index: CreateGetAction<EmptyRequest>("Index"), GetEventDefinitions: CreatePostAction<EmptyRequest, EventDefinitionModel[]>("GetEventDefinitions"), GetRecentNotifications: CreatePostAction<GetRecentEventNotificationsByEventDefinitionRequest, EventSummaryModel[]>("GetRecentNotifications"));
     }
 
-    public EventDefinitionsActions Actions { get; }
+    public EventDefinitionsGroupActions Actions { get; }
 
-    public Task<EventDefinitionModel[]> GetEventDefinitions() => Post<EventDefinitionModel[], EmptyRequest>("GetEventDefinitions", "", new EmptyRequest());
-    public Task<EventSummaryModel[]> GetRecentNotifications(GetRecentEventNotificationsByEventDefinitionRequest model) => Post<EventSummaryModel[], GetRecentEventNotificationsByEventDefinitionRequest>("GetRecentNotifications", "", model);
+    public Task<EventDefinitionModel[]> GetEventDefinitions() => Actions.GetEventDefinitions.Post("", new EmptyRequest());
+    public Task<EventSummaryModel[]> GetRecentNotifications(GetRecentEventNotificationsByEventDefinitionRequest model) => Actions.GetRecentNotifications.Post("", model);
+    public sealed record EventDefinitionsGroupActions(AppClientGetAction<EmptyRequest> Index, AppClientPostAction<EmptyRequest, EventDefinitionModel[]> GetEventDefinitions, AppClientPostAction<GetRecentEventNotificationsByEventDefinitionRequest, EventSummaryModel[]> GetRecentNotifications);
 }

@@ -1,11 +1,12 @@
-﻿import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+﻿import { BasicPageView } from '@jasonbenfield/sharedwebapp/Views/BasicPageView';
 import { MainMenuPanelView } from '../../MainMenuPanelVIew';
 import { NotificationDetailPanelView } from './NotificationDetailPanelView';
 
-export class MainPageView {
-    constructor(page: PageFrameView) {
-        this.notificationDetailPanel = page.addContent(new NotificationDetailPanelView());
-        this.menuPanel = page.addContent(new MainMenuPanelView());
+export class MainPageView extends BasicPageView {
+    constructor() {
+        super();
+        this.notificationDetailPanel = this.addView(NotificationDetailPanelView);
+        this.menuPanel = this.addView(MainMenuPanelView);
     }
 
     readonly notificationDetailPanel: NotificationDetailPanelView;

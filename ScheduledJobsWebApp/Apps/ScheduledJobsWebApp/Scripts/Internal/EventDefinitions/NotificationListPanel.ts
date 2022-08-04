@@ -1,9 +1,8 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
-import { AsyncCommand } from "@jasonbenfield/sharedwebapp/Command/AsyncCommand";
-import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
-import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
-import { ScheduledJobsAppApi } from "../../ScheduledJobs/Api/ScheduledJobsAppApi";
+import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
+import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
+import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
 import { EventSummaryListItem } from "../Events/Notifications/EventSummaryListItem";
 import { EventSummaryListItemView } from "../Events/Notifications/EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
@@ -40,7 +39,7 @@ export class NotificationListPanel implements IPanel {
     private back() { this.awaitable.resolve(NotificationListPanelResult.back()); }
 
     private async doRefresh() {
-        let notifications = await this.getNotifications();
+        const notifications = await this.getNotifications();
         this.notifications.setItems(
             notifications,
             (notification, itemView: EventSummaryListItemView) =>

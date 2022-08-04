@@ -2,10 +2,13 @@
 namespace XTI_ScheduledJobsAppClient;
 public sealed partial class UserGroup : AppClientGroup
 {
-    public UserGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl) : base(httpClientFactory, xtiTokenAccessor, clientUrl, "User")
+    public UserGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "User")
     {
-        Actions = new UserActions(clientUrl);
+        Actions = new UserGroupActions(GetUserAccess: CreatePostAction<ResourcePath[], ResourcePathAccess[]>("GetUserAccess"), AccessDenied: CreateGetAction<EmptyRequest>("AccessDenied"), Error: CreateGetAction<EmptyRequest>("Error"), Logout: CreateGetAction<LogoutRequest>("Logout"));
     }
 
-    public UserActions Actions { get; }
+    public UserGroupActions Actions { get; }
+
+    public Task<ResourcePathAccess[]> GetUserAccess(ResourcePath[] model) => Actions.GetUserAccess.Post("", model);
+    public sealed record UserGroupActions(AppClientPostAction<ResourcePath[], ResourcePathAccess[]> GetUserAccess, AppClientGetAction<EmptyRequest> AccessDenied, AppClientGetAction<EmptyRequest> Error, AppClientGetAction<LogoutRequest> Logout);
 }

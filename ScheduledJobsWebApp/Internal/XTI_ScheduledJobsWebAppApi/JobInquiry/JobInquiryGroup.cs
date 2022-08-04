@@ -5,30 +5,29 @@ public sealed class JobInquiryGroup : AppApiGroupWrapper
     public JobInquiryGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        var actions = new AppApiActionFactory(source);
         FailedJobs = source.AddAction
         (
-            actions.Action(nameof(FailedJobs), () => sp.GetRequiredService<FailedJobsView>())
+            nameof(FailedJobs), () => sp.GetRequiredService<FailedJobsView>()
         );
         GetFailedJobs = source.AddAction
         (
-            actions.Action(nameof(GetFailedJobs), () => sp.GetRequiredService<GetFailedJobsAction>())
+            nameof(GetFailedJobs), () => sp.GetRequiredService<GetFailedJobsAction>()
         );
         RecentJobs = source.AddAction
         (
-            actions.Action(nameof(RecentJobs), () => sp.GetRequiredService<RecentJobsView>())
+            nameof(RecentJobs), () => sp.GetRequiredService<RecentJobsView>()
         );
         GetRecentJobs = source.AddAction
         (
-            actions.Action(nameof(GetRecentJobs), () => sp.GetRequiredService<GetRecentJobsAction>())
+            nameof(GetRecentJobs), () => sp.GetRequiredService<GetRecentJobsAction>()
         );
         JobDetail = source.AddAction
         (
-            actions.Action(nameof(JobDetail), () => sp.GetRequiredService<JobDetailView>())
+            nameof(JobDetail), () => sp.GetRequiredService<JobDetailView>()
         );
         GetJobDetail = source.AddAction
         (
-            actions.Action(nameof(GetJobDetail), () => sp.GetRequiredService<GetJobDetailAction>())
+            nameof(GetJobDetail), () => sp.GetRequiredService<GetJobDetailAction>()
         );
     }
 

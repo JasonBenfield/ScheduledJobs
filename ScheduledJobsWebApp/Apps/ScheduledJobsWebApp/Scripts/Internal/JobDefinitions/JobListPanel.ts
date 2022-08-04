@@ -1,9 +1,8 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
-import { AsyncCommand } from "@jasonbenfield/sharedwebapp/Command/AsyncCommand";
-import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
-import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
-import { ScheduledJobsAppApi } from "../../ScheduledJobs/Api/ScheduledJobsAppApi";
+import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
+import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
+import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
 import { JobListPanelView } from "../Jobs/JobListPanelView";
 import { JobSummaryListItem } from "../Jobs/JobSummaryListItem";
 import { JobSummaryListItemView } from "../Jobs/JobSummaryListItemView";
@@ -41,7 +40,7 @@ export class JobListPanel implements IPanel {
     private back() { this.awaitable.resolve(JobListPanelResult.back()); }
 
     private async doRefresh() {
-        let jobs = await this.getRecentTriggeredJobs();
+        const jobs = await this.getRecentTriggeredJobs();
         this.triggeredJobs.setItems(
             jobs,
             (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)

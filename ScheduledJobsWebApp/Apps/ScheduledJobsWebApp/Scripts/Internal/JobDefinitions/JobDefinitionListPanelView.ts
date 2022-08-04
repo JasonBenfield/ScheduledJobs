@@ -1,36 +1,36 @@
-﻿import { ButtonCommandItem } from "@jasonbenfield/sharedwebapp/Command/ButtonCommandItem";
-import { Block } from "@jasonbenfield/sharedwebapp/Html/Block";
-import { FlexColumn } from "@jasonbenfield/sharedwebapp/Html/FlexColumn";
-import { FlexColumnFill } from "@jasonbenfield/sharedwebapp/Html/FlexColumnFill";
-import { ListBlockViewModel } from "@jasonbenfield/sharedwebapp/Html/ListBlockViewModel";
-import { ListGroupView } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroupView";
-import { MessageAlertView } from "@jasonbenfield/sharedwebapp/MessageAlertView";
-import { PaddingCss } from "@jasonbenfield/sharedwebapp/PaddingCss";
+﻿import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
+import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
+import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
+import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
+import { ButtonListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
+import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
+import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { ScheduledJobsTheme } from "../ScheduledJobsTheme";
 import { JobDefinitionListItemView } from "./JobDefinitionListItemView";
 
-export class JobDefinitionListPanelView extends Block {
+export class JobDefinitionListPanelView extends GridView {
     readonly alert: MessageAlertView;
-    readonly jobDefinitions: ListGroupView;
-    readonly menuButton: ButtonCommandItem;
-    readonly refreshButton: ButtonCommandItem;
+    readonly jobDefinitions: ButtonListGroupView;
+    readonly menuButton: ButtonCommandView;
+    readonly refreshButton: ButtonCommandView;
 
-    constructor() {
-        super();
+    constructor(container: BasicComponentView) {
+        super(container);
         this.height100();
-        let flexColumn = this.addContent(new FlexColumn());
-        let flexFill = flexColumn.addContent(new FlexColumnFill());
-        flexFill.container.setPadding(PaddingCss.top(3));
-        this.alert = flexFill.addContent(new MessageAlertView());
-        this.jobDefinitions = flexFill.addContent(
-            new ListGroupView(() => new JobDefinitionListItemView(), new ListBlockViewModel())
+        this.layout();
+        this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
+        const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
+        this.alert = mainContent.addView(MessageAlertView);
+        this.jobDefinitions = mainContent.addView(ButtonListGroupView);
+        this.jobDefinitions.setItemViewType(JobDefinitionListItemView);
+        const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
+            this.addCell().addView(ToolbarView)
         );
-        let toolbar = flexColumn.addContent(ScheduledJobsTheme.instance.commandToolbar.toolbar());
-        this.menuButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.menuButton()
+        this.menuButton = ScheduledJobsTheme.instance.commandToolbar.menuButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
-        this.refreshButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.refreshButton()
+        this.refreshButton = ScheduledJobsTheme.instance.commandToolbar.refreshButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
     }
 }

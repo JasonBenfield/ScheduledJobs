@@ -1,12 +1,10 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
-import { AsyncCommand } from "@jasonbenfield/sharedwebapp/Command/AsyncCommand";
-import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
-import { FormGroup } from "@jasonbenfield/sharedwebapp/Html/FormGroup";
-import { TextBlock } from "@jasonbenfield/sharedwebapp/Html/TextBlock";
-import { TextLink } from "@jasonbenfield/sharedwebapp/Html/TextLink";
-import { ListGroup } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/MessageAlert";
-import { ScheduledJobsAppApi } from "../../../ScheduledJobs/Api/ScheduledJobsAppApi";
+import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
+import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
+import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { TextLinkComponent } from "@jasonbenfield/sharedwebapp/Components/TextLinkComponent";
+import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
 import { JobDetailPanelView } from "./JobDetailPanelView";
 import { TaskListItem } from "./TaskListItem";
 import { TaskListItemView } from "./TaskListItemView";
@@ -33,8 +31,8 @@ export class JobDetailPanelResult {
 export class JobDetailPanel implements IPanel {
     private readonly awaitable = new Awaitable<JobDetailPanelResult>();
     private readonly alert: MessageAlert;
-    private readonly jobDisplayText: TextBlock;
-    private readonly triggeredByLink: TextLink;
+    private readonly jobDisplayText: TextComponent;
+    private readonly triggeredByLink: TextLinkComponent;
     private readonly taskList: ListGroup;
     private readonly refreshCommand: AsyncCommand;
     private jobID: number;
@@ -43,11 +41,10 @@ export class JobDetailPanel implements IPanel {
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobDetailPanelView) {
         this.view.hideJob();
         this.alert = new MessageAlert(this.view.alert);
-        this.jobDisplayText = new TextBlock('', this.view.jobDisplayText);
-        new FormGroup(this.view.triggeredByFormGroup).setCaption('Triggered By');
-        this.triggeredByLink = new TextLink('', this.view.triggeredByLink);
+        this.jobDisplayText = new TextComponent(this.view.jobDisplayText);
+        this.triggeredByLink = new TextLinkComponent(this.view.triggeredByLink);
         this.taskList = new ListGroup(this.view.tasks);
-        this.taskList.itemClicked.register(this.onTaskClicked.bind(this));
+        this.taskList.registerItemClicked(this.onTaskClicked.bind(this));
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);

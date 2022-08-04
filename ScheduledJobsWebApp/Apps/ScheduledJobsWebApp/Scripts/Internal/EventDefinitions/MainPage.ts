@@ -1,34 +1,34 @@
-﻿import { PageFrameView } from '@jasonbenfield/sharedwebapp/PageFrameView';
+﻿import { BasicPage } from '@jasonbenfield/sharedwebapp/Components/BasicPage';
 import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
-import { Startup } from '@jasonbenfield/sharedwebapp/Startup';
 import { Apis } from '../Apis';
-import { NotificationListPanel } from './NotificationListPanel';
 import { MainMenuPanel } from '../MainMenuPanel';
 import { EventDefinitionListPanel } from './EventDefinitionListPanel';
 import { MainPageView } from './MainPageView';
+import { NotificationListPanel } from './NotificationListPanel';
 import { SelectSourceKeyPanel } from './SelectSourceKeyPanel';
 
-class MainPage {
+class MainPage extends BasicPage {
+    protected readonly view: MainPageView;
     private readonly panels = new SingleActivePanel();
     private readonly eventDefinitionsPanel: EventDefinitionListPanel;
     private readonly selectSourceKeyPanel: SelectSourceKeyPanel;
     private readonly notificationsPanel: NotificationListPanel;
     private readonly menuPanel: MainMenuPanel;
 
-    constructor(page: PageFrameView) {
-        let schdJobsApi = new Apis(page.modalError).ScheduledJobs();
-        let view = new MainPageView(page);
+    constructor() {
+        super(new MainPageView());
+        const schdJobsApi = new Apis(this.view.modalError).ScheduledJobs();
         this.eventDefinitionsPanel = this.panels.add(
-            new EventDefinitionListPanel(schdJobsApi, view.eventDefinitionsPanel)
+            new EventDefinitionListPanel(schdJobsApi, this.view.eventDefinitionsPanel)
         );
         this.selectSourceKeyPanel = this.panels.add(
-            new SelectSourceKeyPanel(view.selectSourceKeyPanel)
+            new SelectSourceKeyPanel(this.view.selectSourceKeyPanel)
         );
         this.notificationsPanel = this.panels.add(
-            new NotificationListPanel(schdJobsApi, view.notificationsPanel)
+            new NotificationListPanel(schdJobsApi, this.view.notificationsPanel)
         );
         this.menuPanel = this.panels.add(
-            new MainMenuPanel(schdJobsApi, view.menuPanel)
+            new MainMenuPanel(schdJobsApi, this.view.menuPanel)
         );
         this.eventDefinitionsPanel.refresh();
         this.activateEventDefinitionsPanel();
@@ -36,7 +36,7 @@ class MainPage {
 
     private async activateEventDefinitionsPanel() {
         this.panels.activate(this.eventDefinitionsPanel);
-        let result = await this.eventDefinitionsPanel.start();
+        const result = await this.eventDefinitionsPanel.start();
         if (result.eventDefinitionSelected) {
             this.notificationsPanel.setEventDefinitionID(result.eventDefinitionSelected.eventDefinitionID);
             this.activateSelectSourceKeyPanel();
@@ -48,7 +48,7 @@ class MainPage {
 
     private async activateSelectSourceKeyPanel() {
         this.panels.activate(this.selectSourceKeyPanel);
-        let result = await this.selectSourceKeyPanel.start();
+        const result = await this.selectSourceKeyPanel.start();
         if (result.back) {
             this.activateEventDefinitionsPanel();
         }
@@ -61,7 +61,7 @@ class MainPage {
 
     private async activateNotificationsPanel() {
         this.panels.activate(this.notificationsPanel);
-        let result = await this.notificationsPanel.start();
+        const result = await this.notificationsPanel.start();
         if (result.back) {
             this.activateEventDefinitionsPanel();
         }
@@ -69,10 +69,10 @@ class MainPage {
 
     private async activateMenuPanel() {
         this.panels.activate(this.menuPanel);
-        let result = await this.menuPanel.start();
+        const result = await this.menuPanel.start();
         if (result.done) {
             this.activateEventDefinitionsPanel();
         }
     }
 }
-new MainPage(new Startup().build());
+new MainPage();

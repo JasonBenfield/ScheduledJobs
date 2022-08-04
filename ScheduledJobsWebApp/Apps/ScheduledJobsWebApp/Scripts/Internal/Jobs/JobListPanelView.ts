@@ -1,45 +1,44 @@
-﻿import { ButtonCommandItem } from "@jasonbenfield/sharedwebapp/Command/ButtonCommandItem";
-import { Block } from "@jasonbenfield/sharedwebapp/Html/Block";
-import { FlexColumn } from "@jasonbenfield/sharedwebapp/Html/FlexColumn";
-import { FlexColumnFill } from "@jasonbenfield/sharedwebapp/Html/FlexColumnFill";
-import { ListBlockViewModel } from "@jasonbenfield/sharedwebapp/Html/ListBlockViewModel";
-import { TextHeading1View } from "@jasonbenfield/sharedwebapp/Html/TextHeading1View";
-import { ListGroupView } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroupView";
-import { MessageAlertView } from "@jasonbenfield/sharedwebapp/MessageAlertView";
+﻿import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
+import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
+import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicTextComponentView";
+import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
+import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
+import { LinkListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
+import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
+import { TextHeading1View } from "@jasonbenfield/sharedwebapp/Views/TextHeadings";
+import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { ScheduledJobsTheme } from "../ScheduledJobsTheme";
 import { JobSummaryListItemView } from "./JobSummaryListItemView";
 
-export class JobListPanelView extends Block {
-    readonly heading: ITextComponentView;
+export class JobListPanelView extends GridView {
+    readonly heading: BasicTextComponentView;
     readonly alert: MessageAlertView;
-    readonly jobs: ListGroupView;
-    readonly backButton: ButtonCommandItem;
-    readonly menuButton: ButtonCommandItem;
-    readonly refreshButton: ButtonCommandItem;
+    readonly jobs: LinkListGroupView;
+    readonly backButton: ButtonCommandView;
+    readonly menuButton: ButtonCommandView;
+    readonly refreshButton: ButtonCommandView;
 
-    constructor() {
-        super();
+    constructor(container: BasicComponentView) {
+        super(container);
         this.height100();
-        let flexColumn = this.addContent(new FlexColumn());
-        let flexFill = flexColumn.addContent(new FlexColumnFill());
-        this.heading = flexFill.addContent(new TextHeading1View());
-        this.alert = flexFill.addContent(new MessageAlertView());
-        this.jobs = flexFill.addContent(
-            new ListGroupView(
-                () => new JobSummaryListItemView(),
-                new ListBlockViewModel()
-            )
+        this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
+        const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
+        this.heading = mainContent.addView(TextHeading1View);
+        this.alert = mainContent.addView(MessageAlertView);
+        this.jobs = mainContent.addView(LinkListGroupView);
+        this.jobs.setItemViewType(JobSummaryListItemView);
+        const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
+            this.addCell().addView(ToolbarView)
         );
-        let toolbar = flexColumn.addContent(ScheduledJobsTheme.instance.commandToolbar.toolbar());
-        this.backButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.backButton()
+        this.backButton = ScheduledJobsTheme.instance.commandToolbar.backButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
         this.backButton.hide();
-        this.menuButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.menuButton()
+        this.menuButton = ScheduledJobsTheme.instance.commandToolbar.menuButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
-        this.refreshButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.refreshButton()
+        this.refreshButton = ScheduledJobsTheme.instance.commandToolbar.refreshButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
     }
 }

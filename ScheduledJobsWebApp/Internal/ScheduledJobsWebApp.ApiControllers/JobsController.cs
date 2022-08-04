@@ -1,7 +1,7 @@
 // Generated Code
 namespace ScheduledJobsWebApp.ApiControllers;
 [Authorize]
-public class JobsController : Controller
+public sealed partial class JobsController : Controller
 {
     private readonly ScheduledJobsAppApi api;
     public JobsController(ScheduledJobsAppApi api)

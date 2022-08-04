@@ -4,17 +4,17 @@ public sealed partial class ScheduledJobsAppClient : AppClient
 {
     public ScheduledJobsAppClient(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, ScheduledJobsAppClientVersion version) : base(httpClientFactory, xtiTokenAccessor, clientUrl, "ScheduledJobs", version.Value)
     {
-        User = GetGroup((_clientFactory, _tokenAccessor, _url) => new UserGroup(_clientFactory, _tokenAccessor, _url));
-        UserCache = GetGroup((_clientFactory, _tokenAccessor, _url) => new UserCacheGroup(_clientFactory, _tokenAccessor, _url));
-        Home = GetGroup((_clientFactory, _tokenAccessor, _url) => new HomeGroup(_clientFactory, _tokenAccessor, _url));
-        Recurring = GetGroup((_clientFactory, _tokenAccessor, _url) => new RecurringGroup(_clientFactory, _tokenAccessor, _url));
-        EventDefinitions = GetGroup((_clientFactory, _tokenAccessor, _url) => new EventDefinitionsGroup(_clientFactory, _tokenAccessor, _url));
-        EventInquiry = GetGroup((_clientFactory, _tokenAccessor, _url) => new EventInquiryGroup(_clientFactory, _tokenAccessor, _url));
-        Events = GetGroup((_clientFactory, _tokenAccessor, _url) => new EventsGroup(_clientFactory, _tokenAccessor, _url));
-        JobDefinitions = GetGroup((_clientFactory, _tokenAccessor, _url) => new JobDefinitionsGroup(_clientFactory, _tokenAccessor, _url));
-        JobInquiry = GetGroup((_clientFactory, _tokenAccessor, _url) => new JobInquiryGroup(_clientFactory, _tokenAccessor, _url));
-        Jobs = GetGroup((_clientFactory, _tokenAccessor, _url) => new JobsGroup(_clientFactory, _tokenAccessor, _url));
-        Tasks = GetGroup((_clientFactory, _tokenAccessor, _url) => new TasksGroup(_clientFactory, _tokenAccessor, _url));
+        User = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new UserGroup(_clientFactory, _tokenAccessor, _url, _options));
+        UserCache = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new UserCacheGroup(_clientFactory, _tokenAccessor, _url, _options));
+        Home = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new HomeGroup(_clientFactory, _tokenAccessor, _url, _options));
+        Recurring = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new RecurringGroup(_clientFactory, _tokenAccessor, _url, _options));
+        EventDefinitions = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new EventDefinitionsGroup(_clientFactory, _tokenAccessor, _url, _options));
+        EventInquiry = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new EventInquiryGroup(_clientFactory, _tokenAccessor, _url, _options));
+        Events = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new EventsGroup(_clientFactory, _tokenAccessor, _url, _options));
+        JobDefinitions = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new JobDefinitionsGroup(_clientFactory, _tokenAccessor, _url, _options));
+        JobInquiry = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new JobInquiryGroup(_clientFactory, _tokenAccessor, _url, _options));
+        Jobs = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new JobsGroup(_clientFactory, _tokenAccessor, _url, _options));
+        Tasks = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new TasksGroup(_clientFactory, _tokenAccessor, _url, _options));
     }
 
     public ScheduledJobsRoleNames RoleNames { get; } = ScheduledJobsRoleNames.Instance;

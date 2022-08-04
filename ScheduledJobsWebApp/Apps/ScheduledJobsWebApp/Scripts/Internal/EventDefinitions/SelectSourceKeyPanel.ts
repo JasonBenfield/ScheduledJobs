@@ -1,5 +1,5 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
-import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
+import { Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { TextInputFormGroup } from "@jasonbenfield/sharedwebapp/Forms/TextInputFormGroup";
 import { SelectSourceKeyPanelView } from "./SelectSourceKeyPanelView";
 
@@ -31,10 +31,13 @@ export class SelectSourceKeyPanel implements IPanel {
         this.sourceKey.setCaption('Source Key (opt.)');
         new Command(this.back.bind(this)).add(view.backButton);
         new Command(this.next.bind(this)).add(view.nextButton);
-        view.formSubmitted.register(this.onFormSubmitted.bind(this));
+        view.handleFormSubmitted(this.onFormSubmitted.bind(this));
     }
 
-    private onFormSubmitted() { this.next(); }
+    private onFormSubmitted(el: HTMLElement, evt: JQueryEventObject) {
+        evt.preventDefault();
+        this.next();
+    }
 
     private back() { this.awaitable.resolve(SelectSourceKeyPanelResult.back()); }
 

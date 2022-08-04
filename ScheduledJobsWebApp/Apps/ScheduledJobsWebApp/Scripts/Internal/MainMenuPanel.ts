@@ -1,6 +1,6 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
-import { Command } from "@jasonbenfield/sharedwebapp/Command/Command";
-import { ScheduledJobsAppApi } from "../ScheduledJobs/Api/ScheduledJobsAppApi";
+import { Command } from "@jasonbenfield/sharedwebapp/Components/Command";
+import { ScheduledJobsAppApi } from "../Lib/Api/ScheduledJobsAppApi";
 import { MainMenuPanelView } from "./MainMenuPanelVIew";
 
 interface IResults {

@@ -1,48 +1,49 @@
-﻿import { ButtonCommandItem } from "@jasonbenfield/sharedwebapp/Command/ButtonCommandItem";
+﻿import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
 import { FlexCss } from "@jasonbenfield/sharedwebapp/FlexCss";
-import { Block } from "@jasonbenfield/sharedwebapp/Html/Block";
-import { FlexColumn } from "@jasonbenfield/sharedwebapp/Html/FlexColumn";
-import { FlexColumnFill } from "@jasonbenfield/sharedwebapp/Html/FlexColumnFill";
-import { NavLinkView } from "@jasonbenfield/sharedwebapp/Html/NavLinkView";
-import { NavView } from "@jasonbenfield/sharedwebapp/Html/NavView";
-import { TextSpanView } from "@jasonbenfield/sharedwebapp/Html/TextSpanView";
-import { Toolbar } from "@jasonbenfield/sharedwebapp/Html/Toolbar";
+import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
+import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
+import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
+import { NavView } from "@jasonbenfield/sharedwebapp/Views/NavView";
+import { TextLinkView } from "@jasonbenfield/sharedwebapp/Views/TextLinkView";
+import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { ScheduledJobsTheme } from "./ScheduledJobsTheme";
 
-export class MainMenuPanelView extends Block {
-    readonly doneButton: ButtonCommandItem;
-    readonly eventDefinitionsLink: NavLinkView;
-    readonly notificationsLink: NavLinkView;
-    readonly jobDefinitionsLink: NavLinkView;
-    readonly failedJobsLink: NavLinkView;
-    readonly recentJobsLink: NavLinkView;
-    private readonly toolbar: Toolbar;
+export class MainMenuPanelView extends GridView {
+    readonly doneButton: ButtonCommandView;
+    readonly eventDefinitionsLink: TextLinkView;
+    readonly notificationsLink: TextLinkView;
+    readonly jobDefinitionsLink: TextLinkView;
+    readonly failedJobsLink: TextLinkView;
+    readonly recentJobsLink: TextLinkView;
+    private readonly toolbar: ToolbarView;
 
-    constructor() {
-        super();
+    constructor(container: BasicComponentView) {
+        super(container);
         this.height100();
-        let flexColumn = this.addContent(new FlexColumn());
-        let flexFill = flexColumn.addContent(new FlexColumnFill());
-        let navView = flexFill.addContent(new NavView());
+        this.layout();
+        this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
+        let mainContent = ScheduledJobsTheme.instance.mainContent(
+            this.addCell()
+        );
+        let navView = mainContent.addView(NavView);
         navView.pills();
         navView.setFlexCss(new FlexCss().column());
-        this.eventDefinitionsLink = navView.addLink();
-        this.eventDefinitionsLink.addContent(new TextSpanView())
-            .configure(ts => ts.setText('Event Definitions'));
-        this.notificationsLink = navView.addLink();
-        this.notificationsLink.addContent(new TextSpanView())
-            .configure(ts => ts.setText('Event Notifications'));
-        this.jobDefinitionsLink = navView.addLink();
-        this.jobDefinitionsLink.addContent(new TextSpanView())
-            .configure(ts => ts.setText('Job Definitions'));
-        this.failedJobsLink = navView.addLink();
-        this.failedJobsLink.addContent(new TextSpanView())
-            .configure(ts => ts.setText('Failed Jobs'));
-        this.recentJobsLink = navView.addLink();
-        this.recentJobsLink.addContent(new TextSpanView())
-            .configure(ts => ts.setText('Recent Jobs'));
-        this.toolbar = flexColumn.addContent(ScheduledJobsTheme.instance.commandToolbar.toolbar());
-        this.doneButton = this.toolbar.columnStart.addContent(ScheduledJobsTheme.instance.commandToolbar.backButton());
+        this.eventDefinitionsLink = navView.addTextLink();
+        this.eventDefinitionsLink.setText('Event Definitions');
+        this.notificationsLink = navView.addTextLink();
+        this.notificationsLink.setText('Event Notifications');
+        this.jobDefinitionsLink = navView.addTextLink();
+        this.jobDefinitionsLink.setText('Job Definitions');
+        this.failedJobsLink = navView.addTextLink();
+        this.failedJobsLink.setText('Failed Jobs');
+        this.recentJobsLink = navView.addTextLink();
+        this.recentJobsLink.setText('Recent Jobs');
+        this.toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
+            this.addCell().addView(ToolbarView)
+        );
+        this.doneButton = ScheduledJobsTheme.instance.commandToolbar.backButton(
+            this.toolbar.columnStart.addView(ButtonCommandView)
+        );
         this.doneButton.setText('Back');
     }
 

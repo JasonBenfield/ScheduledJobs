@@ -1,7 +1,7 @@
 // Generated Code
 namespace ScheduledJobsWebApp.ApiControllers;
 [Authorize]
-public class UserCacheController : Controller
+public sealed partial class UserCacheController : Controller
 {
     private readonly ScheduledJobsAppApi api;
     public UserCacheController(ScheduledJobsAppApi api)

@@ -1,36 +1,36 @@
-﻿import { ButtonCommandItem } from "@jasonbenfield/sharedwebapp/Command/ButtonCommandItem";
-import { Block } from "@jasonbenfield/sharedwebapp/Html/Block";
-import { FlexColumn } from "@jasonbenfield/sharedwebapp/Html/FlexColumn";
-import { FlexColumnFill } from "@jasonbenfield/sharedwebapp/Html/FlexColumnFill";
-import { ListBlockViewModel } from "@jasonbenfield/sharedwebapp/Html/ListBlockViewModel";
-import { ListGroupView } from "@jasonbenfield/sharedwebapp/ListGroup/ListGroupView";
-import { MessageAlertView } from "@jasonbenfield/sharedwebapp/MessageAlertView";
-import { PaddingCss } from "@jasonbenfield/sharedwebapp/PaddingCss";
+﻿import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
+import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
+import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
+import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
+import { LinkListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
+import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
+import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { EventSummaryListItemView } from "../Events/Notifications/EventSummaryListItemView";
 import { ScheduledJobsTheme } from "../ScheduledJobsTheme";
 
-export class NotificationListPanelView extends Block {
+export class NotificationListPanelView extends GridView {
     readonly alert: MessageAlertView;
-    readonly notifications: ListGroupView;
-    readonly backButton: ButtonCommandItem;
-    readonly refreshButton: ButtonCommandItem;
+    readonly notifications: LinkListGroupView;
+    readonly backButton: ButtonCommandView;
+    readonly refreshButton: ButtonCommandView;
 
-    constructor() {
-        super();
+    constructor(container: BasicComponentView) {
+        super(container);
         this.height100();
-        let flexColumn = this.addContent(new FlexColumn());
-        let flexFill = flexColumn.addContent(new FlexColumnFill());
-        flexFill.container.setPadding(PaddingCss.top(3));
-        this.alert = flexFill.addContent(new MessageAlertView());
-        this.notifications = flexFill.addContent(
-            new ListGroupView(() => new EventSummaryListItemView(), new ListBlockViewModel())
+        this.layout();
+        this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
+        const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
+        this.alert = mainContent.addView(MessageAlertView);
+        this.notifications = mainContent.addView(LinkListGroupView);
+        this.notifications.setItemViewType(EventSummaryListItemView);
+        const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
+            this.addCell().addView(ToolbarView)
         );
-        let toolbar = flexColumn.addContent(ScheduledJobsTheme.instance.commandToolbar.toolbar());
-        this.backButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.backButton()
+        this.backButton = ScheduledJobsTheme.instance.commandToolbar.backButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
-        this.refreshButton = toolbar.columnStart.addContent(
-            ScheduledJobsTheme.instance.commandToolbar.refreshButton()
+        this.refreshButton = ScheduledJobsTheme.instance.commandToolbar.refreshButton(
+            toolbar.columnStart.addView(ButtonCommandView)
         );
     }
 }
