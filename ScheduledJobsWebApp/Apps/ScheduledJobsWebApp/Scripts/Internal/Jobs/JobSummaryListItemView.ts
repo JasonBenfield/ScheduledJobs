@@ -4,6 +4,7 @@ import { TextSpanView } from "@jasonbenfield/sharedwebapp/Views/TextSpanView";
 import { LinkListGroupItemView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
 import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
+import { MarginCss } from "@jasonbenfield/sharedwebapp/MarginCss";
 
 export class JobSummaryListItemView extends LinkListGroupItemView {
 
@@ -13,8 +14,8 @@ export class JobSummaryListItemView extends LinkListGroupItemView {
         const col1 = row.addColumn();
         this.displayText = col1.addView(TextSpanView);
         const col2 = row.addColumn();
-        this.timeStarted = col2
-            .addView(TextSpanView);
+        this.timeStarted = col2.addView(TextSpanView);
+        this.timeStarted.setMargin(MarginCss.end(3));
         this.timeElapsed = col2.addView(TextSpanView);
         const col3 = row.addColumn();
         this.status = col3.addView(TextSpanView);

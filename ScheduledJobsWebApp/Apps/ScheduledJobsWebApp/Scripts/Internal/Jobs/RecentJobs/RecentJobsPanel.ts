@@ -36,7 +36,7 @@ export class RecentJobsPanel implements IPanel {
         this.refreshCommand.animateIconWhenInProgress('spin');
     }
 
-    private requestMenu() { return RecentJobsPanelResult.menuRequested(); }
+    private requestMenu() { this.awaitable.resolve(RecentJobsPanelResult.menuRequested()); }
 
     private async doRefresh() {
         const failedJobs = await this.getRecentJobs();

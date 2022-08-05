@@ -21,9 +21,10 @@ internal static class XtiTestHostExtensions
         }
         var hubClient = host.GetRequiredService<HubAppClient>();
         var adminUserCreds = host.GetRequiredService<AdminUserCredentials>();
-        var adminUserID = await hubClient.Users.AddOrUpdateUser
+        await hubClient.Users.AddOrUpdateUser
         (
-            new AddUserModel
+            "General",
+            new AddOrUpdateUserModel
             {
                 UserName = adminUserCreds.Value.UserName,
                 Password = adminUserCreds.Value.Password,
@@ -34,7 +35,7 @@ internal static class XtiTestHostExtensions
         (
             new SetUserAccessRequest
             {
-                UserID = adminUserID,
+                UserName = new AppUserName(adminUserCreds.Value.UserName),
                 RoleAssignments = new[]
                 {
                     new SetUserAccessRoleRequest

@@ -16,9 +16,9 @@ public sealed class TriggeredJobTask
 
     public JobTaskKey TaskKey { get => Model.TaskDefinition.TaskKey; }
 
-    public T Data<T>() where T : new() => 
-        string.IsNullOrWhiteSpace(Model.TaskData) 
-            ? new T() 
+    public T Data<T>() where T : new() =>
+        string.IsNullOrWhiteSpace(Model.TaskData)
+            ? new T()
             : XtiSerializer.Deserialize<T>(Model.TaskData);
 
     public LogEntryModel[] Errors() =>
@@ -38,15 +38,14 @@ public sealed class TriggeredJobTask
 
     internal Task<TriggeredJobTask?> Failed
     (
-        JobTaskStatus errorStatus, 
-        TimeSpan retryAfter, 
-        NextTaskModel[] nextTasks, 
+        JobTaskStatus errorStatus,
+        TimeSpan retryAfter,
+        NextTaskModel[] nextTasks,
         Exception ex
     ) => job.TaskFailed(this, errorStatus, retryAfter, nextTasks, ex);
 
-    internal Task Completed(bool preserveData, NextTaskModel[] nextTasks) => 
+    internal Task Completed(bool preserveData, NextTaskModel[] nextTasks) =>
         job.TaskCompleted(this, preserveData, nextTasks);
 
-    internal Task CancelJob(string reason, DeletionTime deletionTime) =>
-        job.CancelJob(this, reason, deletionTime);
+    internal Task CancelJob(string reason) => job.CancelJob(this, reason);
 }

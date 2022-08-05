@@ -14,6 +14,7 @@ export class TaskListItemView extends ButtonListGroupItemView {
         const row = this.addView(RowView);
         const col1 = row.addColumn();
         this.generation = col1.addView(TextSpanView);
+        this.generation.setMargin(MarginCss.end(1));
         this.displayText = col1.addView(TextSpanView);
         const col2 = row.addColumn();
         this.timeStarted = col2.addView(TextSpanView);

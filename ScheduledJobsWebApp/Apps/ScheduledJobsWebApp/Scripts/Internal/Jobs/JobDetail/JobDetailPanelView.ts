@@ -4,7 +4,7 @@ import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicCompo
 import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicTextComponentView";
 import { BlockView } from "@jasonbenfield/sharedwebapp/Views/BlockView";
 import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
-import { FormGroupView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
+import { FormGroupGridView, FormGroupView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
 import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
 import { ButtonListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
 import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
@@ -34,10 +34,13 @@ export class JobDetailPanelView extends GridView {
         this.jobBlock = mainContent.addView(BlockView);
         this.jobBlock.addCssName('container');
         this.jobDisplayText = this.jobBlock.addView(TextHeading1View);
-        this.triggeredByFormGroup = this.jobBlock.addView(FormGroupView);
+        const formGroupContainer = this.jobBlock.addView(FormGroupGridView);
+        this.triggeredByFormGroup = formGroupContainer.addFormGroup(FormGroupView);
         this.triggeredByFormGroup.caption.setText('Triggered By');
-        this.triggeredByFormGroup.valueCell.addCssName('form-control-plaintext');
-        this.triggeredByLink = this.triggeredByFormGroup.valueCell.addView(TextLinkView);
+        this.triggeredByLink = this.triggeredByFormGroup.valueCell
+            .addView(BlockView)
+            .configure(b => b.addCssName('form-control-plaintext'))
+            .addView(TextLinkView);
         this.jobBlock.setPadding(PaddingCss.xs({ top: 3, bottom: 3 }));
         this.tasks = mainContent.addView(ButtonListGroupView);
         this.tasks.setItemViewType(TaskListItemView);

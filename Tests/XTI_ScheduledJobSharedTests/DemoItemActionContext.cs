@@ -33,11 +33,11 @@ public sealed class DemoItemActionContext<T>
         this.throwError = throwError;
     }
 
-    public void MaybeCancel(DoSomethingItemData itemData, CancelJobExceptionBuilder cancelExceptionBuilder)
+    public void MaybeCancel(DoSomethingItemData itemData, Func<CancelJobExceptionBuilder> cancelExceptionBuilder)
     {
         if (isCanceled(itemData))
         {
-            throwError(cancelExceptionBuilder);
+            throwError(cancelExceptionBuilder());
         }
     }
 

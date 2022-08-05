@@ -36,7 +36,7 @@ export class FailedJobsPanel implements IPanel {
         this.refreshCommand.animateIconWhenInProgress('spin');
     }
 
-    private requestMenu() { return FailedJobsPanelResult.menuRequested(); }
+    private requestMenu() { this.awaitable.resolve(FailedJobsPanelResult.menuRequested()); }
 
     private async doRefresh() {
         const failedJobs = await this.getFailedJobs();

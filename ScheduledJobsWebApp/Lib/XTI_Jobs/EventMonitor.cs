@@ -57,7 +57,7 @@ public sealed class EventMonitor
         }
         catch(CancelJobException cancelJobEx)
         {
-            await currentTask.CancelJob(cancelJobEx.Reason, cancelJobEx.DeletionTime);
+            await currentTask.CancelJob(cancelJobEx.Reason);
             nextTask = null;
         }
         catch (Exception ex)

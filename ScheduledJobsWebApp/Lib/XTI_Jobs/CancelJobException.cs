@@ -2,13 +2,11 @@
 
 public sealed class CancelJobException : Exception
 {
-    internal CancelJobException(string reason, DeletionTime deletionTime)
-        : base($"Job cancelled\r\n{reason}\r\nDeletion Time: {deletionTime.DisplayText}")
+    internal CancelJobException(string reason)
+        : base($"Job cancelled: {reason}")
     {
         Reason = reason;
-        DeletionTime = deletionTime;
     }
 
     public string Reason { get; }
-    public DeletionTime DeletionTime { get; }
 }

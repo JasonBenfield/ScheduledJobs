@@ -65,14 +65,13 @@ public sealed class SjcJobDb : IJobDb
             }
         );
 
-    public Task JobCancelled(int taskID, string reason, DeletionTime deletionTime) =>
+    public Task JobCancelled(int taskID, string reason) =>
         schdJobClient.Jobs.JobCancelled
         (
             new JobCancelledRequest
             {
                 TaskID = taskID,
-                Reason = reason,
-                DeletionTime = deletionTime
+                Reason = reason
             }
         );
 

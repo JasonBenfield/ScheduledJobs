@@ -5,6 +5,7 @@ import { PaddingCss } from "@jasonbenfield/sharedwebapp/PaddingCss";
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
 import { BlockView } from "@jasonbenfield/sharedwebapp/Views/BlockView";
 import { GridCellView } from "@jasonbenfield/sharedwebapp/Views/Grid";
+import { MarginCss } from "@jasonbenfield/sharedwebapp/MarginCss";
 
 export class ScheduledJobsTheme {
     public static readonly instance = new ScheduledJobsTheme();
@@ -63,7 +64,7 @@ export class ScheduledJobsTheme {
             return toolbar
                 .configure(t => {
                     t.setBackgroundContext(ContextualClass.secondary);
-                    t.addCssName('bg-opacity-50');
+                    t.addCssName('bg-opacity-25');
                     t.setPadding(PaddingCss.xs(3));
                 });
         },
@@ -74,6 +75,7 @@ export class ScheduledJobsTheme {
                     b.setText('');
                     b.setTitle('Menu');
                     b.useOutlineStyle(ContextualClass.secondary);
+                    b.setMargin(MarginCss.end(1));
                 });
         },
         refreshButton(button: ButtonCommandView) {
@@ -92,6 +94,7 @@ export class ScheduledJobsTheme {
                     b.setText('Back');
                     b.setTitle('Back');
                     b.useOutlineStyle(ContextualClass.secondary);
+                    b.setMargin(MarginCss.end(1));
                 });
         },
         nextButton(button: ButtonCommandView) {

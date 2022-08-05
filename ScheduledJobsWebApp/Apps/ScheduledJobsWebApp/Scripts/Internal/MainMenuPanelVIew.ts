@@ -1,5 +1,6 @@
 ﻿import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
 import { FlexCss } from "@jasonbenfield/sharedwebapp/FlexCss";
+import { MarginCss } from "@jasonbenfield/sharedwebapp/MarginCss";
 import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
 import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
 import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
@@ -30,14 +31,19 @@ export class MainMenuPanelView extends GridView {
         navView.setFlexCss(new FlexCss().column());
         this.eventDefinitionsLink = navView.addTextLink();
         this.eventDefinitionsLink.setText('Event Definitions');
+        this.eventDefinitionsLink.setMargin(MarginCss.bottom(3));
         this.notificationsLink = navView.addTextLink();
         this.notificationsLink.setText('Event Notifications');
+        this.notificationsLink.setMargin(MarginCss.bottom(3));
         this.jobDefinitionsLink = navView.addTextLink();
         this.jobDefinitionsLink.setText('Job Definitions');
+        this.jobDefinitionsLink.setMargin(MarginCss.bottom(3));
         this.failedJobsLink = navView.addTextLink();
         this.failedJobsLink.setText('Failed Jobs');
+        this.failedJobsLink.setMargin(MarginCss.bottom(3));
         this.recentJobsLink = navView.addTextLink();
         this.recentJobsLink.setText('Recent Jobs');
+        this.recentJobsLink.setMargin(MarginCss.bottom(3));
         this.toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );

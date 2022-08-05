@@ -22,7 +22,7 @@ public interface IJobDb
 
     Task StartTask(int taskID);
 
-    Task JobCancelled(int taskID, string reason, DeletionTime deletionTime);
+    Task JobCancelled(int taskID, string reason);
 
     Task<TriggeredJobWithTasksModel> TaskCompleted
     (

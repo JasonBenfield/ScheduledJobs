@@ -22,7 +22,7 @@ class MainPage extends BasicPage {
 
     private async activateFailedJobsPanel() {
         this.panels.activate(this.jobsPanel);
-        let result = await this.jobsPanel.start();
+        const result = await this.jobsPanel.start();
         if (result.menuRequested) {
             this.activateMenuPanel();
         }
@@ -30,7 +30,7 @@ class MainPage extends BasicPage {
 
     private async activateMenuPanel() {
         this.panels.activate(this.menuPanel);
-        let result = await this.menuPanel.start();
+        const result = await this.menuPanel.start();
         if (result.done) {
             this.activateFailedJobsPanel();
         }

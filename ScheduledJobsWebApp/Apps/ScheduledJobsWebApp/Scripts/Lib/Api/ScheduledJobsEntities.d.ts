@@ -165,7 +165,6 @@ interface IStartTaskRequest {
 interface IJobCancelledRequest {
 	TaskID: number;
 	Reason: string;
-	DeletionTime: IDeletionTime;
 }
 interface ITaskCompletedRequest {
 	CompletedTaskID: number;
@@ -199,10 +198,6 @@ interface IDuplicateHandling {
 	DisplayText: string;
 }
 interface IAppEventSeverity {
-	Value: number;
-	DisplayText: string;
-}
-interface IDeletionTime {
 	Value: number;
 	DisplayText: string;
 }

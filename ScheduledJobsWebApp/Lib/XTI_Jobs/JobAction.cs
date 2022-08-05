@@ -5,6 +5,7 @@ public abstract class JobAction<T> : IJobAction
 {
     private readonly TriggeredJobTask task;
     private T data = new T();
+    private bool isCancelled = false;
 
     protected JobAction(TriggeredJobTask task)
     {
@@ -16,12 +17,20 @@ public abstract class JobAction<T> : IJobAction
         data = task.Data<T>();
         var resultBuilder = new JobActionResultBuilder();
         await Execute(stoppingToken, task, resultBuilder, data);
+        if (isCancelled)
+        {
+            throw new CancelJobException("");
+        }
         return resultBuilder.Build();
     }
 
     protected abstract Task<T> Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder next, T data);
 
-    protected CancelJobExceptionBuilder CancelJob() => new CancelJobExceptionBuilder();
+    protected CancelJobExceptionBuilder CancelJob()
+    {
+        isCancelled = true;
+        return new CancelJobExceptionBuilder();
+    }
 
     public async Task<JobErrorResult> OnError(Exception ex)
     {

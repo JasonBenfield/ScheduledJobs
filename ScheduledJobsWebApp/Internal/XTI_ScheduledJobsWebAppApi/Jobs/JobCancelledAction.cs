@@ -11,7 +11,7 @@ internal sealed class JobCancelledAction : AppAction<JobCancelledRequest, EmptyA
 
     public async Task<EmptyActionResult> Execute(JobCancelledRequest model, CancellationToken stoppingToken)
     {
-        await db.JobCancelled(model.TaskID, model.Reason, model.DeletionTime);
+        await db.JobCancelled(model.TaskID, model.Reason);
         return new EmptyActionResult();
     }
 }

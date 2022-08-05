@@ -57,8 +57,8 @@ public sealed class TriggeredJob
         .FirstOrDefault()
         ?? JobTaskStatus.Values.NotSet;
 
-    internal Task CancelJob(TriggeredJobTask triggeredJobTask, string reason, DeletionTime deletionTime) =>
-        db.JobCancelled(triggeredJobTask.Model.ID, reason, deletionTime);
+    internal Task CancelJob(TriggeredJobTask triggeredJobTask, string reason) =>
+        db.JobCancelled(triggeredJobTask.Model.ID, reason);
 
     internal async Task<TriggeredJobTask?> Start(NextTaskModel[] firstTasks)
     {

@@ -11,7 +11,7 @@ export class TaskListItem extends BasicComponent {
         let generation = '';
         if (task.Generation > 1) {
             for (let i = 0; i < task.Generation - 1; i++) {
-                generation += '&nbsp;&nbsp;';
+                generation += '>>';
             }
         }
         view.generation.setText(generation);

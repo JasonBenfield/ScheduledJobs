@@ -6,7 +6,7 @@ import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicT
 import { BlockView } from "@jasonbenfield/sharedwebapp/Views/BlockView";
 import { CardView } from "@jasonbenfield/sharedwebapp/Views/Card";
 import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
-import { FormGroupTextView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
+import { FormGroupGridView, FormGroupTextView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
 import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
 import { LinkListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
 import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
@@ -36,12 +36,11 @@ export class NotificationDetailPanelView extends GridView {
         this.detailBlock = mainContent.addView(BlockView);
         this.eventDisplayText = this.detailBlock.addView(TextHeading1View)
             .configure(th => th.setMargin(MarginCss.bottom(3)));
-        this.sourceKey = this.detailBlock.addView(FormGroupTextView)
-            .configure(b => b.setMargin(MarginCss.bottom(3)));
+        const formGroupContainer = this.detailBlock.addView(FormGroupGridView)
+        this.sourceKey = formGroupContainer.addFormGroup(FormGroupTextView);
         this.sourceKey.captionCell.setTextCss(new TextCss().end());
-        this.sourceData = this.detailBlock.addView(FormGroupTextView)
-            .configure(b => b.setMargin(MarginCss.bottom(3)));
-        let card = this.detailBlock.addView(CardView);
+        this.sourceData = formGroupContainer.addFormGroup(FormGroupTextView);
+        const card = this.detailBlock.addView(CardView);
         this.triggeredJobsTitle = card.addCardTitleHeader();
         this.triggeredJobs = card.addLinkListGroup();
         this.triggeredJobs.setItemViewType(JobSummaryListItemView);

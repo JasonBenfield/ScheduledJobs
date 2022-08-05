@@ -450,62 +450,17 @@ public sealed class EfJobDb : IJobDb
         }
     }
 
-    public Task JobCancelled(int taskID, string reason, DeletionTime deletionTime) =>
+    public Task JobCancelled(int taskID, string reason) =>
         db.Transaction
         (
             async () =>
             {
                 var taskEntity = await GetTask(taskID);
-                if (deletionTime.Equals(DeletionTime.Values.Immediately))
-                {
-                    await DeleteJob(taskEntity);
-                }
-                else
-                {
-                    var efTask = CreateEfTriggeredJobTask(taskEntity);
-                    await efTask.Cancel();
-                    await efTask.LogMessage("Cancelled", reason, "");
-                    if (deletionTime.Equals(DeletionTime.Values.NextDay))
-                    {
-                        var timeToDelete = new DateTimeOffset(clock.Now().LocalDateTime.Date.AddDays(1));
-                        var jobEntity = await db.TriggeredJobs.Retrieve()
-                            .FirstAsync(j => j.ID == taskEntity.TriggeredJobID);
-                        await db.TriggeredJobs.Update(jobEntity, j => j.TimeToDelete = timeToDelete);
-                    }
-                }
+                var efTask = CreateEfTriggeredJobTask(taskEntity);
+                await efTask.Cancel();
+                await efTask.LogMessage("Cancelled", reason, "");
             }
         );
-
-    private async Task DeleteJob(TriggeredJobTaskEntity taskEntity)
-    {
-        var taskIDs = db.TriggeredJobTasks.Retrieve()
-            .Where(t => t.TriggeredJobID == taskEntity.TriggeredJobID)
-            .Select(t => t.ID);
-        var entries = await db.LogEntries.Retrieve()
-            .Where(le => taskIDs.Contains(le.TaskID))
-            .ToArrayAsync();
-        foreach (var entry in entries)
-        {
-            await db.LogEntries.Delete(entry);
-        }
-        var hierTasks = await db.HierarchicalTriggeredJobTasks.Retrieve()
-            .Where(ht => taskIDs.Contains(ht.ParentTaskID))
-            .ToArrayAsync();
-        foreach (var hierTask in hierTasks)
-        {
-            await db.HierarchicalTriggeredJobTasks.Delete(hierTask);
-        }
-        var tasks = await db.TriggeredJobTasks.Retrieve()
-            .Where(t => taskIDs.Contains(t.ID))
-            .ToArrayAsync();
-        foreach (var task in tasks)
-        {
-            await db.TriggeredJobTasks.Delete(task);
-        }
-        var job = await db.TriggeredJobs.Retrieve()
-            .FirstAsync(j => j.ID == taskEntity.TriggeredJobID);
-        await db.TriggeredJobs.Delete(job);
-    }
 
     public async Task<TriggeredJobWithTasksModel> TaskFailed(int failedTaskID, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, string category, string message, string details)
     {
