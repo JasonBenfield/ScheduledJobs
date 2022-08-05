@@ -4,7 +4,6 @@ using XTI_Core;
 using XTI_Core.Extensions;
 using XTI_DB;
 using XTI_JobsDB.EF;
-using XTI_JobsDB.Entities;
 
 namespace XTI_JobsDB.SqlServer;
 
