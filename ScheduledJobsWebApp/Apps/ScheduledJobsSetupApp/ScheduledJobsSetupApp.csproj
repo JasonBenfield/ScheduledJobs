@@ -16,6 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Internal\XTI_JobsDB.SqlServer\XTI_JobsDB.SqlServer.csproj" />
 		<ProjectReference Include="..\..\Internal\XTI_ScheduledJobsWebAppApi\XTI_ScheduledJobsWebAppApi.csproj" />
 	</ItemGroup>
 

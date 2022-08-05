@@ -4,6 +4,9 @@ using ScheduledJobsSetupApp;
 using XTI_App.Abstractions;
 using XTI_App.Api;
 using XTI_AppSetupApp.Extensions;
+using XTI_DB;
+using XTI_JobsDB.EF;
+using XTI_JobsDB.SqlServer;
 using XTI_ScheduledJobsWebAppApi;
 
 await XtiSetupAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
@@ -12,5 +15,7 @@ await XtiSetupAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
         services.AddSingleton(_ => AppVersionKey.Current);
         services.AddScoped<AppApiFactory, ScheduledJobsAppApiFactory>();
         services.AddScoped<IAppSetup, ScheduledJobsAppSetup>();
+        services.AddJobDbContextForSqlServer();
+        services.AddScoped<DbAdmin<JobDbContext>>();
     })
     .RunConsoleAsync();
