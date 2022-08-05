@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="XTI_Core.Fakes" Version="1.10.12" />
+		<PackageReference Include="XTI_Core.Extensions" Version="1.10.12" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    <PackageReference Include="XTI_HubAppClient.Extensions" Version="1.4.22" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ScheduledJobsWebApp\Internal\XTI_JobsDB.SqlServer\XTI_JobsDB.SqlServer.csproj" />
+    <ProjectReference Include="..\..\ScheduledJobsWebApp\Internal\XTI_ScheduledJobsWebAppApi\XTI_ScheduledJobsWebAppApi.csproj" />
+    <ProjectReference Include="..\..\ScheduledJobsWebApp\Lib\XTI_ScheduledJobsAppClient\XTI_ScheduledJobsAppClient.csproj" />
+    <ProjectReference Include="..\XTI_ScheduledJobSharedTests\XTI_ScheduledJobSharedTests.csproj" />
+  </ItemGroup>
+
+</Project>

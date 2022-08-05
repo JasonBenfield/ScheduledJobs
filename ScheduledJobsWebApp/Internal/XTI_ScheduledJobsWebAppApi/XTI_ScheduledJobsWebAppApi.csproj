@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="XTI_App.Extensions" Version="1.8.22" />
+		<PackageReference Include="XTI_WebApp.Api" Version="1.8.22" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\XTI_JobsDB.EF\XTI_JobsDB.EF.csproj" />
+	  <ProjectReference Include="..\..\Lib\XTI_Jobs\XTI_Jobs.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Tasks\TaskErrors.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>TaskErrors.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Tasks\TaskErrors.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>TaskErrors.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+</Project>
