@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_ApiGeneratorApp.Extensions" Version="1.3.24" />
+		<PackageReference Include="XTI_ApiGeneratorApp.Extensions" Version="1.3.25" />
 	</ItemGroup>
 
 	<ItemGroup>
