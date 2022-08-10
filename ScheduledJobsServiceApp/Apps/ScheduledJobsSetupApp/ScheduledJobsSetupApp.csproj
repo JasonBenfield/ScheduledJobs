@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_AppSetupApp.Extensions" Version="1.4.25" />
+		<PackageReference Include="XTI_AppSetupApp.Extensions" Version="1.4.26" />
 	</ItemGroup>
 
 	<ItemGroup>

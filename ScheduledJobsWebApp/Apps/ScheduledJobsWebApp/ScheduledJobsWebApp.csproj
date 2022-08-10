@@ -7,8 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_HubAppClient.WebApp.Extensions" Version="1.4.25" />
-		<PackageReference Include="XTI_WebApp.RCL" Version="1.8.23" />
+		<PackageReference Include="XTI_HubAppClient.WebApp.Extensions" Version="1.4.26" />
+		<PackageReference Include="XTI_WebApp.RCL" Version="1.8.24" />
 	</ItemGroup>
 
 	<ItemGroup>

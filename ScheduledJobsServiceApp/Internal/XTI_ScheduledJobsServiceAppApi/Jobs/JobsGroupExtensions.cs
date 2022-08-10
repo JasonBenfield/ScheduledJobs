@@ -4,8 +4,9 @@ namespace XTI_ScheduledJobsServiceAppApi;
 
 internal static class JobsGroupExtensions
 {
-    public static void AddHomeGroupServices(this IServiceCollection services)
+    public static void AddJobsGroupServices(this IServiceCollection services)
     {
         services.AddScoped<PurgeJobsAndEventsAction>();
+        services.AddScoped<TimeoutJobsAction>();
     }
 }
