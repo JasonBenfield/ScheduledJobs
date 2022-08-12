@@ -24,8 +24,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\Tests\XTI_ScheduledJobSharedTests\XTI_ScheduledJobSharedTests.csproj" />
-		<ProjectReference Include="..\..\Internal\XTI_JobsDB.InMemory\XTI_JobsDB.InMemory.csproj" />
 		<ProjectReference Include="..\..\Internal\XTI_ScheduledJobsWebAppApi\XTI_ScheduledJobsWebAppApi.csproj" />
+		<ProjectReference Include="..\..\Lib\XTI_JobsDB.InMemory\XTI_JobsDB.InMemory.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -101,7 +101,7 @@ internal sealed class TriggerJobTest
             events => events.AddEvent
             (
                 DemoEventKeys.SomethingHappened,
-                evt => evt.Ignore().WhenSourceKeysAndDataAreEqual()
+                evt => evt.IgnoreDuplicates().WhenSourceKeysAndDataAreEqual()
             ),
             jobs => BuildJobs(jobs)
         );
@@ -247,7 +247,7 @@ internal sealed class TriggerJobTest
             events => events.AddEvent
             (
                 DemoEventKeys.SomethingHappened,
-                evt => evt.Ignore().WhenSourceKeysOnlyAreEqual()
+                evt => evt.IgnoreDuplicates().WhenSourceKeysOnlyAreEqual()
             ),
             jobs => BuildJobs(jobs)
         );
@@ -274,7 +274,7 @@ internal sealed class TriggerJobTest
             events => events.AddEvent
             (
                 DemoEventKeys.SomethingHappened,
-                evt => evt.Ignore().WhenSourceKeysOnlyAreEqual()
+                evt => evt.IgnoreDuplicates().WhenSourceKeysOnlyAreEqual()
                     .ActiveFor(activeFor)
             ),
             jobs => BuildJobs(jobs)
@@ -301,7 +301,7 @@ internal sealed class TriggerJobTest
             events => events.AddEvent
             (
                 DemoEventKeys.SomethingHappened,
-                evt => evt.Ignore().WhenSourceKeysOnlyAreEqual()
+                evt => evt.IgnoreDuplicates().WhenSourceKeysOnlyAreEqual()
                     .StartNotifying(clock.Now().AddMinutes(5))
             ),
             jobs => BuildJobs(jobs)
