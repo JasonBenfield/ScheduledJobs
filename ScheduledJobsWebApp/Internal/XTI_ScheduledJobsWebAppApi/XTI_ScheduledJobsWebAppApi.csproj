@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\XTI_JobsDB.EF\XTI_JobsDB.EF.csproj" />
+	  <ProjectReference Include="..\..\Lib\XTI_JobsDB.EF\XTI_JobsDB.EF.csproj" />
 	  <ProjectReference Include="..\..\Lib\XTI_Jobs\XTI_Jobs.csproj" />
 	</ItemGroup>
 

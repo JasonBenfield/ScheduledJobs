@@ -15,7 +15,7 @@ public sealed class EventBuilder
     internal bool CompareSourceKeyAndDataForDuplication { get; set; } = true;
     internal DuplicateHandling DuplicateHandling { get; set; } = DuplicateHandling.Values.Ignore;
 
-    public EventDuplicationBuilder Ignore() => Duplicates(DuplicateHandling.Values.Ignore);
+    public EventDuplicationBuilder IgnoreDuplicates() => Duplicates(DuplicateHandling.Values.Ignore);
 
     public EventDuplicationBuilder KeepNewest() => Duplicates(DuplicateHandling.Values.KeepNewest);
 

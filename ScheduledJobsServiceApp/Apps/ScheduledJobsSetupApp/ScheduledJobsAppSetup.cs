@@ -1,11 +1,38 @@
 ﻿using XTI_App.Abstractions;
+using XTI_HubAppClient;
+using XTI_ScheduledJobsServiceAppApi;
 
 namespace ScheduledJobsSetupApp;
 
 internal sealed class ScheduledJobsAppSetup : IAppSetup
 {
-    public Task Run(AppVersionKey versionKey)
+    private readonly HubAppClient hubClient;
+
+    public ScheduledJobsAppSetup(HubAppClient hubClient)
     {
-        return Task.CompletedTask;
+        this.hubClient = hubClient;
+    }
+
+    public async Task Run(AppVersionKey versionKey)
+    {
+        var systemUserName = new SystemUserName(ScheduledJobsInfo.AppKey, Environment.MachineName);
+        await hubClient.Install.SetUserAccess
+        (
+            new SetUserAccessRequest
+            {
+                UserName = systemUserName.Value,
+                RoleAssignments = new[]
+                {
+                    new SetUserAccessRoleRequest
+                    {
+                        AppKey = AppKey.WebApp("ScheduledJobs"),
+                        RoleNames = new []
+                        {
+                            AppRoleName.Admin
+                        }
+                    }
+                }
+            }
+        );
     }
 }
