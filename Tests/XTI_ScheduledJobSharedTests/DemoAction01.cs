@@ -12,7 +12,7 @@ public sealed class DemoAction01 : JobAction<DoSomethingData>
         this.context = context;
     }
 
-    protected override async Task<DoSomethingData> Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder nextTasks, DoSomethingData data)
+    protected override async Task Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder nextTasks, DoSomethingData data)
     {
         if (!context.Delay.Equals(TimeSpan.Zero))
         {
@@ -29,6 +29,5 @@ public sealed class DemoAction01 : JobAction<DoSomethingData>
         nextTasks
             .AddNext(DemoJobs.DoSomething.Task02, data)
             .AddNext(DemoJobs.DoSomething.TaskFinal, data);
-        return data;
     }
 }

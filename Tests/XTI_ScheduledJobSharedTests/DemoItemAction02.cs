@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace XTI_ScheduledJobSharedTests;
+﻿namespace XTI_ScheduledJobSharedTests;
 
 public sealed class DemoItemAction02 : JobAction<DoSomethingItemData>
 {
@@ -11,13 +9,13 @@ public sealed class DemoItemAction02 : JobAction<DoSomethingItemData>
         this.context = context;
     }
 
-    protected override Task<DoSomethingItemData> Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder nextTasks, DoSomethingItemData data)
+    protected override Task Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder nextTasks, DoSomethingItemData data)
     {
         context.MaybeThrowError(data);
         context.MaybeCancel(data, () => CancelJob());
         data.Value = $"Value{data.ItemID}";
         context.AddValue(data.Value);
-        return Task.FromResult(data);
+        return Task.CompletedTask;
     }
 
     protected override Task OnError(Exception ex, DoSomethingItemData data, JobErrorResultBuilder onError)
