@@ -3,7 +3,7 @@
 public sealed class JobBuilder
 {
     private readonly JobKey jobKey;
-    private TimeSpan timeout;
+    private TimeSpan timeout = TimeSpan.FromDays(1);
     private TimeSpan deleteAfter = TimeSpan.FromDays(365);
     private readonly List<JobTaskBuilder> tasks = new();
 
