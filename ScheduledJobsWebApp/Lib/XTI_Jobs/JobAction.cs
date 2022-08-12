@@ -24,7 +24,7 @@ public abstract class JobAction<T> : IJobAction
         return resultBuilder.Build();
     }
 
-    protected abstract Task<T> Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder next, T data);
+    protected abstract Task Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder next, T data);
 
     protected CancelJobExceptionBuilder CancelJob()
     {

@@ -11,7 +11,7 @@ public sealed class DemoItemAction01 : JobAction<DoSomethingItemData>
         this.context = context;
     }
 
-    protected override Task<DoSomethingItemData> Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder next, DoSomethingItemData data)
+    protected override Task Execute(CancellationToken stoppingToken, TriggeredJobTask task, JobActionResultBuilder next, DoSomethingItemData data)
     {
         context.MaybeThrowError(data);
         context.MaybeCancel(data, () => CancelJob());
@@ -20,7 +20,7 @@ public sealed class DemoItemAction01 : JobAction<DoSomethingItemData>
         next
             .PreserveData()
             .AddNext(DemoJobs.DoSomething.TaskItem02, data);
-        return Task.FromResult(data);
+        return Task.CompletedTask;
     }
 
     protected override Task OnError(Exception ex, DoSomethingItemData data, JobErrorResultBuilder onError)
