@@ -32,8 +32,7 @@ public sealed class EventMonitor
         var pendingJobs = await db.TriggerJobs(eventKey, jobKey, eventRaisedStartTime);
         foreach (var pendingJob in pendingJobs)
         {
-            var transformedData = jobActionFactory.CreateTransformedSourceData(pendingJob.SourceData);
-            var taskData = await transformedData.Value();
+            var taskData = await jobActionFactory.TransformSourceData(pendingJob.SourceKey, pendingJob.SourceData);
             var firstTasks = jobActionFactory.FirstTasks(taskData);
             var triggeredJob = new TriggeredJob(db, pendingJob);
             var nextTask = await triggeredJob.Start(firstTasks);

@@ -300,7 +300,7 @@ public sealed class EfJobDb : IJobDb
                 ),
                 jobEntity.EventNotificationID
             );
-            var pendingJob = new PendingJobModel(job, notificationEntity.SourceData);
+            var pendingJob = new PendingJobModel(job, notificationEntity.SourceKey, notificationEntity.SourceData);
             pendingJobs.Add(pendingJob);
         }
         return pendingJobs.ToArray();
