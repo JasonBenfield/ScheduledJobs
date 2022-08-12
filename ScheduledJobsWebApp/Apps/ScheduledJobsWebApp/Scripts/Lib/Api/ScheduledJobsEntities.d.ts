@@ -146,6 +146,7 @@ interface ITriggerJobsRequest {
 }
 interface IPendingJobModel {
 	Job: ITriggeredJobModel;
+	SourceKey: string;
 	SourceData: string;
 }
 interface IRetryJobsRequest {

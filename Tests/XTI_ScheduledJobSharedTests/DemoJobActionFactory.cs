@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 
 namespace XTI_ScheduledJobSharedTests;
 
@@ -49,11 +50,22 @@ public sealed class DemoJobActionFactory : IJobActionFactory
         return action;
     }
 
-    public ITransformedSourceData CreateTransformedSourceData(string sourceData) => new DemoTransformedSourceData(sourceData);
+    public Task<string> TransformSourceData(string sourceKey, string sourceData)
+    {
+        var somethingHappenedData = JsonSerializer.Deserialize<SomethingHappenedData>(sourceData) ?? new SomethingHappenedData();
+        var doSomethingData = new DoSomethingData
+        {
+            SourceID = somethingHappenedData.ID,
+            TargetID = somethingHappenedData.ID * 10,
+            Items = somethingHappenedData.Items.Select(item => new DoSomethingItemData { ItemID = item }).ToArray()
+        };
+        var serializedTargetData = JsonSerializer.Serialize(doSomethingData);
+        return Task.FromResult(serializedTargetData);
+    }
 
-    public NextTaskModel[] FirstTasks(string taskData) => 
-        new[] 
-        { 
+    public NextTaskModel[] FirstTasks(string taskData) =>
+        new[]
+        {
             new NextTaskModel(DemoJobs.DoSomething.Task01, taskData)
         };
 }

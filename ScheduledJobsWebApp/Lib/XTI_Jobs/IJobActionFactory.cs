@@ -2,7 +2,7 @@
 
 public interface IJobActionFactory
 {
-    ITransformedSourceData CreateTransformedSourceData(string sourceData);
+    Task<string> TransformSourceData(string sourceKey, string sourceData);
     NextTaskModel[] FirstTasks(string taskData);
     IJobAction CreateJobAction(TriggeredJobTask jobTask);
 }
