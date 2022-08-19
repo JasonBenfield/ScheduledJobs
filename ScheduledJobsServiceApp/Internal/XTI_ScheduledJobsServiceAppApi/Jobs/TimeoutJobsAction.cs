@@ -11,7 +11,7 @@ internal sealed class TimeoutJobsAction : AppAction<EmptyRequest, EmptyActionRes
 
     public async Task<EmptyActionResult> Execute(EmptyRequest model, CancellationToken ct)
     {
-        await schdJobsClient.Recurring.TimeoutTasks();
+        await schdJobsClient.Recurring.TimeoutTasks(ct);
         return new EmptyActionResult();
     }
 }

@@ -9,6 +9,6 @@ public sealed partial class UserCacheGroup : AppClientGroup
 
     public UserCacheGroupActions Actions { get; }
 
-    public Task<EmptyActionResult> ClearCache(string model) => Actions.ClearCache.Post("", model);
+    public Task<EmptyActionResult> ClearCache(string model, CancellationToken ct = default) => Actions.ClearCache.Post("", model, ct);
     public sealed record UserCacheGroupActions(AppClientPostAction<string, EmptyActionResult> ClearCache);
 }
