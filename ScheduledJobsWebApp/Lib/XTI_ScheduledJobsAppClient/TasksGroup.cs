@@ -9,7 +9,7 @@ public sealed partial class TasksGroup : AppClientGroup
 
     public TasksGroupActions Actions { get; }
 
-    public Task<EmptyActionResult> CancelTask(GetTaskRequest model) => Actions.CancelTask.Post("", model);
-    public Task<EmptyActionResult> RetryTask(GetTaskRequest model) => Actions.RetryTask.Post("", model);
+    public Task<EmptyActionResult> CancelTask(GetTaskRequest model, CancellationToken ct = default) => Actions.CancelTask.Post("", model, ct);
+    public Task<EmptyActionResult> RetryTask(GetTaskRequest model, CancellationToken ct = default) => Actions.RetryTask.Post("", model, ct);
     public sealed record TasksGroupActions(AppClientPostAction<GetTaskRequest, EmptyActionResult> CancelTask, AppClientPostAction<GetTaskRequest, EmptyActionResult> RetryTask);
 }

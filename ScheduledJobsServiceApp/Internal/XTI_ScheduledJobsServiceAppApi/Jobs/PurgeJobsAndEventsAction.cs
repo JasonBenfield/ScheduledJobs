@@ -11,7 +11,7 @@ public sealed class PurgeJobsAndEventsAction : AppAction<EmptyRequest, EmptyActi
 
     public async Task<EmptyActionResult> Execute(EmptyRequest model, CancellationToken ct)
     {
-        await schdJobsClient.Recurring.PurgeJobsAndEvents();
+        await schdJobsClient.Recurring.PurgeJobsAndEvents(ct);
         return new EmptyActionResult();
     }
 }

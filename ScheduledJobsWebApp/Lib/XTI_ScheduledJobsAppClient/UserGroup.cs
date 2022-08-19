@@ -9,6 +9,6 @@ public sealed partial class UserGroup : AppClientGroup
 
     public UserGroupActions Actions { get; }
 
-    public Task<ResourcePathAccess[]> GetUserAccess(ResourcePath[] model) => Actions.GetUserAccess.Post("", model);
+    public Task<ResourcePathAccess[]> GetUserAccess(ResourcePath[] model, CancellationToken ct = default) => Actions.GetUserAccess.Post("", model, ct);
     public sealed record UserGroupActions(AppClientPostAction<ResourcePath[], ResourcePathAccess[]> GetUserAccess, AppClientGetAction<EmptyRequest> AccessDenied, AppClientGetAction<EmptyRequest> Error, AppClientGetAction<LogoutRequest> Logout);
 }

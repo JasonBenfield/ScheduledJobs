@@ -9,7 +9,7 @@ public sealed partial class RecurringGroup : AppClientGroup
 
     public RecurringGroupActions Actions { get; }
 
-    public Task<EmptyActionResult> TimeoutTasks() => Actions.TimeoutTasks.Post("", new EmptyRequest());
-    public Task<EmptyActionResult> PurgeJobsAndEvents() => Actions.PurgeJobsAndEvents.Post("", new EmptyRequest());
+    public Task<EmptyActionResult> TimeoutTasks(CancellationToken ct = default) => Actions.TimeoutTasks.Post("", new EmptyRequest(), ct);
+    public Task<EmptyActionResult> PurgeJobsAndEvents(CancellationToken ct = default) => Actions.PurgeJobsAndEvents.Post("", new EmptyRequest(), ct);
     public sealed record RecurringGroupActions(AppClientPostAction<EmptyRequest, EmptyActionResult> TimeoutTasks, AppClientPostAction<EmptyRequest, EmptyActionResult> PurgeJobsAndEvents);
 }

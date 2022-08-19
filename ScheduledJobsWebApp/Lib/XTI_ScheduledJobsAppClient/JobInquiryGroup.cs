@@ -9,8 +9,8 @@ public sealed partial class JobInquiryGroup : AppClientGroup
 
     public JobInquiryGroupActions Actions { get; }
 
-    public Task<JobSummaryModel[]> GetFailedJobs() => Actions.GetFailedJobs.Post("", new EmptyRequest());
-    public Task<JobSummaryModel[]> GetRecentJobs() => Actions.GetRecentJobs.Post("", new EmptyRequest());
-    public Task<TriggeredJobDetailModel> GetJobDetail(GetJobDetailRequest model) => Actions.GetJobDetail.Post("", model);
+    public Task<JobSummaryModel[]> GetFailedJobs(CancellationToken ct = default) => Actions.GetFailedJobs.Post("", new EmptyRequest(), ct);
+    public Task<JobSummaryModel[]> GetRecentJobs(CancellationToken ct = default) => Actions.GetRecentJobs.Post("", new EmptyRequest(), ct);
+    public Task<TriggeredJobDetailModel> GetJobDetail(GetJobDetailRequest model, CancellationToken ct = default) => Actions.GetJobDetail.Post("", model, ct);
     public sealed record JobInquiryGroupActions(AppClientGetAction<EmptyRequest> FailedJobs, AppClientPostAction<EmptyRequest, JobSummaryModel[]> GetFailedJobs, AppClientGetAction<EmptyRequest> RecentJobs, AppClientPostAction<EmptyRequest, JobSummaryModel[]> GetRecentJobs, AppClientGetAction<GetJobDetailRequest> JobDetail, AppClientPostAction<GetJobDetailRequest, TriggeredJobDetailModel> GetJobDetail);
 }
