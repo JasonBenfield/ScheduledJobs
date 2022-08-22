@@ -123,4 +123,7 @@
   <data name="TaskWithStatusCannotBeRetried" xml:space="preserve">
     <value>Task with status {0} cannot be retried.</value>
   </data>
+  <data name="TaskWithStatusCannotEditTaskData" xml:space="preserve">
+    <value>Task with status {0} cannot edit task data.</value>
+  </data>
 </root>

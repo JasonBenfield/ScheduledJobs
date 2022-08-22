@@ -14,6 +14,7 @@ import { TaskDetailPanelView } from "./TaskDetailPanelView";
 
 interface Results {
     backRequested?: { refreshRequired: boolean; };
+    editTaskRequested?: { task: ITriggeredJobTaskModel; };
 }
 
 export class TaskDetailPanelResult {
@@ -21,9 +22,15 @@ export class TaskDetailPanelResult {
         return new TaskDetailPanelResult({ backRequested: { refreshRequired: refreshRequired } });
     }
 
+    static editTaskRequested(task: ITriggeredJobTaskModel) {
+        return new TaskDetailPanelResult({ editTaskRequested: { task: task } });
+    }
+
     private constructor(private readonly results: Results) { }
 
     get backRequested() { return this.results.backRequested; }
+
+    get editTaskRequested() { return this.results.editTaskRequested; }
 }
 
 export class TaskDetailPanel implements IPanel {
@@ -42,13 +49,13 @@ export class TaskDetailPanel implements IPanel {
     private readonly modalConfirm: ModalConfirm;
 
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
-        this.displayText = new TextComponent(this.view.displayText);
-        this.status = new TextComponent(this.view.status);
-        this.timeStarted = new TextComponent(this.view.timeStarted);
-        this.timeElapsed = new TextComponent(this.view.timeElapsed);
-        this.taskData = new TextComponent(this.view.taskData);
-        this.logEntries = new ListGroup(this.view.logEntries);
-        this.alert = new MessageAlert(this.view.alert);
+        this.displayText = new TextComponent(view.displayText);
+        this.status = new TextComponent(view.status);
+        this.timeStarted = new TextComponent(view.timeStarted);
+        this.timeElapsed = new TextComponent(view.timeElapsed);
+        this.taskData = new TextComponent(view.taskData);
+        this.logEntries = new ListGroup(view.logEntries);
+        this.alert = new MessageAlert(view.alert);
         new Command(this.previousTask.bind(this)).add(view.previousTaskButton);
         new Command(this.nextTask.bind(this)).add(view.nextTaskButton);
         new Command(this.back.bind(this)).add(view.backButton);
@@ -58,6 +65,7 @@ export class TaskDetailPanel implements IPanel {
         this.retryTaskCommand = new AsyncCommand(this.retryTask.bind(this));
         this.retryTaskCommand.hide();
         this.retryTaskCommand.add(view.retryTaskButton);
+        new Command(this.editTask.bind(this)).add(view.editTaskDataButton);
         this.modalConfirm = new ModalConfirm(view.modalConfirm);
     }
 
@@ -85,6 +93,10 @@ export class TaskDetailPanel implements IPanel {
                 TaskDetailPanelResult.backRequested(true)
             );
         }
+    }
+
+    private editTask() {
+        this.awaitable.resolve(TaskDetailPanelResult.editTaskRequested(this.currentTask));
     }
 
     private back() {

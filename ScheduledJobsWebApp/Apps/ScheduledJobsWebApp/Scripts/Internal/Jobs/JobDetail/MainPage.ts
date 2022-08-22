@@ -3,6 +3,7 @@ import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActiv
 import { Url } from '@jasonbenfield/sharedwebapp/Url';
 import { Apis } from '../../Apis';
 import { MainMenuPanel } from '../../MainMenuPanel';
+import { EditTaskDataPanel } from './EditTaskDataPanel';
 import { JobDetailPanel } from './JobDetailPanel';
 import { MainPageView } from './MainPageView';
 import { TaskDetailPanel } from './TaskDetailPanel';
@@ -12,6 +13,7 @@ class MainPage extends BasicPage {
     private readonly panels: SingleActivePanel;
     private readonly jobDetailPanel: JobDetailPanel;
     private readonly taskDetailPanel: TaskDetailPanel;
+    private readonly editTaskDataPanel: EditTaskDataPanel;
     private readonly menuPanel: MainMenuPanel;
 
     constructor() {
@@ -21,6 +23,9 @@ class MainPage extends BasicPage {
         this.jobDetailPanel = this.panels.add(new JobDetailPanel(schdJobsApi, this.view.jobDetailPanel));
         this.taskDetailPanel = this.panels.add(
             new TaskDetailPanel(schdJobsApi, this.view.taskDetailPanel)
+        );
+        this.editTaskDataPanel = this.panels.add(
+            new EditTaskDataPanel(schdJobsApi, this.view.editTaskDataPanel)
         );
         this.menuPanel = this.panels.add(new MainMenuPanel(schdJobsApi, this.view.menuPanel));
         this.jobDetailPanel.setJobID(Number(Url.current().getQueryValue('JobID')));
@@ -48,6 +53,22 @@ class MainPage extends BasicPage {
             if (result.backRequested.refreshRequired) {
                 this.jobDetailPanel.refresh();
             }
+            this.activateJobDetailPanel();
+        }
+        else if (result.editTaskRequested) {
+            this.editTaskDataPanel.setTask(result.editTaskRequested.task);
+            this.activateEditTaskDataPanel();
+        }
+    }
+
+    private async activateEditTaskDataPanel() {
+        this.panels.activate(this.editTaskDataPanel);
+        const result = await this.editTaskDataPanel.start();
+        if (result.cancelled) {
+            this.activateJobDetailPanel();
+        }
+        else if (result.saved) {
+            this.jobDetailPanel.refresh();
             this.activateJobDetailPanel();
         }
     }

@@ -190,6 +190,10 @@ interface ILogMessageRequest {
 interface IGetTaskRequest {
 	TaskID: number;
 }
+interface IEditTaskDataRequest {
+	TaskID: number;
+	TaskData: string;
+}
 interface IJobTaskStatus {
 	Value: number;
 	DisplayText: string;

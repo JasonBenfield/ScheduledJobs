@@ -1,6 +1,7 @@
 ﻿import { ColumnCss } from "@jasonbenfield/sharedwebapp/ColumnCss";
 import { ContextualClass } from "@jasonbenfield/sharedwebapp/ContextualClass";
 import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
+import { FlexCss } from "@jasonbenfield/sharedwebapp/FlexCss";
 import { MarginCss } from "@jasonbenfield/sharedwebapp/MarginCss";
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
 import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
@@ -11,6 +12,7 @@ import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
 import { ListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
 import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
 import { ModalConfirmView } from "@jasonbenfield/sharedwebapp/Views/Modal";
+import { NavView } from "@jasonbenfield/sharedwebapp/Views/NavView";
 import { RowView } from "@jasonbenfield/sharedwebapp/Views/RowView";
 import { TextBlockView } from "@jasonbenfield/sharedwebapp/Views/TextBlockView";
 import { TextHeading3View } from "@jasonbenfield/sharedwebapp/Views/TextHeadings";
@@ -65,20 +67,24 @@ export class TaskDetailPanelView extends GridView {
         this.logEntries = mainContent.addView(ListGroupView);
         this.logEntries.setItemViewType(LogEntryItemView);
         this.logEntries.setMargin(MarginCss.bottom(3));
-        const buttonContainer = mainContent.addView(BlockView);
-        buttonContainer.addCssName('d-grid');
-        buttonContainer.addCssName('gap-2');
-        buttonContainer.addCssName('mx-auto');
-        buttonContainer.addCssFrom(ColumnCss.xs(6));
-        this.retryTaskButton = buttonContainer.addView(ButtonCommandView);
+        const nav = mainContent.addView(NavView);
+        nav.pills();
+        nav.setFlexCss(new FlexCss().column());
+
+        this.editTaskDataButton = nav.addButtonCommand();
+        this.editTaskDataButton.icon.solidStyle('pen-to-square');
+        this.editTaskDataButton.setText('Edit Task Data');
+        this.editTaskDataButton.setTextCss(new TextCss().start());
+
+        this.retryTaskButton = nav.addButtonCommand();
         this.retryTaskButton.icon.solidStyle('repeat');
         this.retryTaskButton.setText('Retry Task');
-        this.retryTaskButton.useOutlineStyle(ContextualClass.primary);
+        this.retryTaskButton.setTextCss(new TextCss().start());
 
-        this.cancelTaskButton = buttonContainer.addView(ButtonCommandView);
+        this.cancelTaskButton = nav.addButtonCommand();
         this.cancelTaskButton.icon.solidStyle('times');
         this.cancelTaskButton.setText('Cancel Task');
-        this.cancelTaskButton.useOutlineStyle(ContextualClass.primary);
+        this.cancelTaskButton.setTextCss(new TextCss().start());
 
         this.alert = mainContent.addView(MessageAlertView);
 
@@ -99,6 +105,7 @@ export class TaskDetailPanelView extends GridView {
     readonly timeElapsed: BasicTextComponentView;
     readonly taskData: TextBlockView;
     readonly logEntries: ListGroupView;
+    readonly editTaskDataButton: ButtonCommandView;
     readonly retryTaskButton: ButtonCommandView;
     readonly cancelTaskButton: ButtonCommandView;
     readonly backButton: ButtonCommandView;

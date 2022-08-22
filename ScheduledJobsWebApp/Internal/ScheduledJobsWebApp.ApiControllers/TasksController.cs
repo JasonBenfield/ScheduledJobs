@@ -20,4 +20,10 @@ public sealed partial class TasksController : Controller
     {
         return api.Group("Tasks").Action<GetTaskRequest, EmptyActionResult>("RetryTask").Execute(model, ct);
     }
+
+    [HttpPost]
+    public Task<ResultContainer<EmptyActionResult>> EditTaskData([FromBody] EditTaskDataRequest model, CancellationToken ct)
+    {
+        return api.Group("Tasks").Action<EditTaskDataRequest, EmptyActionResult>("EditTaskData").Execute(model, ct);
+    }
 }

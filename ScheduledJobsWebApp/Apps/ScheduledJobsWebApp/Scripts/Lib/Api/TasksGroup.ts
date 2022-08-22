@@ -11,15 +11,20 @@ export class TasksGroup extends AppApiGroup {
 		super(events, resourceUrl, 'Tasks');
 		this.CancelTaskAction = this.createAction<IGetTaskRequest,IEmptyActionResult>('CancelTask', 'Cancel Task');
 		this.RetryTaskAction = this.createAction<IGetTaskRequest,IEmptyActionResult>('RetryTask', 'Retry Task');
+		this.EditTaskDataAction = this.createAction<IEditTaskDataRequest,IEmptyActionResult>('EditTaskData', 'Edit Task Data');
 	}
 	
 	readonly CancelTaskAction: AppApiAction<IGetTaskRequest,IEmptyActionResult>;
 	readonly RetryTaskAction: AppApiAction<IGetTaskRequest,IEmptyActionResult>;
+	readonly EditTaskDataAction: AppApiAction<IEditTaskDataRequest,IEmptyActionResult>;
 	
 	CancelTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
 		return this.CancelTaskAction.execute(model, errorOptions || {});
 	}
 	RetryTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
 		return this.RetryTaskAction.execute(model, errorOptions || {});
+	}
+	EditTaskData(model: IEditTaskDataRequest, errorOptions?: IActionErrorOptions) {
+		return this.EditTaskDataAction.execute(model, errorOptions || {});
 	}
 }

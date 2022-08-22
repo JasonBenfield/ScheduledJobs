@@ -9,19 +9,19 @@ import { JobDetailPanelView } from "./JobDetailPanelView";
 import { TaskListItem } from "./TaskListItem";
 import { TaskListItemView } from "./TaskListItemView";
 
-interface Results {
+interface IResult {
     menuRequested?: {};
     taskSelected?: { tasks: ITriggeredJobTaskModel[], selectedTask: ITriggeredJobTaskModel };
 }
 
-export class JobDetailPanelResult {
-    static menuRequested() { return new JobDetailPanelResult({ menuRequested: {} }); }
+class Result {
+    static menuRequested() { return new Result({ menuRequested: {} }); }
 
     static taskSelected(tasks: ITriggeredJobTaskModel[], selectedTask: ITriggeredJobTaskModel) {
-        return new JobDetailPanelResult({ taskSelected: { tasks: tasks, selectedTask: selectedTask } });
+        return new Result({ taskSelected: { tasks: tasks, selectedTask: selectedTask } });
     }
 
-    private constructor(private readonly results: Results) { }
+    private constructor(private readonly results: IResult) { }
 
     get menuRequested() { return this.results.menuRequested; }
 
@@ -29,7 +29,7 @@ export class JobDetailPanelResult {
 }
 
 export class JobDetailPanel implements IPanel {
-    private readonly awaitable = new Awaitable<JobDetailPanelResult>();
+    private readonly awaitable = new Awaitable<Result>();
     private readonly alert: MessageAlert;
     private readonly jobDisplayText: TextComponent;
     private readonly triggeredByLink: TextLinkComponent;
@@ -51,7 +51,7 @@ export class JobDetailPanel implements IPanel {
         this.refreshCommand.animateIconWhenInProgress('spin');
     }
 
-    private requestMenu() { this.awaitable.resolve(JobDetailPanelResult.menuRequested()); }
+    private requestMenu() { this.awaitable.resolve(Result.menuRequested()); }
 
     private async doRefresh() {
         this.jobDetail = await this.getJobDetail(this.jobID);
@@ -82,7 +82,7 @@ export class JobDetailPanel implements IPanel {
 
     private onTaskClicked(taskItem: TaskListItem) {
         this.awaitable.resolve(
-            JobDetailPanelResult.taskSelected(this.jobDetail.Tasks, taskItem.task)
+            Result.taskSelected(this.jobDetail.Tasks, taskItem.task)
         );
     }
 

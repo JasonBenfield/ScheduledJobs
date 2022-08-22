@@ -7,14 +7,22 @@ public sealed class TasksGroup : AppApiGroupWrapper
     {
         CancelTask = source.AddAction
         (
-            nameof(CancelTask), () => sp.GetRequiredService<CancelTaskAction>()
+            nameof(CancelTask), 
+            () => sp.GetRequiredService<CancelTaskAction>()
         );
         RetryTask = source.AddAction
         (
-            nameof(RetryTask), () => sp.GetRequiredService<RetryTaskAction>()
+            nameof(RetryTask), 
+            () => sp.GetRequiredService<RetryTaskAction>()
+        );
+        EditTaskData = source.AddAction
+        (
+            nameof(EditTaskData),
+            () => sp.GetRequiredService<EditTaskDataAction>()
         );
     }
 
     public AppApiAction<GetTaskRequest, EmptyActionResult> CancelTask { get; }
     public AppApiAction<GetTaskRequest, EmptyActionResult> RetryTask { get; }
+    public AppApiAction<EditTaskDataRequest, EmptyActionResult> EditTaskData { get; }
 }
