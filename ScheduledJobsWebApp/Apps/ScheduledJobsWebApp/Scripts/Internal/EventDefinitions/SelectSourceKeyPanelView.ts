@@ -2,7 +2,7 @@
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
 import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
 import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
-import { SimpleFieldFormGroupInputView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
+import { FormGroupGridView, SimpleFieldFormGroupInputView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
 import { FormView } from "@jasonbenfield/sharedwebapp/Views/FormView";
 import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
 import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
@@ -22,7 +22,8 @@ export class SelectSourceKeyPanelView extends GridView {
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         this.form = mainContent.addView(FormView);
         this.form.addOffscreenSubmit();
-        this.sourceKey = this.form.addView(SimpleFieldFormGroupInputView);
+        const formGroupContainer = this.form.addView(FormGroupGridView);
+        this.sourceKey = formGroupContainer.addFormGroup(SimpleFieldFormGroupInputView);
         this.sourceKey.captionCell.setTextCss(new TextCss().end());
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
