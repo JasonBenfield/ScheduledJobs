@@ -74,8 +74,8 @@ export class ScheduledJobsTheme {
                     b.icon.solidStyle('bars');
                     b.setText('');
                     b.setTitle('Menu');
-                    b.useOutlineStyle(ContextualClass.secondary);
-                    b.setMargin(MarginCss.end(1));
+                    b.setContext(ContextualClass.secondary);
+                    b.setMargin(MarginCss.end(3));
                 });
         },
         refreshButton(button: ButtonCommandView) {
@@ -84,7 +84,7 @@ export class ScheduledJobsTheme {
                     b.icon.solidStyle('sync-alt');
                     b.setText('');
                     b.setTitle('Refresh');
-                    b.useOutlineStyle(ContextualClass.secondary);
+                    b.setContext(ContextualClass.secondary);
                 });
         },
         backButton(button: ButtonCommandView) {
@@ -93,8 +93,8 @@ export class ScheduledJobsTheme {
                     b.icon.solidStyle('caret-left');
                     b.setText('Back');
                     b.setTitle('Back');
-                    b.useOutlineStyle(ContextualClass.secondary);
-                    b.setMargin(MarginCss.end(1));
+                    b.setContext(ContextualClass.secondary);
+                    b.setMargin(MarginCss.end(3));
                 });
         },
         nextButton(button: ButtonCommandView) {
@@ -103,7 +103,7 @@ export class ScheduledJobsTheme {
                     b.icon.solidStyle('caret-right');
                     b.setText('Next');
                     b.setTitle('Next');
-                    b.useOutlineStyle(ContextualClass.secondary);
+                    b.setContext(ContextualClass.secondary);
                 });
         },
         cancelButton(button: ButtonCommandView) {
@@ -113,6 +113,7 @@ export class ScheduledJobsTheme {
                     b.setText('Cancel');
                     b.setTitle('Cancel');
                     b.setContext(ContextualClass.danger);
+                    b.setMargin(MarginCss.end(3));
                 });
         },
         saveButton(button: ButtonCommandView) {

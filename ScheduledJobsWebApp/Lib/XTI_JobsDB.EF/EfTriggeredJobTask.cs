@@ -16,6 +16,32 @@ public sealed class EfTriggeredJobTask
         this.clock = clock;
     }
 
+    public async Task EditTaskData(string taskData)
+    {
+        if(entity.TaskData != taskData)
+        {
+            await LogMessage("OriginalTaskData", entity.TaskData, "");
+            await db.TriggeredJobTasks.Update(entity, t => t.TaskData = taskData);
+        }
+    }
+
+    public async Task Timeout()
+    {
+        await Fail();
+        await db.LogEntries.Create
+        (
+            new LogEntryEntity
+            {
+                TaskID = entity.ID,
+                Severity = AppEventSeverity.Values.CriticalError.Value,
+                Category = JobErrors.TaskTimeoutCategory,
+                Message = JobErrors.TaskTimeoutMessage,
+                Details = "",
+                TimeOccurred = clock.Now()
+            }
+        );
+    }
+
     public async Task Cancel()
     {
         var pendingTaskEntities = await db.TriggeredJobTasks.Retrieve()
@@ -85,7 +111,7 @@ public sealed class EfTriggeredJobTask
                 {
                     t.TaskData = "";
                 }
-                if(t.TimeStarted == DateTimeOffset.MaxValue)
+                if (t.TimeStarted == DateTimeOffset.MaxValue)
                 {
                     t.TimeStarted = clock.Now();
                 }
