@@ -78,7 +78,7 @@ public sealed class EfJobDb : IJobDb
     private async Task AddOrUpdateTaskDefinition(JobDefinitionEntity jobDefinitionEntity, RegisteredJobTask task)
     {
         var taskDefEntity = await db.JobTaskDefinitions.Retrieve()
-            .FirstOrDefaultAsync(td => td.TaskKey == task.TaskKey.Value);
+            .FirstOrDefaultAsync(td => td.JobDefinitionID == jobDefinitionEntity.ID && td.TaskKey == task.TaskKey.Value);
         if (taskDefEntity == null)
         {
             taskDefEntity = new JobTaskDefinitionEntity

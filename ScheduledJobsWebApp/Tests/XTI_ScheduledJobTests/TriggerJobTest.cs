@@ -33,12 +33,49 @@ internal sealed class TriggerJobTest
         );
     }
 
+    [Test]
+    public async Task ShouldTriggerJobWithTheSameTaskName()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingElseHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingElseHappened,
+            new EventSource("1", "{ \"ID\": 1 }")
+        );
+        await host.MonitorEvent(DemoEventKeys.SomethingElseHappened, DemoJobs.DoSomethingElse.JobKey);
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var errors = triggeredJobs[0].Errors();
+        Console.WriteLine(XtiSerializer.Serialize(errors, new JsonSerializerOptions { WriteIndented = true }));
+        Assert.That(errors.Length, Is.EqualTo(0));
+    }
+
     private static JobRegistration BuildJobs(JobRegistration jobs)=> 
         jobs.AddJob
         (
             DemoJobs.DoSomething.JobKey,
-            j => j.AddTask(DemoJobs.DoSomething.Task01)
-                .AddTask(DemoJobs.DoSomething.Task02)
+            j =>
+            {
+                foreach(var task in DemoJobs.DoSomething.GetAllTasks())
+                {
+                    j.AddTask(task);
+                }
+            }
+        )
+        .AddJob
+        (
+            DemoJobs.DoSomethingElse.JobKey,
+            j =>
+            {
+                foreach (var task in DemoJobs.DoSomethingElse.GetAllTasks())
+                {
+                    j.AddTask(task);
+                }
+            }
         );
 
     [Test]
