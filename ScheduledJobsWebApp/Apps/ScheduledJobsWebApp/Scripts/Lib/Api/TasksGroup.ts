@@ -11,11 +11,13 @@ export class TasksGroup extends AppApiGroup {
 		super(events, resourceUrl, 'Tasks');
 		this.CancelTaskAction = this.createAction<IGetTaskRequest,IEmptyActionResult>('CancelTask', 'Cancel Task');
 		this.RetryTaskAction = this.createAction<IGetTaskRequest,IEmptyActionResult>('RetryTask', 'Retry Task');
+		this.TimeoutTaskAction = this.createAction<IGetTaskRequest,IEmptyActionResult>('TimeoutTask', 'Timeout Task');
 		this.EditTaskDataAction = this.createAction<IEditTaskDataRequest,IEmptyActionResult>('EditTaskData', 'Edit Task Data');
 	}
 	
 	readonly CancelTaskAction: AppApiAction<IGetTaskRequest,IEmptyActionResult>;
 	readonly RetryTaskAction: AppApiAction<IGetTaskRequest,IEmptyActionResult>;
+	readonly TimeoutTaskAction: AppApiAction<IGetTaskRequest,IEmptyActionResult>;
 	readonly EditTaskDataAction: AppApiAction<IEditTaskDataRequest,IEmptyActionResult>;
 	
 	CancelTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
@@ -23,6 +25,9 @@ export class TasksGroup extends AppApiGroup {
 	}
 	RetryTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
 		return this.RetryTaskAction.execute(model, errorOptions || {});
+	}
+	TimeoutTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
+		return this.TimeoutTaskAction.execute(model, errorOptions || {});
 	}
 	EditTaskData(model: IEditTaskDataRequest, errorOptions?: IActionErrorOptions) {
 		return this.EditTaskDataAction.execute(model, errorOptions || {});

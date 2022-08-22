@@ -79,6 +79,15 @@ namespace XTI_ScheduledJobsWebAppApi.Tasks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Task with status {0} cannot be timed out..
+        /// </summary>
+        public static string TaskWithStatusCannotBeTimedOut {
+            get {
+                return ResourceManager.GetString("TaskWithStatusCannotBeTimedOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task with status {0} cannot edit task data..
         /// </summary>
         public static string TaskWithStatusCannotEditTaskData {

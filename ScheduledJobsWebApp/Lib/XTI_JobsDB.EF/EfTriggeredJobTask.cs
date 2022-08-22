@@ -25,6 +25,23 @@ public sealed class EfTriggeredJobTask
         }
     }
 
+    public async Task Timeout()
+    {
+        await Fail();
+        await db.LogEntries.Create
+        (
+            new LogEntryEntity
+            {
+                TaskID = entity.ID,
+                Severity = AppEventSeverity.Values.CriticalError.Value,
+                Category = JobErrors.TaskTimeoutCategory,
+                Message = JobErrors.TaskTimeoutMessage,
+                Details = "",
+                TimeOccurred = clock.Now()
+            }
+        );
+    }
+
     public async Task Cancel()
     {
         var pendingTaskEntities = await db.TriggeredJobTasks.Retrieve()

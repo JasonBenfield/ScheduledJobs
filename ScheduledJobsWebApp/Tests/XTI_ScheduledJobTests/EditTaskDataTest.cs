@@ -5,7 +5,7 @@ using XTI_ScheduledJobsWebAppApi.Tasks;
 
 namespace XTI_ScheduledJobTests;
 
-internal sealed class EditTargetDataTest
+internal sealed class EditTaskDataTest
 {
     [Test]
     public async Task ShouldEditTaskData()

@@ -22,6 +22,12 @@ public sealed partial class TasksController : Controller
     }
 
     [HttpPost]
+    public Task<ResultContainer<EmptyActionResult>> TimeoutTask([FromBody] GetTaskRequest model, CancellationToken ct)
+    {
+        return api.Group("Tasks").Action<GetTaskRequest, EmptyActionResult>("TimeoutTask").Execute(model, ct);
+    }
+
+    [HttpPost]
     public Task<ResultContainer<EmptyActionResult>> EditTaskData([FromBody] EditTaskDataRequest model, CancellationToken ct)
     {
         return api.Group("Tasks").Action<EditTaskDataRequest, EmptyActionResult>("EditTaskData").Execute(model, ct);

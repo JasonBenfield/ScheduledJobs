@@ -70,18 +70,28 @@ export class TaskDetailPanelView extends GridView {
         const nav = mainContent.addView(NavView);
         nav.pills();
         nav.setFlexCss(new FlexCss().column());
+        nav.setMargin(MarginCss.bottom(3));
+
+        this.timeoutTaskButton = nav.addButtonCommand();
+        this.timeoutTaskButton.icon.makeFixedWidth();
+        this.timeoutTaskButton.icon.regularStyle('clock');
+        this.timeoutTaskButton.setText('Timeout Task');
+        this.timeoutTaskButton.setTextCss(new TextCss().start());
 
         this.editTaskDataButton = nav.addButtonCommand();
+        this.editTaskDataButton.icon.makeFixedWidth();
         this.editTaskDataButton.icon.solidStyle('pen-to-square');
         this.editTaskDataButton.setText('Edit Task Data');
         this.editTaskDataButton.setTextCss(new TextCss().start());
 
         this.retryTaskButton = nav.addButtonCommand();
+        this.retryTaskButton.icon.makeFixedWidth();
         this.retryTaskButton.icon.solidStyle('repeat');
         this.retryTaskButton.setText('Retry Task');
         this.retryTaskButton.setTextCss(new TextCss().start());
 
         this.cancelTaskButton = nav.addButtonCommand();
+        this.cancelTaskButton.icon.makeFixedWidth();
         this.cancelTaskButton.icon.solidStyle('times');
         this.cancelTaskButton.setText('Cancel Task');
         this.cancelTaskButton.setTextCss(new TextCss().start());
@@ -105,6 +115,7 @@ export class TaskDetailPanelView extends GridView {
     readonly timeElapsed: BasicTextComponentView;
     readonly taskData: TextBlockView;
     readonly logEntries: ListGroupView;
+    readonly timeoutTaskButton: ButtonCommandView;
     readonly editTaskDataButton: ButtonCommandView;
     readonly retryTaskButton: ButtonCommandView;
     readonly cancelTaskButton: ButtonCommandView;

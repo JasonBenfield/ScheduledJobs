@@ -26,19 +26,7 @@ internal sealed class TimeoutTasksAction : AppAction<EmptyRequest, EmptyActionRe
             (
                 async () =>
                 {
-                    await new EfTriggeredJobTask(db, runningTask, clock).Fail();
-                    await db.LogEntries.Create
-                    (
-                        new LogEntryEntity
-                        {
-                            TaskID = runningTask.ID,
-                            Severity = AppEventSeverity.Values.CriticalError.Value,
-                            Category = JobErrors.TaskTimeoutCategory,
-                            Message = JobErrors.TaskTimeoutMessage,
-                            Details = "",
-                            TimeOccurred = now
-                        }
-                    );
+                    await new EfTriggeredJobTask(db, runningTask, clock).Timeout();
                 }
             );
         }

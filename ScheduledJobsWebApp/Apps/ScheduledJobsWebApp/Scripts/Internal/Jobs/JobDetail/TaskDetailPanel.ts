@@ -12,21 +12,21 @@ import { LogEntryItem } from "./LogEntryItem";
 import { LogEntryItemView } from "./LogEntryItemView";
 import { TaskDetailPanelView } from "./TaskDetailPanelView";
 
-interface Results {
+interface IResult {
     backRequested?: { refreshRequired: boolean; };
     editTaskRequested?: { task: ITriggeredJobTaskModel; };
 }
 
-export class TaskDetailPanelResult {
+class Result {
     static backRequested(refreshRequired: boolean) {
-        return new TaskDetailPanelResult({ backRequested: { refreshRequired: refreshRequired } });
+        return new Result({ backRequested: { refreshRequired: refreshRequired } });
     }
 
     static editTaskRequested(task: ITriggeredJobTaskModel) {
-        return new TaskDetailPanelResult({ editTaskRequested: { task: task } });
+        return new Result({ editTaskRequested: { task: task } });
     }
 
-    private constructor(private readonly results: Results) { }
+    private constructor(private readonly results: IResult) { }
 
     get backRequested() { return this.results.backRequested; }
 
@@ -34,7 +34,7 @@ export class TaskDetailPanelResult {
 }
 
 export class TaskDetailPanel implements IPanel {
-    private readonly awaitable = new Awaitable<TaskDetailPanelResult>();
+    private readonly awaitable = new Awaitable<Result>();
     private readonly displayText: TextComponent;
     private readonly status: TextComponent;
     private readonly timeStarted: TextComponent;
@@ -44,6 +44,8 @@ export class TaskDetailPanel implements IPanel {
     private readonly alert: MessageAlert;
     private tasks: ITriggeredJobTaskModel[];
     private currentTask: ITriggeredJobTaskModel;
+    private readonly timeoutTaskCommand: AsyncCommand;
+    private readonly editTaskDataCommand: Command;
     private readonly cancelTaskCommand: AsyncCommand;
     private readonly retryTaskCommand: AsyncCommand;
     private readonly modalConfirm: ModalConfirm;
@@ -59,14 +61,30 @@ export class TaskDetailPanel implements IPanel {
         new Command(this.previousTask.bind(this)).add(view.previousTaskButton);
         new Command(this.nextTask.bind(this)).add(view.nextTaskButton);
         new Command(this.back.bind(this)).add(view.backButton);
+        this.timeoutTaskCommand = new AsyncCommand(this.timeoutTask.bind(this));
+        this.timeoutTaskCommand.hide();
+        this.timeoutTaskCommand.add(view.timeoutTaskButton);
         this.cancelTaskCommand = new AsyncCommand(this.cancelTask.bind(this));
         this.cancelTaskCommand.hide();
         this.cancelTaskCommand.add(view.cancelTaskButton);
         this.retryTaskCommand = new AsyncCommand(this.retryTask.bind(this));
         this.retryTaskCommand.hide();
         this.retryTaskCommand.add(view.retryTaskButton);
-        new Command(this.editTask.bind(this)).add(view.editTaskDataButton);
+        this.editTaskDataCommand = new Command(this.editTask.bind(this));
+        this.editTaskDataCommand.add(view.editTaskDataButton);
+        this.editTaskDataCommand.hide();
         this.modalConfirm = new ModalConfirm(view.modalConfirm);
+    }
+
+    private async timeoutTask() {
+        const confirmed = await this.modalConfirm.confirm('Cause this task to timeout?', 'Confirm timeout');
+        if (confirmed) {
+            await this.alert.infoAction(
+                'Timing out task...',
+                () => this.schdJobsApi.Tasks.TimeoutTask({ TaskID: this.currentTask.ID })
+            );
+            this.awaitable.resolve(Result.backRequested(true));
+        }
     }
 
     private async cancelTask() {
@@ -76,9 +94,7 @@ export class TaskDetailPanel implements IPanel {
                 'Canceling task...',
                 () => this.schdJobsApi.Tasks.CancelTask({ TaskID: this.currentTask.ID })
             );
-            this.awaitable.resolve(
-                TaskDetailPanelResult.backRequested(true)
-            );
+            this.awaitable.resolve(Result.backRequested(true));
         }
     }
 
@@ -90,18 +106,18 @@ export class TaskDetailPanel implements IPanel {
                 () => this.schdJobsApi.Tasks.RetryTask({ TaskID: this.currentTask.ID })
             );
             this.awaitable.resolve(
-                TaskDetailPanelResult.backRequested(true)
+                Result.backRequested(true)
             );
         }
     }
 
     private editTask() {
-        this.awaitable.resolve(TaskDetailPanelResult.editTaskRequested(this.currentTask));
+        this.awaitable.resolve(Result.editTaskRequested(this.currentTask));
     }
 
     private back() {
         this.awaitable.resolve(
-            TaskDetailPanelResult.backRequested(false)
+            Result.backRequested(false)
         );
     }
 
@@ -154,14 +170,22 @@ export class TaskDetailPanel implements IPanel {
             currentTask.LogEntries,
             (entry, itemView: LogEntryItemView) => new LogEntryItem(entry, itemView)
         );
-        let status = JobTaskStatus.values.value(currentTask.Status.Value);
+        const status = JobTaskStatus.values.value(currentTask.Status.Value);
         if (status.equals(JobTaskStatus.values.Failed)) {
             this.cancelTaskCommand.show();
             this.retryTaskCommand.show();
+            this.editTaskDataCommand.show();
         }
         else {
             this.cancelTaskCommand.hide();
             this.retryTaskCommand.hide();
+            this.editTaskDataCommand.hide();
+        }
+        if (status.equals(JobTaskStatus.values.Running)) {
+            this.timeoutTaskCommand.show();
+        }
+        else {
+            this.timeoutTaskCommand.hide();
         }
     }
 
