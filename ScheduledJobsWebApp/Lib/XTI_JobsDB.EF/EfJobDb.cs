@@ -230,7 +230,9 @@ public sealed class EfJobDb : IJobDb
                 t => t.Status = JobTaskStatus.Values.Pending.Value
             );
         }
+        var retryJobIDs = retryTasks.Select(rt => rt.TriggeredJobID).Distinct().ToList();
         var pendingJobIDs = db.TriggeredJobTasks.Retrieve()
+            .Where(tjt => retryJobIDs.Contains(tjt.TriggeredJobID))
             .GroupBy(jt => jt.TriggeredJobID)
             .Select(grouped => new { JobID = grouped.Key, Status = grouped.Min(t => t.Status) })
             .Where(grouped => grouped.Status == JobTaskStatus.Values.Pending.Value)
