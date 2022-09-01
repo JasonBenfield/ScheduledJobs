@@ -12,9 +12,9 @@ public interface IJobDb
 
     Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime);
 
-    Task DeleteJobsWithNoTasks(JobKey jobKey);
+    Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey);
 
-    Task<TriggeredJobWithTasksModel[]> RetryJobs(JobKey jobKey);
+    Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey);
 
     Task<TriggeredJobWithTasksModel> StartJob
     (

@@ -19,8 +19,8 @@ public sealed class EventMonitor
 
     public async Task Run(CancellationToken stoppingToken)
     {
-        await db.DeleteJobsWithNoTasks(jobKey);
-        var retryJobs = await db.RetryJobs(jobKey);
+        await db.DeleteJobsWithNoTasks(eventKey, jobKey);
+        var retryJobs = await db.RetryJobs(eventKey, jobKey);
         foreach(var retryJob in retryJobs)
         {
             var triggeredJob = new TriggeredJob(db, retryJob);

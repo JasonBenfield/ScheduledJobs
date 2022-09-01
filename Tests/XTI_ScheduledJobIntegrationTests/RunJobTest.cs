@@ -106,7 +106,7 @@ internal sealed class RunJobTest
         );
         var sourceData = new SomethingHappenedData
         {
-            ID = 15,
+            ID = 16,
             Items = Enumerable.Range(1, 3).ToArray()
         };
         var eventNotifications = await host1.RaiseEvent

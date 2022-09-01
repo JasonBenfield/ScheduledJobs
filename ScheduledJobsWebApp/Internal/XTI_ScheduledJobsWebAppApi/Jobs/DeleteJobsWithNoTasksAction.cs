@@ -2,6 +2,7 @@
 
 public sealed class DeleteJobsWithNoTasksRequest
 {
+    public EventKey EventKey { get; set; } = new EventKey("");
     public JobKey JobKey { get; set; } = new JobKey("");
 }
 
@@ -16,7 +17,7 @@ internal sealed class DeleteJobsWithNoTasksAction : AppAction<DeleteJobsWithNoTa
 
     public async Task<EmptyActionResult> Execute(DeleteJobsWithNoTasksRequest model, CancellationToken stoppingToken)
     {
-        await db.DeleteJobsWithNoTasks(model.JobKey);
+        await db.DeleteJobsWithNoTasks(model.EventKey, model.JobKey);
         return new EmptyActionResult();
     }
 }

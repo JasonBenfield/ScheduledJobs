@@ -37,14 +37,22 @@ public sealed class SjcJobDb : IJobDb
             }
         );
 
-    public Task DeleteJobsWithNoTasks(JobKey jobKey) =>
-        schdJobClient.Jobs.DeleteJobsWithNoTasks(new DeleteJobsWithNoTasksRequest { JobKey = jobKey });
+    public Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey) =>
+        schdJobClient.Jobs.DeleteJobsWithNoTasks
+        (
+            new DeleteJobsWithNoTasksRequest
+            {
+                EventKey = eventKey,
+                JobKey = jobKey
+            }
+        );
 
-    public Task<TriggeredJobWithTasksModel[]> RetryJobs(JobKey jobKey) =>
+    public Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey) =>
         schdJobClient.Jobs.RetryJobs
         (
             new RetryJobsRequest
             {
+                EventKey = eventKey,
                 JobKey = jobKey
             }
         );

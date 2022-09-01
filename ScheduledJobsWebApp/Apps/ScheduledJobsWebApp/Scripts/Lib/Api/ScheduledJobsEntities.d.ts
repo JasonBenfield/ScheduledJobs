@@ -150,9 +150,11 @@ interface IPendingJobModel {
 	SourceData: string;
 }
 interface IDeleteJobsWithNoTasksRequest {
+	EventKey: IEventKey;
 	JobKey: IJobKey;
 }
 interface IRetryJobsRequest {
+	EventKey: IEventKey;
 	JobKey: IJobKey;
 }
 interface IStartJobRequest {
