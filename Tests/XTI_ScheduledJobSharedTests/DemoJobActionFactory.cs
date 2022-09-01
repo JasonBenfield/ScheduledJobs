@@ -1,10 +1,11 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace XTI_ScheduledJobSharedTests;
 
 public sealed class DemoJobActionFactory : IJobActionFactory
 {
+    private bool errorDuringTransform;
+
     public DemoJobActionFactory()
     {
         Action01Context = new DemoActionContext<DemoAction01>();
@@ -50,8 +51,22 @@ public sealed class DemoJobActionFactory : IJobActionFactory
         return action;
     }
 
+    public void FailTransformSourceData()
+    {
+        errorDuringTransform = true;
+    }
+
+    public void AllowTransformSourceData()
+    {
+        errorDuringTransform = false;
+    }
+
     public Task<string> TransformSourceData(string sourceKey, string sourceData)
     {
+        if (errorDuringTransform)
+        {
+            throw new Exception();
+        }
         var somethingHappenedData = JsonSerializer.Deserialize<SomethingHappenedData>(sourceData) ?? new SomethingHappenedData();
         var doSomethingData = new DoSomethingData
         {

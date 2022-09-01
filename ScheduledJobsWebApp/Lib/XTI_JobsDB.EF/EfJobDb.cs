@@ -204,13 +204,52 @@ public sealed class EfJobDb : IJobDb
         }
     }
 
-    public async Task<TriggeredJobWithTasksModel[]> RetryJobs(JobKey jobKey)
+    public async Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey)
     {
+        var eventDefinitionID = db.EventDefinitions.Retrieve()
+            .Where(ed => ed.EventKey == eventKey.Value)
+            .Select(ed => ed.ID);
+        var eventNotificationIDs = db.EventNotifications.Retrieve()
+            .Where(en => eventDefinitionID.Contains(en.EventDefinitionID))
+            .Select(en => en.ID);
+        var jobDefinitionID = db.JobDefinitions.Retrieve()
+            .Where(jd => jd.JobKey == jobKey.Value)
+            .Select(jd => jd.ID);
+        var jobIDsForTasks = db.TriggeredJobTasks.Retrieve()
+            .Select(tjt => tjt.TriggeredJobID);
+        var jobs = await db.TriggeredJobs.Retrieve()
+            .Where
+            (
+                tj => 
+                    eventNotificationIDs.Contains(tj.EventNotificationID) && 
+                    jobDefinitionID.Contains(tj.JobDefinitionID) && 
+                    !jobIDsForTasks.Contains(tj.ID)
+            )
+            .ToArrayAsync();
+        foreach(var job in jobs)
+        {
+            await db.TriggeredJobs.Delete(job);
+        }
+    }
+
+    public async Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey)
+    {
+        var eventDefinitionID = db.EventDefinitions.Retrieve()
+            .Where(ed => ed.EventKey == eventKey.Value)
+            .Select(ed => ed.ID);
+        var eventNotificationIDs = db.EventNotifications.Retrieve()
+            .Where(en => eventDefinitionID.Contains(en.EventDefinitionID))
+            .Select(en => en.ID);
         var jobDefinitionID = db.JobDefinitions.Retrieve()
             .Where(jd => jd.JobKey == jobKey.Value)
             .Select(jd => jd.ID);
         var triggeredJobIDs = db.TriggeredJobs.Retrieve()
-            .Where(tj => jobDefinitionID.Contains(tj.JobDefinitionID))
+            .Where
+            (
+                tj => 
+                    eventNotificationIDs.Contains(tj.EventNotificationID) && 
+                    jobDefinitionID.Contains(tj.JobDefinitionID)
+            )
             .Select(tj => tj.ID);
         var now = clock.Now();
         var retryTasks = await db.TriggeredJobTasks.Retrieve()
@@ -580,4 +619,5 @@ public sealed class EfJobDb : IJobDb
                 TimeOccurred = clock.Now()
             }
         );
+
 }

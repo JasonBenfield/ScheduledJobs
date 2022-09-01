@@ -13,6 +13,10 @@ public sealed class JobsGroup : AppApiGroupWrapper
         (
             nameof(TriggerJobs), () => sp.GetRequiredService<TriggerJobsAction>()
         );
+        DeleteJobsWithNoTasks = source.AddAction
+        (
+            nameof(DeleteJobsWithNoTasks), () => sp.GetRequiredService<DeleteJobsWithNoTasksAction>()
+        );
         RetryJobs = source.AddAction
         (
             nameof(RetryJobs), () => sp.GetRequiredService<RetryJobsAction>()
@@ -45,6 +49,7 @@ public sealed class JobsGroup : AppApiGroupWrapper
 
     public AppApiAction<RegisteredJob[], EmptyActionResult> AddOrUpdateRegisteredJobs { get; }
     public AppApiAction<TriggerJobsRequest, PendingJobModel[]> TriggerJobs { get; }
+    public AppApiAction<DeleteJobsWithNoTasksRequest, EmptyActionResult> DeleteJobsWithNoTasks { get; }
     public AppApiAction<RetryJobsRequest, TriggeredJobWithTasksModel[]> RetryJobs { get; }
     public AppApiAction<StartJobRequest, TriggeredJobWithTasksModel> StartJob { get; }
     public AppApiAction<StartTaskRequest, EmptyActionResult> StartTask { get; }

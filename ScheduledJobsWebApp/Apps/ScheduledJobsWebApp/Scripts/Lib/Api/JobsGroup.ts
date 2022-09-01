@@ -11,6 +11,7 @@ export class JobsGroup extends AppApiGroup {
 		super(events, resourceUrl, 'Jobs');
 		this.AddOrUpdateRegisteredJobsAction = this.createAction<IRegisteredJob[],IEmptyActionResult>('AddOrUpdateRegisteredJobs', 'Add Or Update Registered Jobs');
 		this.TriggerJobsAction = this.createAction<ITriggerJobsRequest,IPendingJobModel[]>('TriggerJobs', 'Trigger Jobs');
+		this.DeleteJobsWithNoTasksAction = this.createAction<IDeleteJobsWithNoTasksRequest,IEmptyActionResult>('DeleteJobsWithNoTasks', 'Delete Jobs With No Tasks');
 		this.RetryJobsAction = this.createAction<IRetryJobsRequest,ITriggeredJobWithTasksModel[]>('RetryJobs', 'Retry Jobs');
 		this.StartJobAction = this.createAction<IStartJobRequest,ITriggeredJobWithTasksModel>('StartJob', 'Start Job');
 		this.StartTaskAction = this.createAction<IStartTaskRequest,IEmptyActionResult>('StartTask', 'Start Task');
@@ -22,6 +23,7 @@ export class JobsGroup extends AppApiGroup {
 	
 	readonly AddOrUpdateRegisteredJobsAction: AppApiAction<IRegisteredJob[],IEmptyActionResult>;
 	readonly TriggerJobsAction: AppApiAction<ITriggerJobsRequest,IPendingJobModel[]>;
+	readonly DeleteJobsWithNoTasksAction: AppApiAction<IDeleteJobsWithNoTasksRequest,IEmptyActionResult>;
 	readonly RetryJobsAction: AppApiAction<IRetryJobsRequest,ITriggeredJobWithTasksModel[]>;
 	readonly StartJobAction: AppApiAction<IStartJobRequest,ITriggeredJobWithTasksModel>;
 	readonly StartTaskAction: AppApiAction<IStartTaskRequest,IEmptyActionResult>;
@@ -35,6 +37,9 @@ export class JobsGroup extends AppApiGroup {
 	}
 	TriggerJobs(model: ITriggerJobsRequest, errorOptions?: IActionErrorOptions) {
 		return this.TriggerJobsAction.execute(model, errorOptions || {});
+	}
+	DeleteJobsWithNoTasks(model: IDeleteJobsWithNoTasksRequest, errorOptions?: IActionErrorOptions) {
+		return this.DeleteJobsWithNoTasksAction.execute(model, errorOptions || {});
 	}
 	RetryJobs(model: IRetryJobsRequest, errorOptions?: IActionErrorOptions) {
 		return this.RetryJobsAction.execute(model, errorOptions || {});
