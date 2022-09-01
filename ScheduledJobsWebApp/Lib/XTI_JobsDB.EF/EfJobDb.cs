@@ -204,6 +204,22 @@ public sealed class EfJobDb : IJobDb
         }
     }
 
+    public async Task DeleteJobsWithNoTasks(JobKey jobKey)
+    {
+        var jobDefinitionID = db.JobDefinitions.Retrieve()
+            .Where(jd => jd.JobKey == jobKey.Value)
+            .Select(jd => jd.ID);
+        var jobIDsForTasks = db.TriggeredJobTasks.Retrieve()
+            .Select(tjt => tjt.TriggeredJobID);
+        var jobs = await db.TriggeredJobs.Retrieve()
+            .Where(tj => jobDefinitionID.Contains(tj.JobDefinitionID) && !jobIDsForTasks.Contains(tj.ID))
+            .ToArrayAsync();
+        foreach(var job in jobs)
+        {
+            await db.TriggeredJobs.Delete(job);
+        }
+    }
+
     public async Task<TriggeredJobWithTasksModel[]> RetryJobs(JobKey jobKey)
     {
         var jobDefinitionID = db.JobDefinitions.Retrieve()
@@ -580,4 +596,5 @@ public sealed class EfJobDb : IJobDb
                 TimeOccurred = clock.Now()
             }
         );
+
 }

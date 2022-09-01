@@ -6,6 +6,7 @@ using XTI_Core;
 using XTI_Core.Extensions;
 using XTI_Core.Fakes;
 using XTI_HubAppClient.Extensions;
+using XTI_JobsDB.EF;
 using XTI_JobsDB.SqlServer;
 using XTI_ScheduledJobsAppClient;
 using XTI_ScheduledJobsWebAppApi;
@@ -32,7 +33,7 @@ internal sealed class TestHost
         host.Services.AddHubClientServices();
         host.Services.AddSingleton<ScheduledJobsAppClientVersion>();
         host.Services.AddScoped<ScheduledJobsAppClient>();
-        host.Services.AddScoped<IJobDb, SjcJobDb>();
+        host.Services.AddScoped<IJobDb, EfJobDb>();
         host.Services.AddScoped<EventRegistration>();
         host.Services.AddScoped<JobRegistration>();
         host.Services.AddScoped<IncomingEventFactory>();

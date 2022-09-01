@@ -13,7 +13,8 @@ internal sealed class GetRecentJobsAction : AppAction<EmptyRequest, JobSummaryMo
 
     public Task<JobSummaryModel[]> Execute(EmptyRequest model, CancellationToken stoppingToken) =>
         db.ExpandedTriggeredJobs.Retrieve()
-            .OrderBy(j => j.TimeJobStarted)
+            .OrderByDescending(j => j.TimeJobStarted)
+            .Take(50)
             .Select(j => new JobSummaryModel(j))
             .ToArrayAsync();
 }

@@ -760,6 +760,38 @@ internal sealed class RunJobTest
     }
 
     [Test]
+    public async Task ShouldRetryAfterErrorDuringTransformSourceData()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => jobs.BuildJobs()
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var actionFactory = host.GetRequiredService<DemoJobActionFactory>();
+        actionFactory.FailTransformSourceData();
+        try
+        {
+            await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        }
+        catch { }
+        actionFactory.AllowTransformSourceData();
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        Assert.That(triggeredJobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should retry after error during transform source data");
+    }
+
+    [Test]
     public async Task ShouldNotPreserveData()
     {
         var host = TestHost.CreateDefault();

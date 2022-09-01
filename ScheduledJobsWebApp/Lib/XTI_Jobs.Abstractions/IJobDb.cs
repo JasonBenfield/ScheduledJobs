@@ -12,6 +12,8 @@ public interface IJobDb
 
     Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime);
 
+    Task DeleteJobsWithNoTasks(JobKey jobKey);
+
     Task<TriggeredJobWithTasksModel[]> RetryJobs(JobKey jobKey);
 
     Task<TriggeredJobWithTasksModel> StartJob
@@ -23,7 +25,7 @@ public interface IJobDb
     Task StartTask(int taskID);
 
     Task JobCancelled(int taskID, string reason);
-
+    
     Task<TriggeredJobWithTasksModel> TaskCompleted
     (
         int completedTaskID,

@@ -5,6 +5,7 @@ import { LinkListGroupItemView } from "@jasonbenfield/sharedwebapp/Views/ListGro
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
 import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicTextComponentView";
 import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
+import { MarginCss } from "@jasonbenfield/sharedwebapp/MarginCss";
 
 export class EventSummaryListItemView extends LinkListGroupItemView {
     readonly displayText: BasicTextComponentView;
@@ -23,6 +24,7 @@ export class EventSummaryListItemView extends LinkListGroupItemView {
         const col3 = row.addColumn()
             .configure(c => c.setTextCss(new TextCss().truncate()));
         this.sourceKey = col3.addView(TextSpanView);
+        this.sourceKey.setMargin(MarginCss.end(1));
         this.sourceData = col3.addView(TextSpanView);
         let col4 = row.addColumn();
         col4.setTextCss(new TextCss().end());

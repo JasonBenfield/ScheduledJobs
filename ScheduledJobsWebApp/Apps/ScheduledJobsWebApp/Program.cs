@@ -16,6 +16,16 @@ builder.Services.AddScoped<IJobDb, EfJobDb>();
 builder.Services.AddScoped<AppApiFactory, ScheduledJobsAppApiFactory>();
 builder.Services.AddScoped(sp => (ScheduledJobsAppApi)sp.GetRequiredService<IAppApi>());
 builder.Services.AddScheduledJobsAppApiServices();
+builder.Services.AddThrottledLog<ScheduledJobsAppApi>
+(
+    (api, throttled) =>
+    {
+        throttled.Throttle(api.Jobs.DeleteJobsWithNoTasks).Requests().ForOneHour().Exceptions().For(5).Minutes()
+            .AndThrottle(api.Jobs.RetryJobs).Requests().ForOneHour().Exceptions().For(5).Minutes()
+            .AndThrottle(api.Jobs.TriggerJobs).Requests().ForOneHour().Exceptions().For(5).Minutes()
+            .AndThrottle(api.Recurring.TimeoutTasks).Requests().ForOneHour().Exceptions().For(5).Minutes();
+    }
+);
 builder.Services
     .AddMvc()
     .AddJsonOptions(options =>

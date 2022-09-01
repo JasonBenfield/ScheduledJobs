@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using XTI_Core;
+using XTI_JobsDB.EF;
 
 namespace XTI_ScheduledJobIntegrationTests;
 
@@ -90,6 +91,41 @@ internal sealed class RunJobTest
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var jobs = await eventNotifications[0].TriggeredJobs();
         Assert.That(jobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should retry job");
+    }
+
+    [Test]
+    public async Task ShouldRetryAfterErrorDuringTransformSourceData()
+    {
+        var host1 = TestHost.CreateDefault(XtiEnvironment.Development);
+        var db = host1.GetRequiredService<JobDbContext>();
+        await host1.Setup();
+        await host1.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => BuildJobs(jobs)
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 15,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host1.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var actionFactory = host1.GetRequiredService<DemoJobActionFactory>();
+        actionFactory.FailTransformSourceData();
+        try
+        {
+            await host1.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        }
+        catch { }
+        actionFactory.AllowTransformSourceData();
+        var host2 = TestHost.CreateDefault(XtiEnvironment.Development);
+        await host2.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        Assert.That(triggeredJobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should retry after error during transform source data");
     }
 
     private static JobRegistration BuildJobs(JobRegistration jobs) =>

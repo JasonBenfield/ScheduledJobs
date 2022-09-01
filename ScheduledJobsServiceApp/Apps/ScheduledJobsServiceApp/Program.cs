@@ -47,8 +47,8 @@ await XtiServiceAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
         );
         services.AddThrottledLog<ScheduledJobsAppApi>
         (
-            (api, throttled) => throttled.Throttle(api.Jobs.TimeoutJobs)
-                .Requests().ForOneHour()
+            (api, throttled) => throttled
+                .Throttle(api.Jobs.TimeoutJobs).Requests().ForOneHour()
         );
     })
     .UseWindowsService()

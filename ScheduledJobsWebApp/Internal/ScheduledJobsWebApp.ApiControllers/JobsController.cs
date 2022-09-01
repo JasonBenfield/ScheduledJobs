@@ -22,6 +22,12 @@ public sealed partial class JobsController : Controller
     }
 
     [HttpPost]
+    public Task<ResultContainer<EmptyActionResult>> DeleteJobsWithNoTasks([FromBody] DeleteJobsWithNoTasksRequest model, CancellationToken ct)
+    {
+        return api.Group("Jobs").Action<DeleteJobsWithNoTasksRequest, EmptyActionResult>("DeleteJobsWithNoTasks").Execute(model, ct);
+    }
+
+    [HttpPost]
     public Task<ResultContainer<TriggeredJobWithTasksModel[]>> RetryJobs([FromBody] RetryJobsRequest model, CancellationToken ct)
     {
         return api.Group("Jobs").Action<RetryJobsRequest, TriggeredJobWithTasksModel[]>("RetryJobs").Execute(model, ct);

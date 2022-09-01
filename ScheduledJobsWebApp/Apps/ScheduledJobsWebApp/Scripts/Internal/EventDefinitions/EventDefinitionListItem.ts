@@ -5,6 +5,8 @@ import { EventDefinitionListItemView } from "./EventDefinitionListItemView";
 export class EventDefinitionListItem extends BasicComponent {
     constructor(readonly evtDef: IEventDefinitionModel, view: EventDefinitionListItemView) {
         super(view);
-        new TextComponent(view.displayText).setText(evtDef.EventKey.DisplayText);
+        const displayText = new TextComponent(view.displayText);
+        displayText.setText(evtDef.EventKey.DisplayText);
+        displayText.syncTitleWithText();
     }
 }

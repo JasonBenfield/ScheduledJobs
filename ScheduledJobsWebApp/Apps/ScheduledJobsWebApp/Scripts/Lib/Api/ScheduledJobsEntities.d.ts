@@ -149,6 +149,9 @@ interface IPendingJobModel {
 	SourceKey: string;
 	SourceData: string;
 }
+interface IDeleteJobsWithNoTasksRequest {
+	JobKey: IJobKey;
+}
 interface IRetryJobsRequest {
 	JobKey: IJobKey;
 }
