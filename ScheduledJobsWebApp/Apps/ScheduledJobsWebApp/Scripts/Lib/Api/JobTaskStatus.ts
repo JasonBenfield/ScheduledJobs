@@ -18,7 +18,7 @@ export class JobTaskStatuss extends NumericValues<JobTaskStatus> {
 
 export class JobTaskStatus extends NumericValue implements IJobTaskStatus {
 	public static readonly values = new JobTaskStatuss(
-		new JobTaskStatus(0, 'NotSet'),
+		new JobTaskStatus(0, 'Not Set'),
 		new JobTaskStatus(10, 'Failed'),
 		new JobTaskStatus(20, 'Retry'),
 		new JobTaskStatus(30, 'Running'),

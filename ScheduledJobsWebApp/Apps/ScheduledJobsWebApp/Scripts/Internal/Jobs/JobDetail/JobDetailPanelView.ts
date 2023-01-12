@@ -20,7 +20,7 @@ export class JobDetailPanelView extends GridView {
     readonly jobDisplayText: BasicTextComponentView;
     private readonly triggeredByFormGroup: FormGroupView;
     readonly triggeredByLink: TextLinkView;
-    readonly tasks: ButtonListGroupView;
+    readonly tasks: ButtonListGroupView<TaskListItemView>;
     readonly menuButton: ButtonCommandView;
     readonly refreshButton: ButtonCommandView;
 
@@ -42,8 +42,7 @@ export class JobDetailPanelView extends GridView {
             .configure(b => b.addCssName('form-control-plaintext'))
             .addView(TextLinkView);
         this.jobBlock.setPadding(PaddingCss.xs({ top: 3, bottom: 3 }));
-        this.tasks = mainContent.addView(ButtonListGroupView);
-        this.tasks.setItemViewType(TaskListItemView);
+        this.tasks = mainContent.addButtonListGroup(TaskListItemView);
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );

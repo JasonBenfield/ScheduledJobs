@@ -9,11 +9,11 @@ import { JobSummaryListItem } from "../JobSummaryListItem";
 import { JobSummaryListItemView } from "../JobSummaryListItemView";
 
 interface IResults {
-    menuRequested?: {};
+    menuRequested?: boolean;
 }
 
 export class FailedJobsPanelResult {
-    static menuRequested() { return new FailedJobsPanelResult({ menuRequested: {} }); }
+    static menuRequested() { return new FailedJobsPanelResult({ menuRequested: true }); }
 
     private constructor(private readonly results: IResults) { }
 
@@ -23,7 +23,7 @@ export class FailedJobsPanelResult {
 export class FailedJobsPanel implements IPanel {
     private readonly awaitable = new Awaitable<FailedJobsPanelResult>();
     private readonly alert: MessageAlert;
-    private readonly failedJobsList: ListGroup;
+    private readonly failedJobsList: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobListPanelView) {
@@ -42,22 +42,18 @@ export class FailedJobsPanel implements IPanel {
         const failedJobs = await this.getFailedJobs();
         this.failedJobsList.setItems(
             failedJobs,
-            (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
+            (job, itemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
         );
         if (failedJobs.length === 0) {
             this.alert.success('No failed jobs were found.');
         }
     }
 
-    private async getFailedJobs() {
-        let failedJobs: IJobSummaryModel[];
-        await this.alert.infoAction(
+    private getFailedJobs() {
+        return this.alert.infoAction(
             'Loading...',
-            async () => {
-                failedJobs = await this.schdJobsApi.JobInquiry.GetFailedJobs();
-            }
+            () => this.schdJobsApi.JobInquiry.GetFailedJobs()
         );
-        return failedJobs;
     }
 
     refresh() { return this.refreshCommand.execute(); }

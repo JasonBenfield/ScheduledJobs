@@ -2,6 +2,7 @@
 using XTI_Core;
 using XTI_Core.Extensions;
 using XTI_DB;
+using XTI_Hub.Abstractions;
 using XTI_HubAppClient;
 using XTI_JobsDB.EF;
 using XTI_ScheduledJobsWebAppApi;
@@ -24,7 +25,7 @@ internal static class XtiTestHostExtensions
         await hubClient.Users.AddOrUpdateUser
         (
             "General",
-            new AddOrUpdateUserModel
+            new AddOrUpdateUserRequest
             {
                 UserName = adminUserCreds.Value.UserName,
                 Password = adminUserCreds.Value.Password,
@@ -34,17 +35,14 @@ internal static class XtiTestHostExtensions
         await hubClient.Install.SetUserAccess
         (
             new SetUserAccessRequest
-            {
-                UserName = new AppUserName(adminUserCreds.Value.UserName),
-                RoleAssignments = new[]
-                {
-                    new SetUserAccessRoleRequest
-                    {
-                        AppKey = ScheduledJobsInfo.AppKey,
-                        RoleNames = new [] { new AppRoleName(hubClient.RoleNames.Admin) }
-                    }
-                }
-            }
+            (
+                new AppUserName(adminUserCreds.Value.UserName),
+                new SetUserAccessRoleRequest
+                (
+                    ScheduledJobsInfo.AppKey,
+                    new AppRoleName(hubClient.RoleNames.Admin)
+                )
+            )
         );
         hubClient.UseToken<AdminUserXtiToken>();
     }

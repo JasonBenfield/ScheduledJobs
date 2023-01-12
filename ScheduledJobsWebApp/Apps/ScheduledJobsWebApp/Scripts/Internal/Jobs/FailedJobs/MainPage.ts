@@ -1,11 +1,10 @@
-﻿import { BasicPage } from '@jasonbenfield/sharedwebapp/Components/BasicPage';
-import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
-import { Apis } from '../../Apis';
+﻿import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
 import { MainMenuPanel } from '../../MainMenuPanel';
+import { ScheduledJobsPage } from '../../ScheduledJobsPage';
 import { FailedJobsPanel } from './FailedJobsPanel';
 import { MainPageView } from './MainPageView';
 
-class MainPage extends BasicPage {
+class MainPage extends ScheduledJobsPage {
     protected readonly view: MainPageView;
     private readonly panels = new SingleActivePanel();
     private readonly failedJobsPanel: FailedJobsPanel;
@@ -13,9 +12,8 @@ class MainPage extends BasicPage {
 
     constructor() {
         super(new MainPageView());
-        const schdJobsApi = new Apis(this.view.modalError).ScheduledJobs();
-        this.failedJobsPanel = this.panels.add(new FailedJobsPanel(schdJobsApi, this.view.jobListPanel));
-        this.menuPanel = this.panels.add(new MainMenuPanel(schdJobsApi, this.view.menuPanel));
+        this.failedJobsPanel = this.panels.add(new FailedJobsPanel(this.defaultApi, this.view.jobListPanel));
+        this.menuPanel = this.panels.add(new MainMenuPanel(this.defaultApi, this.view.menuPanel));
         this.failedJobsPanel.refresh();
         this.activateFailedJobsPanel();
     }

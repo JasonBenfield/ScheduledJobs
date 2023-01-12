@@ -16,9 +16,9 @@ export class DuplicateHandlings extends NumericValues<DuplicateHandling> {
 export class DuplicateHandling extends NumericValue implements IDuplicateHandling {
 	public static readonly values = new DuplicateHandlings(
 		new DuplicateHandling(0, 'Ignore'),
-		new DuplicateHandling(10, 'KeepOldest'),
-		new DuplicateHandling(20, 'KeepNewest'),
-		new DuplicateHandling(30, 'KeepAll')
+		new DuplicateHandling(10, 'Keep Oldest'),
+		new DuplicateHandling(20, 'Keep Newest'),
+		new DuplicateHandling(30, 'Keep All')
 	);
 	
 	private constructor(Value: number, DisplayText: string) {

@@ -1,10 +1,10 @@
-﻿import { BasicPageView } from '@jasonbenfield/sharedwebapp/Views/BasicPageView';
-import { MainMenuPanelView } from '../../MainMenuPanelVIew';
+﻿import { MainMenuPanelView } from '../../MainMenuPanelVIew';
+import { ScheduledJobsPageView } from '../../ScheduledJobsPageView';
 import { EditTaskDataPanelView } from './EditTaskDataPanelView';
 import { JobDetailPanelView } from './JobDetailPanelView';
 import { TaskDetailPanelView } from './TaskDetailPanelView';
 
-export class MainPageView extends BasicPageView {
+export class MainPageView extends ScheduledJobsPageView {
     readonly jobDetailPanel: JobDetailPanelView;
     readonly taskDetailPanel: TaskDetailPanelView;
     readonly editTaskDataPanel: EditTaskDataPanelView;

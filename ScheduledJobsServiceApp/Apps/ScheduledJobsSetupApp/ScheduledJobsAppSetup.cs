@@ -1,4 +1,5 @@
 ﻿using XTI_App.Abstractions;
+using XTI_Hub.Abstractions;
 using XTI_HubAppClient;
 using XTI_ScheduledJobsServiceAppApi;
 
@@ -19,20 +20,10 @@ internal sealed class ScheduledJobsAppSetup : IAppSetup
         await hubClient.Install.SetUserAccess
         (
             new SetUserAccessRequest
-            {
-                UserName = systemUserName.Value,
-                RoleAssignments = new[]
-                {
-                    new SetUserAccessRoleRequest
-                    {
-                        AppKey = AppKey.WebApp("ScheduledJobs"),
-                        RoleNames = new []
-                        {
-                            AppRoleName.Admin
-                        }
-                    }
-                }
-            }
+            (
+                systemUserName.Value,
+                new SetUserAccessRoleRequest(AppKey.WebApp("ScheduledJobs"), AppRoleName.Admin)
+            )
         );
     }
 }

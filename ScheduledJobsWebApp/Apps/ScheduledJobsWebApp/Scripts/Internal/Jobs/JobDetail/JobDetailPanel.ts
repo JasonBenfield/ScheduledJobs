@@ -10,12 +10,12 @@ import { TaskListItem } from "./TaskListItem";
 import { TaskListItemView } from "./TaskListItemView";
 
 interface IResult {
-    menuRequested?: {};
+    menuRequested?: boolean;
     taskSelected?: { tasks: ITriggeredJobTaskModel[], selectedTask: ITriggeredJobTaskModel };
 }
 
 class Result {
-    static menuRequested() { return new Result({ menuRequested: {} }); }
+    static menuRequested() { return new Result({ menuRequested: true }); }
 
     static taskSelected(tasks: ITriggeredJobTaskModel[], selectedTask: ITriggeredJobTaskModel) {
         return new Result({ taskSelected: { tasks: tasks, selectedTask: selectedTask } });
@@ -33,7 +33,7 @@ export class JobDetailPanel implements IPanel {
     private readonly alert: MessageAlert;
     private readonly jobDisplayText: TextComponent;
     private readonly triggeredByLink: TextLinkComponent;
-    private readonly taskList: ListGroup;
+    private readonly taskList: ListGroup<TaskListItem, TaskListItemView>;
     private readonly refreshCommand: AsyncCommand;
     private jobID: number;
     private jobDetail: ITriggeredJobDetailModel;
@@ -64,20 +64,16 @@ export class JobDetailPanel implements IPanel {
         );
         this.taskList.setItems(
             this.jobDetail.Tasks,
-            (task, itemView: TaskListItemView) => new TaskListItem(task, itemView)
+            (task, itemView) => new TaskListItem(task, itemView)
         );
         this.view.showJob();
     }
 
-    private async getJobDetail(jobID) {
-        let jobDetail: ITriggeredJobDetailModel;
-        await this.alert.infoAction(
+    private getJobDetail(jobID) {
+        return this.alert.infoAction(
             'Loading...',
-            async () => {
-                jobDetail = await this.schdJobsApi.JobInquiry.GetJobDetail({ JobID: jobID });
-            }
+            () => this.schdJobsApi.JobInquiry.GetJobDetail({ JobID: jobID })
         );
-        return jobDetail;
     }
 
     private onTaskClicked(taskItem: TaskListItem) {

@@ -1,12 +1,11 @@
-﻿import { BasicPage } from '@jasonbenfield/sharedwebapp/Components/BasicPage';
-import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
-import { Apis } from '../Apis';
+﻿import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
 import { MainMenuPanel } from '../MainMenuPanel';
+import { ScheduledJobsPage } from '../ScheduledJobsPage';
 import { JobDefinitionListPanel } from './JobDefinitionListPanel';
 import { JobListPanel } from './JobListPanel';
 import { MainPageView } from './MainPageView';
 
-class MainPage extends BasicPage {
+class MainPage extends ScheduledJobsPage {
     protected readonly view: MainPageView;
     private readonly panels = new SingleActivePanel();
     private readonly jobDefinitionsPanel: JobDefinitionListPanel;
@@ -15,15 +14,14 @@ class MainPage extends BasicPage {
 
     constructor() {
         super(new MainPageView());
-        const schdJobsApi = new Apis(this.view.modalError).ScheduledJobs();
         this.jobDefinitionsPanel = this.panels.add(
-            new JobDefinitionListPanel(schdJobsApi, this.view.jobDefinitionsPanel)
+            new JobDefinitionListPanel(this.defaultApi, this.view.jobDefinitionsPanel)
         );
         this.jobsPanel = this.panels.add(
-            new JobListPanel(schdJobsApi, this.view.jobsPanel)
+            new JobListPanel(this.defaultApi, this.view.jobsPanel)
         );
         this.menuPanel = this.panels.add(
-            new MainMenuPanel(schdJobsApi, this.view.menuPanel)
+            new MainMenuPanel(this.defaultApi, this.view.menuPanel)
         );
         this.jobDefinitionsPanel.refresh();
         this.activateJobDefinitionsPanel();

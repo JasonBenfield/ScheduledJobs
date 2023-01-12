@@ -15,8 +15,12 @@ public static class SqlServerExtensions
         services.AddDbContext<JobDbContext>((sp, options) =>
         {
             var xtiEnv = sp.GetRequiredService<XtiEnvironment>();
-            var jobDbOptions = sp.GetRequiredService<DbOptions>();
-            var connectionString = new JobConnectionString(jobDbOptions, xtiEnv.EnvironmentName);
+            var dbOptions = sp.GetRequiredService<DbOptions>();
+            var connectionString = new XtiConnectionString
+            (
+                dbOptions, 
+                new XtiDbName(xtiEnv.EnvironmentName, "Jobs")
+            );
             options.UseSqlServer
             (
                 connectionString.Value(),

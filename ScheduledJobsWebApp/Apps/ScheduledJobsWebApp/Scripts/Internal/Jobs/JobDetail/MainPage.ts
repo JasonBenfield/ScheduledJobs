@@ -1,14 +1,13 @@
-﻿import { BasicPage } from '@jasonbenfield/sharedwebapp/Components/BasicPage';
-import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
+﻿import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
 import { Url } from '@jasonbenfield/sharedwebapp/Url';
-import { Apis } from '../../Apis';
 import { MainMenuPanel } from '../../MainMenuPanel';
+import { ScheduledJobsPage } from '../../ScheduledJobsPage';
 import { EditTaskDataPanel } from './EditTaskDataPanel';
 import { JobDetailPanel } from './JobDetailPanel';
 import { MainPageView } from './MainPageView';
 import { TaskDetailPanel } from './TaskDetailPanel';
 
-class MainPage extends BasicPage {
+class MainPage extends ScheduledJobsPage {
     protected readonly view: MainPageView;
     private readonly panels: SingleActivePanel;
     private readonly jobDetailPanel: JobDetailPanel;
@@ -18,16 +17,15 @@ class MainPage extends BasicPage {
 
     constructor() {
         super(new MainPageView());
-        const schdJobsApi = new Apis(this.view.modalError).ScheduledJobs();
         this.panels = new SingleActivePanel();
-        this.jobDetailPanel = this.panels.add(new JobDetailPanel(schdJobsApi, this.view.jobDetailPanel));
+        this.jobDetailPanel = this.panels.add(new JobDetailPanel(this.defaultApi, this.view.jobDetailPanel));
         this.taskDetailPanel = this.panels.add(
-            new TaskDetailPanel(schdJobsApi, this.view.taskDetailPanel)
+            new TaskDetailPanel(this.defaultApi, this.view.taskDetailPanel)
         );
         this.editTaskDataPanel = this.panels.add(
-            new EditTaskDataPanel(schdJobsApi, this.view.editTaskDataPanel)
+            new EditTaskDataPanel(this.defaultApi, this.view.editTaskDataPanel)
         );
-        this.menuPanel = this.panels.add(new MainMenuPanel(schdJobsApi, this.view.menuPanel));
+        this.menuPanel = this.panels.add(new MainMenuPanel(this.defaultApi, this.view.menuPanel));
         this.jobDetailPanel.setJobID(Number(Url.current().getQueryValue('JobID')));
         this.jobDetailPanel.refresh();
         this.activateJobDetailPanel();
