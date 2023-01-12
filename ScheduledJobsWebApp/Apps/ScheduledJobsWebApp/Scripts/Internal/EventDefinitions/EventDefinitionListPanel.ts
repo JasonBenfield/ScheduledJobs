@@ -8,12 +8,12 @@ import { EventDefinitionListItemView } from "./EventDefinitionListItemView";
 import { EventDefinitionListPanelView } from "./EventDefinitionListPanelView";
 
 interface IResults {
-    menuRequested?: {};
+    menuRequested?: boolean;
     eventDefinitionSelected?: { eventDefinitionID: number; }
 }
 
 export class EventDefinitionListPanelResult {
-    static menuRequested() { return new EventDefinitionListPanelResult({ menuRequested: {} }); }
+    static menuRequested() { return new EventDefinitionListPanelResult({ menuRequested: true }); }
 
     static eventDefinitionSelected(eventDefinitionID: number) {
         return new EventDefinitionListPanelResult({
@@ -31,7 +31,7 @@ export class EventDefinitionListPanelResult {
 export class EventDefinitionListPanel implements IPanel {
     private readonly awaitable = new Awaitable<EventDefinitionListPanelResult>();
     private readonly alert: MessageAlert;
-    private readonly eventDefinitions: ListGroup;
+    private readonly eventDefinitions: ListGroup<EventDefinitionListItem, EventDefinitionListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: EventDefinitionListPanelView) {
@@ -54,7 +54,7 @@ export class EventDefinitionListPanel implements IPanel {
         const evtDefs = await this.getEventDefinitions();
         this.eventDefinitions.setItems(
             evtDefs,
-            (evtDef, itemView: EventDefinitionListItemView) => new EventDefinitionListItem(evtDef, itemView)
+            (evtDef, itemView) => new EventDefinitionListItem(evtDef, itemView)
         );
         if (evtDefs.length === 0) {
             this.alert.danger('No event definitions were found');

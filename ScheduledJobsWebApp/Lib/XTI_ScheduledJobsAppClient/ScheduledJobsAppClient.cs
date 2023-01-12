@@ -4,8 +4,6 @@ public sealed partial class ScheduledJobsAppClient : AppClient
 {
     public ScheduledJobsAppClient(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, ScheduledJobsAppClientVersion version) : base(httpClientFactory, xtiTokenAccessor, clientUrl, "ScheduledJobs", version.Value)
     {
-        User = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new UserGroup(_clientFactory, _tokenAccessor, _url, _options));
-        UserCache = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new UserCacheGroup(_clientFactory, _tokenAccessor, _url, _options));
         Home = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new HomeGroup(_clientFactory, _tokenAccessor, _url, _options));
         Recurring = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new RecurringGroup(_clientFactory, _tokenAccessor, _url, _options));
         EventDefinitions = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new EventDefinitionsGroup(_clientFactory, _tokenAccessor, _url, _options));
@@ -19,10 +17,6 @@ public sealed partial class ScheduledJobsAppClient : AppClient
 
     public ScheduledJobsRoleNames RoleNames { get; } = ScheduledJobsRoleNames.Instance;
     public string AppName { get; } = "ScheduledJobs";
-    public UserGroup User { get; }
-
-    public UserCacheGroup UserCache { get; }
-
     public HomeGroup Home { get; }
 
     public RecurringGroup Recurring { get; }

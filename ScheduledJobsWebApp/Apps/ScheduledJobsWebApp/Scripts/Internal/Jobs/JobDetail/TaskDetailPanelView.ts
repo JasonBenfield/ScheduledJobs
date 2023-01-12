@@ -64,8 +64,7 @@ export class TaskDetailPanelView extends GridView {
         this.timeElapsed = topBlock.addView(TextSpanView);
         this.taskData = mainContent.addView(TextBlockView)
             .configure(b => b.setMargin(MarginCss.bottom(3)));
-        this.logEntries = mainContent.addView(ListGroupView);
-        this.logEntries.setItemViewType(LogEntryItemView);
+        this.logEntries = mainContent.addListGroup(LogEntryItemView);
         this.logEntries.setMargin(MarginCss.bottom(3));
         const nav = mainContent.addView(NavView);
         nav.pills();
@@ -114,7 +113,7 @@ export class TaskDetailPanelView extends GridView {
     readonly timeStarted: BasicTextComponentView;
     readonly timeElapsed: BasicTextComponentView;
     readonly taskData: TextBlockView;
-    readonly logEntries: ListGroupView;
+    readonly logEntries: ListGroupView<LogEntryItemView>;
     readonly timeoutTaskButton: ButtonCommandView;
     readonly editTaskDataButton: ButtonCommandView;
     readonly retryTaskButton: ButtonCommandView;

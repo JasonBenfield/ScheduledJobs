@@ -9,11 +9,11 @@ import { EventSummaryListItemView } from "./EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
 
 interface IResults {
-    menuRequested?: {};
+    menuRequested?: boolean;
 }
 
 export class NotificationListPanelResult {
-    static menuRequested() { return new NotificationListPanelResult({ menuRequested: {} }); }
+    static menuRequested() { return new NotificationListPanelResult({ menuRequested: true }); }
 
     private constructor(private readonly results: IResults) { }
 
@@ -23,7 +23,7 @@ export class NotificationListPanelResult {
 export class NotificationListPanel implements IPanel {
     private readonly awaitable = new Awaitable<NotificationListPanelResult>();
     private readonly alert: MessageAlert;
-    private readonly recentEventsList: ListGroup;
+    private readonly recentEventsList: ListGroup<EventSummaryListItem, EventSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
     constructor(
@@ -47,22 +47,18 @@ export class NotificationListPanel implements IPanel {
         let recentEvents = await this.getRecentEvents();
         this.recentEventsList.setItems(
             recentEvents,
-            (evt, itemView: EventSummaryListItemView) => new EventSummaryListItem(this.schdJobsApi, evt, itemView)
+            (evt, itemView) => new EventSummaryListItem(this.schdJobsApi, evt, itemView)
         );
         if (recentEvents.length === 0) {
             this.alert.danger('No events were found.');
         }
     }
 
-    private async getRecentEvents() {
-        let recentEvents: IEventSummaryModel[];
-        await this.alert.infoAction(
+    private getRecentEvents() {
+        return this.alert.infoAction(
             'Loading...',
-            async () => {
-                recentEvents = await this.schdJobsApi.EventInquiry.GetRecentNotifications();
-            }
+            () => this.schdJobsApi.EventInquiry.GetRecentNotifications()
         );
-        return recentEvents;
     }
 
     refresh() { return this.refreshCommand.execute(); }

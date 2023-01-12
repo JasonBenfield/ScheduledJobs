@@ -40,7 +40,7 @@ export class TaskDetailPanel implements IPanel {
     private readonly timeStarted: TextComponent;
     private readonly timeElapsed: TextComponent;
     private readonly taskData: TextComponent;
-    private readonly logEntries: ListGroup;
+    private readonly logEntries: ListGroup<LogEntryItem, LogEntryItemView>;
     private readonly alert: MessageAlert;
     private tasks: ITriggeredJobTaskModel[];
     private currentTask: ITriggeredJobTaskModel;
@@ -122,8 +122,8 @@ export class TaskDetailPanel implements IPanel {
     }
 
     private previousTask() {
-        let currentIndex = this.tasks.indexOf(this.currentTask);
-        let previousTask = this.tasks[currentIndex - 1];
+        const currentIndex = this.tasks.indexOf(this.currentTask);
+        const previousTask = this.tasks[currentIndex - 1];
         if (previousTask) {
             this.setCurrentTask(previousTask);
         }
@@ -133,8 +133,8 @@ export class TaskDetailPanel implements IPanel {
     }
 
     private nextTask() {
-        let currentIndex = this.tasks.indexOf(this.currentTask);
-        let nextTask = this.tasks[currentIndex + 1];
+        const currentIndex = this.tasks.indexOf(this.currentTask);
+        const nextTask = this.tasks[currentIndex + 1];
         if (nextTask) {
             this.setCurrentTask(nextTask);
         }
@@ -168,7 +168,7 @@ export class TaskDetailPanel implements IPanel {
         }
         this.logEntries.setItems(
             currentTask.LogEntries,
-            (entry, itemView: LogEntryItemView) => new LogEntryItem(entry, itemView)
+            (entry, itemView) => new LogEntryItem(entry, itemView)
         );
         const status = JobTaskStatus.values.value(currentTask.Status.Value);
         if (status.equals(JobTaskStatus.values.Failed)) {

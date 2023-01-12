@@ -15,16 +15,16 @@ public sealed partial class UserController : Controller
         return api.Group("User").Action<ResourcePath[], ResourcePathAccess[]>("GetUserAccess").Execute(model, ct);
     }
 
-    public async Task<IActionResult> AccessDenied(CancellationToken ct)
+    public async Task<IActionResult> UserProfile(CancellationToken ct)
     {
-        var result = await api.Group("User").Action<EmptyRequest, WebViewResult>("AccessDenied").Execute(new EmptyRequest(), ct);
-        return View(result.Data.ViewName);
+        var result = await api.Group("User").Action<EmptyRequest, WebRedirectResult>("UserProfile").Execute(new EmptyRequest(), ct);
+        return Redirect(result.Data.Url);
     }
 
-    public async Task<IActionResult> Error(CancellationToken ct)
+    [HttpPost]
+    public Task<ResultContainer<LinkModel[]>> GetMenuLinks([FromBody] string model, CancellationToken ct)
     {
-        var result = await api.Group("User").Action<EmptyRequest, WebViewResult>("Error").Execute(new EmptyRequest(), ct);
-        return View(result.Data.ViewName);
+        return api.Group("User").Action<string, LinkModel[]>("GetMenuLinks").Execute(model, ct);
     }
 
     public async Task<IActionResult> Logout(LogoutRequest model, CancellationToken ct)

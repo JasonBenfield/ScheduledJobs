@@ -10,11 +10,11 @@ import { JobSummaryListItemView } from "../../Jobs/JobSummaryListItemView";
 import { NotificationDetailPanelView } from "./NotificationDetailPanelView";
 
 interface IResults {
-    menuRequested?: {};
+    menuRequested?: boolean;
 }
 
 export class NotificationDetailPanelResult {
-    static menuRequested() { return new NotificationDetailPanelResult({ menuRequested: {} }); }
+    static menuRequested() { return new NotificationDetailPanelResult({ menuRequested: true }); }
 
     private constructor(private readonly results: IResults) { }
 
@@ -25,7 +25,7 @@ export class NotificationDetailPanel implements IPanel {
     private readonly awaitable = new Awaitable<NotificationDetailPanelResult>();
     private readonly sourceKey: TextValueFormGroup;
     private readonly sourceData: TextValueFormGroup;
-    private readonly triggeredJobs: ListGroup;
+    private readonly triggeredJobs: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly alert: MessageAlert;
     private readonly refreshCommand: AsyncCommand;
     private notificationID: number;
@@ -57,22 +57,18 @@ export class NotificationDetailPanel implements IPanel {
         this.sourceData.setValue(notificationDetail.Event.SourceData);
         this.triggeredJobs.setItems(
             notificationDetail.TriggeredJobs,
-            (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
+            (job, itemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
         );
         this.view.showJobDetail();
     }
 
-    private async getNotificationDetail(notificationID: number) {
-        let notificationDetail: IEventNotificationDetailModel;
-        await this.alert.infoAction(
+    private getNotificationDetail(notificationID: number) {
+        return this.alert.infoAction(
             'Loading...',
-            async () => {
-                notificationDetail = await this.schdJobsApi.EventInquiry.GetNotificationDetail(
-                    { NotificationID: notificationID }
-                );
-            }
+            () => this.schdJobsApi.EventInquiry.GetNotificationDetail(
+                { NotificationID: notificationID }
+            )
         );
-        return notificationDetail;
     }
 
     setNotificationID(notificationID: number) {

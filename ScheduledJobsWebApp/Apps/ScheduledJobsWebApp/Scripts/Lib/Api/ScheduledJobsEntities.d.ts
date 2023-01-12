@@ -11,6 +11,11 @@ interface IResourcePathAccess {
 }
 interface IEmptyRequest {
 }
+interface ILinkModel {
+	LinkName: string;
+	DisplayText: string;
+	Url: string;
+}
 interface ILogoutRequest {
 	ReturnUrl: string;
 }

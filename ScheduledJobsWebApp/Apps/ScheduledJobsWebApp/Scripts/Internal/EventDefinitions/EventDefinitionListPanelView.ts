@@ -10,7 +10,7 @@ import { EventDefinitionListItemView } from "./EventDefinitionListItemView";
 
 export class EventDefinitionListPanelView extends GridView {
     readonly alert: MessageAlertView;
-    readonly eventDefinitions: ButtonListGroupView;
+    readonly eventDefinitions: ButtonListGroupView<EventDefinitionListItemView>;
     readonly menuButton: ButtonCommandView;
     readonly refreshButton: ButtonCommandView;
 
@@ -21,8 +21,7 @@ export class EventDefinitionListPanelView extends GridView {
         this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         this.alert = mainContent.addView(MessageAlertView);
-        this.eventDefinitions = mainContent.addView(ButtonListGroupView);
-        this.eventDefinitions.setItemViewType(EventDefinitionListItemView);
+        this.eventDefinitions = mainContent.addButtonListGroup(EventDefinitionListItemView);
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );
