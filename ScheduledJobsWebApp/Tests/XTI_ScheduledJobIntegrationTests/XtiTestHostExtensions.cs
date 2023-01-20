@@ -61,15 +61,17 @@ internal static class XtiTestHostExtensions
     {
         var stoppingToken = host.GetRequiredService<CancellationTokenSource>().Token;
         var monitorBuilder = host.GetRequiredService<EventMonitorBuilder>();
-        var jobActionFactory = host.GetRequiredService<IJobActionFactory>();
+        var jobActionFactory = host.GetRequiredService<DemoJobActionFactory>();
+        var transformedEventData = host.GetRequiredService<DemoTransformedEventData>();
         return monitorBuilder
             .When(eventKey)
             .Trigger(jobKey)
             .UseJobActionFactory(jobActionFactory)
+            .TransformEventData(transformedEventData)
             .Run(stoppingToken);
     }
 
-    public static Task<EventNotification[]> RaiseEvent(this XtiHost host, EventKey eventKey, EventSource source)
+    public static Task<EventNotification[]> RaiseEvent(this XtiHost host, EventKey eventKey, XtiEventSource source)
     {
         var incomingEventFactory = host.GetRequiredService<IncomingEventFactory>();
         return incomingEventFactory

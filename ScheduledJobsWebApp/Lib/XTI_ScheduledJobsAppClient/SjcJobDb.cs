@@ -9,7 +9,7 @@ public sealed class SjcJobDb : IJobDb
         this.schdJobClient = schdJobClient;
     }
 
-    public Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, EventSource[] sources) =>
+    public Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources) =>
         schdJobClient.Events.AddNotifications
         (
             new AddNotificationsRequest

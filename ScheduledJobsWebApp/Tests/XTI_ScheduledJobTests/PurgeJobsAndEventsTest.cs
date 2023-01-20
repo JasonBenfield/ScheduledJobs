@@ -27,7 +27,7 @@ internal sealed class PurgeJobsAndEventsTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -57,7 +57,7 @@ internal sealed class PurgeJobsAndEventsTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -87,7 +87,7 @@ internal sealed class PurgeJobsAndEventsTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -117,7 +117,7 @@ internal sealed class PurgeJobsAndEventsTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -151,7 +151,7 @@ internal sealed class PurgeJobsAndEventsTest
         await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -182,7 +182,7 @@ internal sealed class PurgeJobsAndEventsTest
         await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)

@@ -24,7 +24,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         Assert.That(eventNotifications.Length, Is.EqualTo(1), "Should raise event");
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -51,7 +51,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -81,7 +81,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -112,16 +112,16 @@ internal sealed class RunJobTest
         var eventNotifications = await host1.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var actionFactory = host1.GetRequiredService<DemoJobActionFactory>();
-        actionFactory.FailTransformSourceData();
+        var transformedEventData = host1.GetRequiredService<DemoTransformedEventData>();
+        transformedEventData.FailTransformSourceData();
         try
         {
             await host1.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         }
         catch { }
-        actionFactory.AllowTransformSourceData();
+        transformedEventData.AllowTransformSourceData();
         var host2 = TestHost.CreateDefault(XtiEnvironment.Development);
         await host2.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();

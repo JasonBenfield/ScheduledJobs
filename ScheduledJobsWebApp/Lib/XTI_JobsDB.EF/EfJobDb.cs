@@ -100,7 +100,7 @@ public sealed class EfJobDb : IJobDb
         }
     }
 
-    public async Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, EventSource[] sources)
+    public async Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources)
     {
         var eventNotifications = new List<EventNotificationModel>();
         var evtDefEntity = await db.EventDefinitions.Retrieve()
@@ -162,7 +162,7 @@ public sealed class EfJobDb : IJobDb
         return eventNotifications.ToArray();
     }
 
-    private async Task<EventNotificationEntity[]> GetDuplicateNotifications(EventDefinitionEntity eventDefinition, DuplicateHandling duplicateHandling, EventSource source)
+    private async Task<EventNotificationEntity[]> GetDuplicateNotifications(EventDefinitionEntity eventDefinition, DuplicateHandling duplicateHandling, XtiEventSource source)
     {
         EventNotificationEntity[] duplicateNotifications;
         if (duplicateHandling.Equals(DuplicateHandling.Values.KeepAll))

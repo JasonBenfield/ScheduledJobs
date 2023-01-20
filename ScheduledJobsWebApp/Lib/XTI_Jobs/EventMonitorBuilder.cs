@@ -6,6 +6,7 @@ public sealed class EventMonitorBuilder
     private EventKey eventKey = new EventKey("");
     private JobKey jobKey = new JobKey("");
     private IJobActionFactory? jobActionFactory;
+    private ITransformedEventData? transformedEventData;
     private DateTimeOffset eventRaisedStartTime = DateTimeOffset.MinValue;
 
     public EventMonitorBuilder(IJobDb db)
@@ -34,11 +35,17 @@ public sealed class EventMonitorBuilder
         this.jobActionFactory = jobActionFactory;
     }
 
+    internal void TransformEventData(ITransformedEventData transformedEventData)
+    {
+        this.transformedEventData = transformedEventData;
+    }
+
     internal EventMonitor Build() =>
         new EventMonitor
         (
             db,
             jobActionFactory ?? throw new ArgumentNullException(nameof(jobActionFactory)),
+            transformedEventData ?? throw new ArgumentNullException(nameof(transformedEventData)),
             eventKey,
             jobKey,
             eventRaisedStartTime

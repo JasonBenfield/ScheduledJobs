@@ -23,14 +23,16 @@ internal static class XtiTestHostExtensions
         var monitorBuilder = host.GetRequiredService<EventMonitorBuilder>();
         var monitorBuilder1 = monitorBuilder.When(eventKey);
         configMonitor?.Invoke(monitorBuilder1);
-        var jobActionFactory = host.GetRequiredService<IJobActionFactory>();
+        var jobActionFactory = host.GetRequiredService<DemoJobActionFactory>();
+        var transformedEventData = host.GetRequiredService<DemoTransformedEventData>();
         var monitor = monitorBuilder1
             .Trigger(jobKey)
-            .UseJobActionFactory(jobActionFactory);
+            .UseJobActionFactory(jobActionFactory)
+            .TransformEventData(transformedEventData);
         return monitor.Run(stoppingToken);
     }
 
-    public static Task<EventNotification[]> RaiseEvent(this XtiHost host, EventKey eventKey, EventSource source)
+    public static Task<EventNotification[]> RaiseEvent(this XtiHost host, EventKey eventKey, XtiEventSource source)
     {
         var incomingEventFactory = host.GetRequiredService<IncomingEventFactory>();
         return incomingEventFactory

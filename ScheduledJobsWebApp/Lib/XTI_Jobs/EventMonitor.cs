@@ -4,14 +4,16 @@ public sealed class EventMonitor
 {
     private readonly IJobDb db;
     private readonly IJobActionFactory jobActionFactory;
+    private readonly ITransformedEventData transformedEventData;
     private readonly EventKey eventKey;
     private readonly JobKey jobKey;
     private readonly DateTimeOffset eventRaisedStartTime;
 
-    internal EventMonitor(IJobDb db, IJobActionFactory jobActionFactory, EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime)
+    internal EventMonitor(IJobDb db, IJobActionFactory jobActionFactory, ITransformedEventData transformedEventData, EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime)
     {
         this.db = db;
         this.jobActionFactory = jobActionFactory;
+        this.transformedEventData = transformedEventData;
         this.eventKey = eventKey;
         this.jobKey = jobKey;
         this.eventRaisedStartTime = eventRaisedStartTime;
@@ -33,7 +35,7 @@ public sealed class EventMonitor
         var pendingJobs = await db.TriggerJobs(eventKey, jobKey, eventRaisedStartTime);
         foreach (var pendingJob in pendingJobs)
         {
-            var taskData = await jobActionFactory.TransformSourceData(pendingJob.SourceKey, pendingJob.SourceData);
+            var taskData = await transformedEventData.TransformEventData(pendingJob.SourceKey, pendingJob.SourceData);
             var firstTasks = jobActionFactory.FirstTasks(taskData);
             var triggeredJob = new TriggeredJob(db, pendingJob);
             var nextTask = await triggeredJob.Start(firstTasks);
