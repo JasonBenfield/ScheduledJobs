@@ -21,7 +21,7 @@ internal sealed class TriggerJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -45,7 +45,7 @@ internal sealed class TriggerJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingElseHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingElseHappened, DemoJobs.DoSomethingElse.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -92,7 +92,7 @@ internal sealed class TriggerJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingElseHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -116,7 +116,7 @@ internal sealed class TriggerJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -145,12 +145,12 @@ internal sealed class TriggerJobTest
         var eventNotifications1 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         var eventNotifications2 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         Assert.That(eventNotifications2.Length, Is.EqualTo(0), "Should ignore duplicate events.");
     }
@@ -171,12 +171,12 @@ internal sealed class TriggerJobTest
         var eventNotifications1 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         var eventNotifications2 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs();
@@ -211,12 +211,12 @@ internal sealed class TriggerJobTest
         var eventNotifications1 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         var eventNotifications2 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs();
@@ -251,12 +251,12 @@ internal sealed class TriggerJobTest
         var eventNotifications1 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         var eventNotifications2 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs();
@@ -291,12 +291,12 @@ internal sealed class TriggerJobTest
         var eventNotifications1 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1, \"Description\": \"Whatever\" }")
+            new XtiEventSource("1", "{ \"ID\": 1, \"Description\": \"Whatever\" }")
         );
         var eventNotifications2 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1, \"Description\": \"Different\" }")
+            new XtiEventSource("1", "{ \"ID\": 1, \"Description\": \"Different\" }")
         );
         Assert.That(eventNotifications2.Length, Is.EqualTo(0), "Should handle events as duplicates when source keys only are equal");
     }
@@ -320,7 +320,7 @@ internal sealed class TriggerJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         clock.Add(activeFor.Add(TimeSpan.FromSeconds(1)));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
@@ -346,7 +346,7 @@ internal sealed class TriggerJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         Assert.That(eventNotifications.Length, Is.EqualTo(0), "Should not notify before event has started.");
     }
@@ -368,7 +368,7 @@ internal sealed class TriggerJobTest
         var eventNotifications1 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var now = host.CurrentTime();
         var eventRaisedStartTime = now.AddMinutes(5);
@@ -388,7 +388,7 @@ internal sealed class TriggerJobTest
         var eventNotifications2 = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent
         (

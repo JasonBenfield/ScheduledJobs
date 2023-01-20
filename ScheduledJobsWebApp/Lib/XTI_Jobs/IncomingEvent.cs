@@ -7,9 +7,9 @@ public sealed class IncomingEvent
     private readonly IJobDb db;
     private readonly IClock clock;
     private readonly EventKey eventKey;
-    private readonly EventSource[] sources;
+    private readonly XtiEventSource[] sources;
 
-    internal IncomingEvent(IJobDb db, IClock clock, EventKey eventKey, EventSource[] sources)
+    internal IncomingEvent(IJobDb db, IClock clock, EventKey eventKey, XtiEventSource[] sources)
     {
         this.db = db;
         this.clock = clock;

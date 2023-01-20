@@ -6,7 +6,7 @@ public interface IJobDb
 
     Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs);
 
-    Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, EventSource[] sources);
+    Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources);
 
     Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID);
 

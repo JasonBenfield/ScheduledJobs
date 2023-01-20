@@ -9,9 +9,9 @@ public sealed class EventMonitorBuilder2
         this.builder = builder;
     }
 
-    public EventMonitor UseJobActionFactory(IJobActionFactory jobActionFactory)
+    public EventMonitorBuilder3 UseJobActionFactory(IJobActionFactory jobActionFactory)
     {
         builder.UseJobActionFactory(jobActionFactory);
-        return builder.Build();
+        return new EventMonitorBuilder3(builder);
     }
 }

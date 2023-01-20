@@ -3,5 +3,5 @@
 public sealed record AddNotificationsRequest
 (
     EventKey EventKey, 
-    EventSource[] Sources
+    XtiEventSource[] Sources
 );

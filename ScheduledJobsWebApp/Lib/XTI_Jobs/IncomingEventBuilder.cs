@@ -15,5 +15,5 @@ public sealed class IncomingEventBuilder
         this.eventKey = eventKey;
     }
 
-    public IncomingEvent From(EventSource source) => new IncomingEvent(storedEvents, clock, eventKey, new[] { source });
+    public IncomingEvent From(XtiEventSource source) => new IncomingEvent(storedEvents, clock, eventKey, new[] { source });
 }

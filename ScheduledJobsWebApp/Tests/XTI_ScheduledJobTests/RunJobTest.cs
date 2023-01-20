@@ -20,7 +20,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var action01Context = host.GetRequiredService<DemoActionContext<DemoAction01>>();
@@ -39,7 +39,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource("1", "{ \"ID\": 1 }")
+            new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var action02Context = host.GetRequiredService<DemoActionContext<DemoAction02>>();
@@ -59,7 +59,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var demoContext = host.GetRequiredService<DemoActionContext<DemoAction02>>();
@@ -79,7 +79,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var demoContext = host.GetRequiredService<DemoActionContext<DemoAction02>>();
@@ -103,7 +103,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
@@ -127,7 +127,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -152,7 +152,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var context = host.GetRequiredService<DemoActionContext<DemoAction01>>();
         context.Messages = new[] { "Whatever" };
@@ -180,7 +180,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -209,7 +209,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -236,7 +236,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext1 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext1.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -263,7 +263,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -289,7 +289,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -317,7 +317,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -344,7 +344,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -371,7 +371,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -399,7 +399,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -427,7 +427,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -454,7 +454,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -485,7 +485,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -518,7 +518,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -550,7 +550,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -580,7 +580,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -610,7 +610,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -642,7 +642,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoActionContext<DemoAction01>>();
         demoContext01.Delay = TimeSpan.FromHours(1);
@@ -677,7 +677,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoActionContext<DemoAction01>>();
         demoContext01.Delay = TimeSpan.FromHours(1);
@@ -714,7 +714,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoActionContext<DemoAction01>>();
         demoContext01.Delay = TimeSpan.FromHours(1);
@@ -749,7 +749,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
@@ -776,16 +776,16 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
-        var actionFactory = host.GetRequiredService<DemoJobActionFactory>();
-        actionFactory.FailTransformSourceData();
+        var transformedEventData = host.GetRequiredService<DemoTransformedEventData>();
+        transformedEventData.FailTransformSourceData();
         try
         {
             await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         }
         catch { }
-        actionFactory.AllowTransformSourceData();
+        transformedEventData.AllowTransformSourceData();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
         Assert.That(triggeredJobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should retry after error during transform source data");
@@ -808,7 +808,7 @@ internal sealed class RunJobTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var triggeredJobs = await eventNotifications[0].TriggeredJobs();
