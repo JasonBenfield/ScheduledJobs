@@ -54,13 +54,13 @@ internal sealed class TriggerJobTest
         Assert.That(errors.Length, Is.EqualTo(0));
     }
 
-    private static JobRegistration BuildJobs(JobRegistration jobs)=> 
+    private static JobRegistration BuildJobs(JobRegistration jobs) =>
         jobs.AddJob
         (
             DemoJobs.DoSomething.JobKey,
             j =>
             {
-                foreach(var task in DemoJobs.DoSomething.GetAllTasks())
+                foreach (var task in DemoJobs.DoSomething.GetAllTasks())
                 {
                     j.AddTask(task);
                 }
@@ -403,5 +403,42 @@ internal sealed class TriggerJobTest
         Assert.That(triggeredJobs2.Length, Is.EqualTo(1), "Should trigger jobs after event raised start time");
     }
 
-
+    [Test]
+    public async Task ShouldNotifyAboutEventsFromMultipleSources()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => jobs.BuildJobs()
+        );
+        var sourceData1 = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var sourceData2 = new SomethingHappenedData
+        {
+            ID = 3,
+            Items = Enumerable.Range(4, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new XtiEventSource(sourceData1.ID.ToString(), JsonSerializer.Serialize(sourceData1)),
+            new XtiEventSource(sourceData2.ID.ToString(), JsonSerializer.Serialize(sourceData2))
+        );
+        Assert.That
+        (
+            eventNotifications.Select(n => n.ToModel().SourceKey),
+            Has.One.EqualTo("2"),
+            "Should notify event with source key '2'"
+        );
+        Assert.That
+        (
+            eventNotifications.Select(n => n.ToModel().SourceKey),
+            Has.One.EqualTo("3"),
+            "Should notify event with source key '3'"
+        );
+    }
 }

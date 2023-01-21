@@ -32,12 +32,17 @@ internal static class XtiTestHostExtensions
         return monitor.Run(stoppingToken);
     }
 
-    public static Task<EventNotification[]> RaiseEvent(this XtiHost host, EventKey eventKey, XtiEventSource source)
+    public static Task<EventNotification[]> RaiseEvent
+    (
+        this XtiHost host, 
+        EventKey eventKey, 
+        params XtiEventSource[] sources
+    )
     {
         var incomingEventFactory = host.GetRequiredService<IncomingEventFactory>();
         return incomingEventFactory
             .Incoming(eventKey)
-            .From(source)
+            .From(sources)
             .Notify();
     }
 
