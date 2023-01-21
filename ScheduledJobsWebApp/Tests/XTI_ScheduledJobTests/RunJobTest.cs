@@ -218,6 +218,33 @@ internal sealed class RunJobTest
     }
 
     [Test]
+    public async Task ShouldPreserveData_WhenTaskFails()
+    {
+        var host = TestHost.CreateDefault();
+        await host.Register
+        (
+            events => events.AddEvent(DemoEventKeys.SomethingHappened),
+            jobs => jobs.BuildJobs()
+        );
+        var sourceData = new SomethingHappenedData
+        {
+            ID = 2,
+            Items = Enumerable.Range(1, 3).ToArray()
+        };
+        var eventNotifications = await host.RaiseEvent
+        (
+            DemoEventKeys.SomethingHappened,
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+        );
+        var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
+        demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
+        await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var task = triggeredJobs[0].Tasks(DemoJobs.DoSomething.TaskItem01)[1];
+        Assert.That(task.Data<DoSomethingItemData>().ItemID, Is.EqualTo(2), "Should preserve data when task fails");
+    }
+
+    [Test]
     public async Task ShouldRunNextChildTask()
     {
         var host = TestHost.CreateDefault();

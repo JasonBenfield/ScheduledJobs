@@ -48,6 +48,7 @@ export class TaskDetailPanel implements IPanel {
     private readonly editTaskDataCommand: Command;
     private readonly cancelTaskCommand: AsyncCommand;
     private readonly retryTaskCommand: AsyncCommand;
+    private readonly skipTaskCommand: AsyncCommand;
     private readonly modalConfirm: ModalConfirm;
 
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
@@ -70,6 +71,9 @@ export class TaskDetailPanel implements IPanel {
         this.retryTaskCommand = new AsyncCommand(this.retryTask.bind(this));
         this.retryTaskCommand.hide();
         this.retryTaskCommand.add(view.retryTaskButton);
+        this.skipTaskCommand = new AsyncCommand(this.skipTask.bind(this));
+        this.skipTaskCommand.hide();
+        this.skipTaskCommand.add(view.skipTaskButton);
         this.editTaskDataCommand = new Command(this.editTask.bind(this));
         this.editTaskDataCommand.add(view.editTaskDataButton);
         this.editTaskDataCommand.hide();
@@ -104,6 +108,19 @@ export class TaskDetailPanel implements IPanel {
             await this.alert.infoAction(
                 'Retrying task...',
                 () => this.schdJobsApi.Tasks.RetryTask({ TaskID: this.currentTask.ID })
+            );
+            this.awaitable.resolve(
+                Result.backRequested(true)
+            );
+        }
+    }
+
+    private async skipTask() {
+        const confirmed = await this.modalConfirm.confirm('Skip this task?', 'Confirm skip');
+        if (confirmed) {
+            await this.alert.infoAction(
+                'Skipping task...',
+                () => this.schdJobsApi.Tasks.SkipTask({ TaskID: this.currentTask.ID })
             );
             this.awaitable.resolve(
                 Result.backRequested(true)
@@ -174,11 +191,13 @@ export class TaskDetailPanel implements IPanel {
         if (status.equals(JobTaskStatus.values.Failed)) {
             this.cancelTaskCommand.show();
             this.retryTaskCommand.show();
+            this.skipTaskCommand.show();
             this.editTaskDataCommand.show();
         }
         else {
             this.cancelTaskCommand.hide();
             this.retryTaskCommand.hide();
+            this.skipTaskCommand.hide();
             this.editTaskDataCommand.hide();
         }
         if (status.equals(JobTaskStatus.values.Running)) {
