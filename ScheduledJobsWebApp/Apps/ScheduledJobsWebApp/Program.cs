@@ -7,12 +7,15 @@ using XTI_App.Api;
 using XTI_JobsDB.SqlServer;
 using XTI_Jobs.Abstractions;
 using XTI_JobsDB.EF;
+using XTI_WebApp.Api;
+using ScheduledJobsWebApp;
 
 var builder = XtiWebAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args);
 var xtiEnv = XtiEnvironment.Parse(builder.Environment.EnvironmentName);
 builder.Services.ConfigureXtiCookieAndTokenAuthentication(xtiEnv, builder.Configuration);
 builder.Services.AddJobDbContextForSqlServer();
 builder.Services.AddScoped<IJobDb, EfJobDb>();
+builder.Services.AddScoped<IMenuDefinitionBuilder, SchdJobsMenuDefinitionBuilder>();
 builder.Services.AddScoped<AppApiFactory, ScheduledJobsAppApiFactory>();
 builder.Services.AddScoped(sp => (ScheduledJobsAppApi)sp.GetRequiredService<IAppApi>());
 builder.Services.AddScheduledJobsAppApiServices();
