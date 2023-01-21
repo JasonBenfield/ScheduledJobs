@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Text.Json;
 using XTI_App.Api;
 using XTI_ScheduledJobsWebAppApi;
 
