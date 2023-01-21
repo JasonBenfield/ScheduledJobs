@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace XTI_ScheduledJobSharedTests;
+﻿namespace XTI_ScheduledJobSharedTests;
 
 public sealed class DemoItemAction01 : JobAction<DoSomethingItemData>
 {

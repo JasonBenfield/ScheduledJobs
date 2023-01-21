@@ -123,6 +123,18 @@
   <data name="JobTimeoutMessage" xml:space="preserve">
     <value>Job timed out</value>
   </data>
+  <data name="TaskRetriedCategory" xml:space="preserve">
+    <value>Retried</value>
+  </data>
+  <data name="TaskRetriedMessage" xml:space="preserve">
+    <value>Retried</value>
+  </data>
+  <data name="TaskSkippedCategory" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
+  <data name="TaskSkippedMessage" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
   <data name="TaskTimeoutCategory" xml:space="preserve">
     <value>TaskTimeout</value>
   </data>

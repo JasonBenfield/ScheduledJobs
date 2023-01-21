@@ -15,6 +15,11 @@ public sealed class TasksGroup : AppApiGroupWrapper
             nameof(RetryTask), 
             () => sp.GetRequiredService<RetryTaskAction>()
         );
+        SkipTask = source.AddAction
+        (
+            nameof(SkipTask),
+            () => sp.GetRequiredService<SkipTaskAction>()
+        );
         TimeoutTask = source.AddAction
         (
             nameof(TimeoutTask),
@@ -29,6 +34,7 @@ public sealed class TasksGroup : AppApiGroupWrapper
 
     public AppApiAction<GetTaskRequest, EmptyActionResult> CancelTask { get; }
     public AppApiAction<GetTaskRequest, EmptyActionResult> RetryTask { get; }
+    public AppApiAction<GetTaskRequest, EmptyActionResult> SkipTask { get; }
     public AppApiAction<GetTaskRequest, EmptyActionResult> TimeoutTask { get; }
     public AppApiAction<EditTaskDataRequest, EmptyActionResult> EditTaskData { get; }
 }

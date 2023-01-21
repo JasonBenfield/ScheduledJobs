@@ -79,6 +79,42 @@ namespace XTI_Jobs.Abstractions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Retried.
+        /// </summary>
+        public static string TaskRetriedCategory {
+            get {
+                return ResourceManager.GetString("TaskRetriedCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retried.
+        /// </summary>
+        public static string TaskRetriedMessage {
+            get {
+                return ResourceManager.GetString("TaskRetriedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skipped.
+        /// </summary>
+        public static string TaskSkippedCategory {
+            get {
+                return ResourceManager.GetString("TaskSkippedCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skipped.
+        /// </summary>
+        public static string TaskSkippedMessage {
+            get {
+                return ResourceManager.GetString("TaskSkippedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to TaskTimeout.
         /// </summary>
         public static string TaskTimeoutCategory {

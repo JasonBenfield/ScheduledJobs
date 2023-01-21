@@ -75,9 +75,9 @@ interface IRegisteredEvent {
 }
 interface IAddNotificationsRequest {
 	EventKey: IEventKey;
-	Sources: IEventSource[];
+	Sources: IXtiEventSource[];
 }
-interface IEventSource {
+interface IXtiEventSource {
 	SourceKey: string;
 	SourceData: string;
 }

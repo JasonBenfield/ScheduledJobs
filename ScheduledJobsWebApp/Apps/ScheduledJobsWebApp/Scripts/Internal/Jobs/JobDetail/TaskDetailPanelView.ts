@@ -95,6 +95,12 @@ export class TaskDetailPanelView extends GridView {
         this.cancelTaskButton.setText('Cancel Task');
         this.cancelTaskButton.setTextCss(new TextCss().start());
 
+        this.skipTaskButton = nav.addButtonCommand();
+        this.skipTaskButton.icon.makeFixedWidth();
+        this.skipTaskButton.icon.solidStyle('forward');
+        this.skipTaskButton.setText('Skip Task');
+        this.skipTaskButton.setTextCss(new TextCss().start());
+
         this.alert = mainContent.addView(MessageAlertView);
 
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(this.addCell().addView(ToolbarView));
@@ -118,6 +124,7 @@ export class TaskDetailPanelView extends GridView {
     readonly editTaskDataButton: ButtonCommandView;
     readonly retryTaskButton: ButtonCommandView;
     readonly cancelTaskButton: ButtonCommandView;
+    readonly skipTaskButton: ButtonCommandView;
     readonly backButton: ButtonCommandView;
     readonly modalConfirm: ModalConfirmView;
 
