@@ -5,17 +5,12 @@ import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicCompo
 import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
 import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
 import { NavView } from "@jasonbenfield/sharedwebapp/Views/NavView";
-import { TextLinkView } from "@jasonbenfield/sharedwebapp/Views/TextLinkView";
 import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { ScheduledJobsTheme } from "./ScheduledJobsTheme";
 
 export class MainMenuPanelView extends GridView {
     readonly doneButton: ButtonCommandView;
-    readonly eventDefinitionsLink: TextLinkView;
-    readonly notificationsLink: TextLinkView;
-    readonly jobDefinitionsLink: TextLinkView;
-    readonly failedJobsLink: TextLinkView;
-    readonly recentJobsLink: TextLinkView;
+    readonly menu: NavView;
     private readonly toolbar: ToolbarView;
 
     constructor(container: BasicComponentView) {
@@ -26,24 +21,10 @@ export class MainMenuPanelView extends GridView {
         let mainContent = ScheduledJobsTheme.instance.mainContent(
             this.addCell()
         );
-        let navView = mainContent.addView(NavView);
-        navView.pills();
-        navView.setFlexCss(new FlexCss().column());
-        this.eventDefinitionsLink = navView.addTextLink();
-        this.eventDefinitionsLink.setText('Event Definitions');
-        this.eventDefinitionsLink.setMargin(MarginCss.bottom(3));
-        this.notificationsLink = navView.addTextLink();
-        this.notificationsLink.setText('Event Notifications');
-        this.notificationsLink.setMargin(MarginCss.bottom(3));
-        this.jobDefinitionsLink = navView.addTextLink();
-        this.jobDefinitionsLink.setText('Job Definitions');
-        this.jobDefinitionsLink.setMargin(MarginCss.bottom(3));
-        this.failedJobsLink = navView.addTextLink();
-        this.failedJobsLink.setText('Failed Jobs');
-        this.failedJobsLink.setMargin(MarginCss.bottom(3));
-        this.recentJobsLink = navView.addTextLink();
-        this.recentJobsLink.setText('Recent Jobs');
-        this.recentJobsLink.setMargin(MarginCss.bottom(3));
+        this.menu = mainContent.addView(NavView);
+        this.menu.pills();
+        this.menu.setFlexCss(new FlexCss().column());
+        this.menu.configListItem(li => li.setMargin(MarginCss.bottom(3)));
         this.toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );

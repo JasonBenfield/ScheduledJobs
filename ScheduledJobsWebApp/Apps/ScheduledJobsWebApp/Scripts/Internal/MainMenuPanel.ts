@@ -1,14 +1,15 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
 import { Command } from "@jasonbenfield/sharedwebapp/Components/Command";
+import { MenuComponent } from "@jasonbenfield/sharedwebapp/Components/MenuComponent";
 import { ScheduledJobsAppApi } from "../Lib/Api/ScheduledJobsAppApi";
 import { MainMenuPanelView } from "./MainMenuPanelVIew";
 
 interface IResults {
-    done?: {};
+    done?: boolean;
 }
 
 export class MainMenuPanelResult {
-    static done() { return new MainMenuPanelResult({ done: {} }); }
+    static done() { return new MainMenuPanelResult({ done: true }); }
 
     private constructor(private readonly results: IResults) { }
 
@@ -19,12 +20,9 @@ export class MainMenuPanel implements IPanel {
     private readonly awaitable = new Awaitable<MainMenuPanelResult>();
 
     constructor(schdJobsApi: ScheduledJobsAppApi, private readonly view: MainMenuPanelView) {
+        const menu = new MenuComponent(schdJobsApi, 'main', view.menu);
+        menu.refresh();
         new Command(this.done.bind(this)).add(this.view.doneButton);
-        this.view.eventDefinitionsLink.setHref(schdJobsApi.EventDefinitions.Index.getUrl({}).value());
-        this.view.notificationsLink.setHref(schdJobsApi.EventInquiry.Notifications.getUrl({}).value());
-        this.view.jobDefinitionsLink.setHref(schdJobsApi.JobDefinitions.Index.getUrl({}).value());
-        this.view.failedJobsLink.setHref(schdJobsApi.JobInquiry.FailedJobs.getUrl({}).value());
-        this.view.recentJobsLink.setHref(schdJobsApi.JobInquiry.RecentJobs.getUrl({}).value());
     }
 
     private done() {
