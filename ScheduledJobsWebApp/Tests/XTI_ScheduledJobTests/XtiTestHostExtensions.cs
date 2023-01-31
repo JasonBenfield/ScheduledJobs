@@ -32,10 +32,22 @@ internal static class XtiTestHostExtensions
         return monitor.Run(stoppingToken);
     }
 
+    public static Task<TriggeredJob[]> TriggerJobOnDemand(this XtiHost host, JobKey jobKey, params object[] data)
+    {
+        var stoppingToken = host.GetRequiredService<CancellationTokenSource>().Token;
+        var onDemandBuilder = host.GetRequiredService<OnDemandJobBuilder>();
+        var jobActionFactory = host.GetRequiredService<DemoJobActionFactory>();
+        return onDemandBuilder
+            .ForJob(jobKey)
+            .WithData(data)
+            .UseJobActionFactory(jobActionFactory)
+            .RunUntilCompletion(stoppingToken);
+    }
+
     public static Task<EventNotification[]> RaiseEvent
     (
-        this XtiHost host, 
-        EventKey eventKey, 
+        this XtiHost host,
+        EventKey eventKey,
         params XtiEventSource[] sources
     )
     {
