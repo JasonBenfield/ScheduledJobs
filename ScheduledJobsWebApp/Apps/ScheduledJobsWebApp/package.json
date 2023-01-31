@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@jasonbenfield/sharedwebapp": "^1.9.19",
+    "@jasonbenfield/sharedwebapp": "^1.9.22",
     "@types/node": "^18.11.15"
   },
   "devDependencies": {

@@ -21,66 +21,22 @@ public sealed class EventMonitor
 
     public async Task Run(CancellationToken stoppingToken)
     {
+        if (eventKey.IsOnDemand())
+        {
+            throw new ArgumentException($"Unable to monitor on demand job '{eventKey.DisplayText}'");
+        }
         await db.DeleteJobsWithNoTasks(eventKey, jobKey);
         var retryJobs = await db.RetryJobs(eventKey, jobKey);
+        var jobRunner = new JobRunner(db, jobActionFactory);
         foreach(var retryJob in retryJobs)
         {
-            var triggeredJob = new TriggeredJob(db, retryJob);
-            var nextTask = await triggeredJob.StartNextTask();
-            while (nextTask != null)
-            {
-                nextTask = await ExecuteTask(stoppingToken, triggeredJob, nextTask);
-            }
+            await jobRunner.StartRetry(retryJob, stoppingToken);
         }
         var pendingJobs = await db.TriggerJobs(eventKey, jobKey, eventRaisedStartTime);
         foreach (var pendingJob in pendingJobs)
         {
             var taskData = await transformedEventData.TransformEventData(pendingJob.SourceKey, pendingJob.SourceData);
-            var firstTasks = jobActionFactory.FirstTasks(taskData);
-            var triggeredJob = new TriggeredJob(db, pendingJob);
-            var nextTask = await triggeredJob.Start(firstTasks);
-            while (nextTask != null)
-            {
-                nextTask = await ExecuteTask(stoppingToken, triggeredJob, nextTask);
-            }
+            await jobRunner.StartNew(pendingJob, taskData, stoppingToken);
         }
-    }
-
-    private async Task<TriggeredJobTask?> ExecuteTask(CancellationToken stoppingToken, TriggeredJob triggeredJob, TriggeredJobTask currentTask)
-    {
-        TriggeredJobTask? nextTask;
-        var jobAction = jobActionFactory.CreateJobAction(currentTask);
-        JobActionResult result;
-        try
-        {
-            result = await jobAction.Execute(stoppingToken);
-            await currentTask.Completed(result.PreserveData, result.NextTasks);
-            nextTask = await triggeredJob.StartNextTask();
-        }
-        catch(CancelJobException cancelJobEx)
-        {
-            await currentTask.CancelJob(cancelJobEx.Reason);
-            nextTask = null;
-        }
-        catch (Exception ex)
-        {
-            JobErrorResult errorResult;
-            try
-            {
-                errorResult = await jobAction.OnError(ex);
-            }
-            catch
-            {
-                errorResult = new JobErrorResultBuilder(currentTask.Model).Build();
-            }
-            nextTask = await currentTask.Failed
-            (
-                errorResult.UpdatedStatus, 
-                errorResult.RetryAfter, 
-                errorResult.NextTasks, 
-                ex
-            );
-        }
-        return nextTask;
     }
 }
