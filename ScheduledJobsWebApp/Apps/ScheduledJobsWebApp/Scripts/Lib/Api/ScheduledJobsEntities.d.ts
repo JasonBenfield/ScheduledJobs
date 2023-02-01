@@ -134,6 +134,11 @@ interface ITriggeredJobDetailModel {
 	TriggeredBy: IEventNotificationModel;
 	Tasks: ITriggeredJobTaskModel[];
 }
+interface IAddOrUpdateJobSchedulesRequest {
+	JobKey: string;
+	Schedules: string;
+	DeleteAfter: string;
+}
 interface IRegisteredJob {
 	JobKey: IJobKey;
 	Timeout: string;

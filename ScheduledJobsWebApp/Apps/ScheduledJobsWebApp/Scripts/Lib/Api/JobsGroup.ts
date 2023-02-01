@@ -9,6 +9,7 @@ import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Api/AppResourceUrl";
 export class JobsGroup extends AppApiGroup {
 	constructor(events: AppApiEvents, resourceUrl: AppResourceUrl) {
 		super(events, resourceUrl, 'Jobs');
+		this.AddOrUpdateJobSchedulesAction = this.createAction<IAddOrUpdateJobSchedulesRequest,IEmptyActionResult>('AddOrUpdateJobSchedules', 'Add Or Update Job Schedules');
 		this.AddOrUpdateRegisteredJobsAction = this.createAction<IRegisteredJob[],IEmptyActionResult>('AddOrUpdateRegisteredJobs', 'Add Or Update Registered Jobs');
 		this.TriggerJobsAction = this.createAction<ITriggerJobsRequest,IPendingJobModel[]>('TriggerJobs', 'Trigger Jobs');
 		this.DeleteJobsWithNoTasksAction = this.createAction<IDeleteJobsWithNoTasksRequest,IEmptyActionResult>('DeleteJobsWithNoTasks', 'Delete Jobs With No Tasks');
@@ -21,6 +22,7 @@ export class JobsGroup extends AppApiGroup {
 		this.LogMessageAction = this.createAction<ILogMessageRequest,IEmptyActionResult>('LogMessage', 'Log Message');
 	}
 	
+	readonly AddOrUpdateJobSchedulesAction: AppApiAction<IAddOrUpdateJobSchedulesRequest,IEmptyActionResult>;
 	readonly AddOrUpdateRegisteredJobsAction: AppApiAction<IRegisteredJob[],IEmptyActionResult>;
 	readonly TriggerJobsAction: AppApiAction<ITriggerJobsRequest,IPendingJobModel[]>;
 	readonly DeleteJobsWithNoTasksAction: AppApiAction<IDeleteJobsWithNoTasksRequest,IEmptyActionResult>;
@@ -32,6 +34,9 @@ export class JobsGroup extends AppApiGroup {
 	readonly TaskFailedAction: AppApiAction<ITaskFailedRequest,ITriggeredJobWithTasksModel>;
 	readonly LogMessageAction: AppApiAction<ILogMessageRequest,IEmptyActionResult>;
 	
+	AddOrUpdateJobSchedules(model: IAddOrUpdateJobSchedulesRequest, errorOptions?: IActionErrorOptions) {
+		return this.AddOrUpdateJobSchedulesAction.execute(model, errorOptions || {});
+	}
 	AddOrUpdateRegisteredJobs(model: IRegisteredJob[], errorOptions?: IActionErrorOptions) {
 		return this.AddOrUpdateRegisteredJobsAction.execute(model, errorOptions || {});
 	}

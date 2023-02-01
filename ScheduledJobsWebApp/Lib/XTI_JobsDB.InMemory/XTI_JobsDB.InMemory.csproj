@@ -4,7 +4,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Description>In Memory Database Implementation of Scheduled Jobs</Description>
+		<Description>In Memory Database Implementation of Scheduled Jobs $(XtiVersion)</Description>
 		<PackageTags>$(XtiVersion);$(XtiAppName);XTI Job Abstractions</PackageTags>
 	</PropertyGroup>
 

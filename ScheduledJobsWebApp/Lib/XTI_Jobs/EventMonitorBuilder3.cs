@@ -9,9 +9,9 @@ public sealed class EventMonitorBuilder3
         this.builder = builder;
     }
 
-    public EventMonitor TransformEventData(ITransformedEventData transformedEventData)
+    public EventMonitorBuilderFinal TransformEventData(ITransformedEventData transformedEventData)
     {
         builder.TransformEventData(transformedEventData);
-        return builder.Build();
+        return new EventMonitorBuilderFinal(builder);
     }
 }
