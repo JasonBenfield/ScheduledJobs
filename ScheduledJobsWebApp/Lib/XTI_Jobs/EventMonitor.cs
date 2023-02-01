@@ -19,7 +19,7 @@ public sealed class EventMonitor
         this.eventRaisedStartTime = eventRaisedStartTime;
     }
 
-    public async Task Run(CancellationToken stoppingToken)
+    public async Task<TriggeredJob[]> Run(CancellationToken stoppingToken)
     {
         if (eventKey.IsOnDemand())
         {
@@ -28,15 +28,19 @@ public sealed class EventMonitor
         await db.DeleteJobsWithNoTasks(eventKey, jobKey);
         var retryJobs = await db.RetryJobs(eventKey, jobKey);
         var jobRunner = new JobRunner(db, jobActionFactory);
+        var triggeredJobs = new List<TriggeredJob>();
         foreach(var retryJob in retryJobs)
         {
-            await jobRunner.StartRetry(retryJob, stoppingToken);
+            var triggeredJob = await jobRunner.StartRetry(retryJob, stoppingToken);
+            triggeredJobs.Add(triggeredJob);
         }
         var pendingJobs = await db.TriggerJobs(eventKey, jobKey, eventRaisedStartTime);
         foreach (var pendingJob in pendingJobs)
         {
             var taskData = await transformedEventData.TransformEventData(pendingJob.SourceKey, pendingJob.SourceData);
-            await jobRunner.StartNew(pendingJob, taskData, stoppingToken);
+            var triggeredJob = await jobRunner.StartNew(pendingJob, taskData, stoppingToken);
+            triggeredJobs.Add(triggeredJob);
         }
+        return triggeredJobs.ToArray();
     }
 }

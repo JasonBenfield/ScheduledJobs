@@ -9,12 +9,6 @@ public sealed class EventMonitorBuilder1
         this.builder = builder;
     }
 
-    public EventMonitorBuilder1 HandleEventsRaisedOnOrAfter(DateTimeOffset eventRaisedStartTime)
-    {
-        builder.HandleEventsRaisedOnOrAfter(eventRaisedStartTime);
-        return this;
-    }
-
     public EventMonitorBuilder2 Trigger(JobKey jobKey)
     {
         builder.Trigger(jobKey);

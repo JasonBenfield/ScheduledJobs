@@ -2,6 +2,7 @@
 using XTI_Core;
 using XTI_Core.Extensions;
 using XTI_Core.Fakes;
+using XTI_Schedule;
 
 namespace XTI_ScheduledJobTests;
 
@@ -17,19 +18,39 @@ internal static class XtiTestHostExtensions
         await jobs.Register();
     }
 
-    public static Task MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey, Action<EventMonitorBuilder1>? configMonitor = null)
+    public static Task RegisterJobSchedule(this XtiHost host, JobKey jobKey, params Schedule[] schedules)
+    {
+        var registrationBuilder = host.GetRequiredService<JobScheduleRegistrationBuilder>();
+        return registrationBuilder
+            .Trigger(jobKey)
+            .When(schedules)
+            .Build()
+            .Register();
+    }
+
+    public static Task<TriggeredJob[]> MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey, Action<EventMonitorBuilderFinal>? configMonitor = null)
     {
         var stoppingToken = host.GetRequiredService<CancellationTokenSource>().Token;
         var monitorBuilder = host.GetRequiredService<EventMonitorBuilder>();
-        var monitorBuilder1 = monitorBuilder.When(eventKey);
-        configMonitor?.Invoke(monitorBuilder1);
         var jobActionFactory = host.GetRequiredService<DemoJobActionFactory>();
         var transformedEventData = host.GetRequiredService<DemoTransformedEventData>();
-        var monitor = monitorBuilder1
+        var monitorBuilderFinal = monitorBuilder.When(eventKey)
             .Trigger(jobKey)
             .UseJobActionFactory(jobActionFactory)
             .TransformEventData(transformedEventData);
-        return monitor.Run(stoppingToken);
+        configMonitor?.Invoke(monitorBuilderFinal);
+        return monitorBuilderFinal.Build().Run(stoppingToken);
+    }
+
+    public static Task<TriggeredJob[]> MonitorScheduledJob(this XtiHost host, JobKey jobKey, Action<EventMonitorBuilderFinal>? configMonitor = null)
+    {
+        var stoppingToken = host.GetRequiredService<CancellationTokenSource>().Token;
+        var monitorBuilder = host.GetRequiredService<EventMonitorBuilder>();
+        var jobActionFactory = host.GetRequiredService<DemoJobActionFactory>();
+        var monitorBuilderFinal = monitorBuilder.WhenScheduled(jobKey)
+            .UseJobActionFactory(jobActionFactory);
+        configMonitor?.Invoke(monitorBuilderFinal);
+        return monitorBuilderFinal.Build().Run(stoppingToken);
     }
 
     public static Task<TriggeredJob[]> TriggerJobOnDemand(this XtiHost host, JobKey jobKey, params object[] data)
@@ -41,6 +62,7 @@ internal static class XtiTestHostExtensions
             .ForJob(jobKey)
             .WithData(data)
             .UseJobActionFactory(jobActionFactory)
+            .Build()
             .RunUntilCompletion(stoppingToken);
     }
 

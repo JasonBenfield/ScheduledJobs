@@ -2,20 +2,20 @@
 
 public sealed class EventDuplicationBuilder
 {
-    private readonly EventBuilder eventBuilder;
+    private readonly RegisteredEventBuilder eventBuilder;
 
-    internal EventDuplicationBuilder(EventBuilder eventBuilder)
+    internal EventDuplicationBuilder(RegisteredEventBuilder eventBuilder)
     {
         this.eventBuilder = eventBuilder;
     }
 
-    public EventBuilder WhenSourceKeysOnlyAreEqual()
+    public RegisteredEventBuilder WhenSourceKeysOnlyAreEqual()
     {
         eventBuilder.CompareSourceKeyAndDataForDuplication = false;
         return eventBuilder;
     }
 
-    public EventBuilder WhenSourceKeysAndDataAreEqual()
+    public RegisteredEventBuilder WhenSourceKeysAndDataAreEqual()
     {
         eventBuilder.CompareSourceKeyAndDataForDuplication = true;
         return eventBuilder;

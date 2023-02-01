@@ -4,7 +4,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Description>Raise Events and Trigger Jobs</Description>
+		<Description>Raise Events and Trigger Jobs $(XtiVersion)</Description>
 		<PackageTags>$(XtiVersion);$(XtiAppName);XTI Jobs</PackageTags>
 	</PropertyGroup>
 

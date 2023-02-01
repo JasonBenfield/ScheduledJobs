@@ -1,7 +1,11 @@
-﻿namespace XTI_Jobs.Abstractions;
+﻿using XTI_Schedule;
+
+namespace XTI_Jobs.Abstractions;
 
 public interface IJobDb
 {
+    Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule schedule, TimeSpan deleteAfter);
+
     Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents);
 
     Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs);

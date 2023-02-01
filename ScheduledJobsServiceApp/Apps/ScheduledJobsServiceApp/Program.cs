@@ -23,7 +23,19 @@ await XtiServiceAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
                 (
                     (api, agendaItem) =>
                     {
-                        agendaItem.Action(api.Jobs.PurgeJobsAndEvents.Path)
+                        agendaItem.Action(api.Jobs.AddJobScheduleNotifications)
+                            .Interval(TimeSpan.FromHours(4))
+                            .AddSchedule
+                            (
+                                Schedule.EveryDay().At(TimeRange.AllDay())
+                            );
+                    }
+                );
+                agenda.AddScheduled<ScheduledJobsAppApi>
+                (
+                    (api, agendaItem) =>
+                    {
+                        agendaItem.Action(api.Jobs.PurgeJobsAndEvents)
                             .Interval(TimeSpan.FromMinutes(15))
                             .AddSchedule
                             (
@@ -35,7 +47,7 @@ await XtiServiceAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
                 (
                     (api, agendaItem) =>
                     {
-                        agendaItem.Action(api.Jobs.TimeoutJobs.Path)
+                        agendaItem.Action(api.Jobs.TimeoutJobs)
                             .Interval(TimeSpan.FromMinutes(15))
                             .AddSchedule
                             (

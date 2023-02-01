@@ -1,4 +1,6 @@
-﻿namespace XTI_ScheduledJobsAppClient;
+﻿using XTI_Schedule;
+
+namespace XTI_ScheduledJobsAppClient;
 
 public sealed class SjcJobDb : IJobDb
 {
@@ -8,6 +10,17 @@ public sealed class SjcJobDb : IJobDb
     {
         this.schdJobClient = schdJobClient;
     }
+
+    public Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule aggregateSchedule, TimeSpan deleteAfter) =>
+        schdJobClient.Jobs.AddOrUpdateJobSchedules
+        (
+            new AddOrUpdateJobSchedulesRequest
+            {
+                JobKey = jobKey.DisplayText,
+                Schedules = aggregateSchedule.Serialize(),
+                DeleteAfter = deleteAfter
+            }
+        );
 
     public Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources) =>
         schdJobClient.Events.AddNotifications

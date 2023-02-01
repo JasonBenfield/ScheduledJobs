@@ -4,13 +4,14 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Description>Entity Framework Classes for Scheduled Jobs</Description>
+		<Description>Entity Framework Classes for Scheduled Jobs $(XtiVersion)</Description>
 		<PackageTags>$(XtiVersion);$(XtiAppName);</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_Core.EF" Version="1.10.19-dev230130112517125" />
-		<PackageReference Include="XTI_DB" Version="1.10.19-dev230130112517125" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.2" />
+		<PackageReference Include="XTI_Core.EF" Version="1.10.19-dev230131223516093" />
+		<PackageReference Include="XTI_DB" Version="1.10.19-dev230131223516093" />
 	</ItemGroup>
 
 	<ItemGroup>

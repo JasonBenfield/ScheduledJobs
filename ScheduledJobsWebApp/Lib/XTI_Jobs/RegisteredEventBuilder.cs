@@ -1,12 +1,12 @@
 ﻿namespace XTI_Jobs;
 
-public sealed class EventBuilder
+public sealed class RegisteredEventBuilder
 {
     private readonly EventKey eventKey;
     private TimeSpan deleteAfter = TimeSpan.FromDays(365);
     private TimeSpan activeFor = TimeSpan.MaxValue;
 
-    internal EventBuilder(EventKey eventKey)
+    internal RegisteredEventBuilder(EventKey eventKey)
     {
         this.eventKey = eventKey;
     }
@@ -29,19 +29,19 @@ public sealed class EventBuilder
         return new EventDuplicationBuilder(this);
     }
 
-    public EventBuilder StartNotifying(DateTimeOffset timeToStartNotifications)
+    public RegisteredEventBuilder StartNotifying(DateTimeOffset timeToStartNotifications)
     {
         TimeToStartNotification = timeToStartNotifications;
         return this;
     }
 
-    public EventBuilder ActiveFor(TimeSpan activeFor)
+    public RegisteredEventBuilder ActiveFor(TimeSpan activeFor)
     {
         this.activeFor = activeFor;
         return this;
     }
 
-    public EventBuilder DeleteAfter(TimeSpan deleteAfter)
+    public RegisteredEventBuilder DeleteAfter(TimeSpan deleteAfter)
     {
         this.deleteAfter = deleteAfter;
         return this;

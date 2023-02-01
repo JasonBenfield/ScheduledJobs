@@ -38,6 +38,8 @@ internal sealed class TestHost
         host.Services.AddScoped<JobRegistration>();
         host.Services.AddScoped<IncomingEventFactory>();
         host.Services.AddScoped<EventMonitorBuilder>();
+        host.Services.AddScoped<JobScheduleRegistrationBuilder>();
+        host.Services.AddScoped<OnDemandJobBuilder>();
         host.Services.AddScoped<DemoJobActionFactory>();
         host.Services.AddScoped<DemoTransformedEventData>();
         host.Services.AddScoped(sp => sp.GetRequiredService<DemoJobActionFactory>().Action01Context);

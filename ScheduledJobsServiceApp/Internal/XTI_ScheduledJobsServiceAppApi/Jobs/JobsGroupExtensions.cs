@@ -6,6 +6,7 @@ internal static class JobsGroupExtensions
 {
     public static void AddJobsGroupServices(this IServiceCollection services)
     {
+        services.AddScoped<AddJobScheduleNotificationsAction>();
         services.AddScoped<PurgeJobsAndEventsAction>();
         services.AddScoped<TimeoutJobsAction>();
     }

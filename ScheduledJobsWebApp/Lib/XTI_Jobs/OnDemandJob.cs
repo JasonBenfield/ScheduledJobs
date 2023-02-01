@@ -1,9 +1,6 @@
-﻿using System.Net;
-using XTI_Jobs.Abstractions;
+﻿namespace XTI_Jobs;
 
-namespace XTI_Jobs;
-
-internal sealed class OnDemandJob
+public sealed class OnDemandJob
 {
     private readonly IJobDb db;
     private readonly JobKey jobKey;
@@ -11,7 +8,7 @@ internal sealed class OnDemandJob
     private readonly string[] data;
     private TimeSpan deleteAfter;
 
-    public OnDemandJob(IJobDb db, JobKey jobKey, IJobActionFactory jobActionFactory, string[] data, TimeSpan deleteAfter)
+    internal OnDemandJob(IJobDb db, JobKey jobKey, IJobActionFactory jobActionFactory, string[] data, TimeSpan deleteAfter)
     {
         this.db = db;
         this.jobKey = jobKey;

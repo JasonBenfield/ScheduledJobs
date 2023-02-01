@@ -33,32 +33,18 @@ public sealed class OnDemandJobBuilder
 
     internal void DeleteAfter(TimeSpan deleteAfter)
     {
-        this.deleteAfter = deleteAfter; 
+        this.deleteAfter = deleteAfter;
     }
 
-    internal Task<TriggeredJob[]> Run(CancellationToken stoppingToken)
-    {
-        var job = CreateOnDemandJob();
-        return job.Run(stoppingToken);
-    }
-
-    internal Task<TriggeredJob[]> RunUntilCompletion(CancellationToken stoppingToken)
-    {
-        var job = CreateOnDemandJob();
-        return job.RunUntilCompletion(stoppingToken);
-    }
-
-    private OnDemandJob CreateOnDemandJob()
-    {
-        return new OnDemandJob
-                (
-                    db,
-                    jobKey ?? throw new ArgumentNullException(nameof(jobKey)),
-                    jobActionFactory ?? throw new ArgumentNullException(nameof(jobActionFactory)),
-                    data ?? throw new ArgumentNullException(nameof(data)),
-                    deleteAfter
-                );
-    }
+    internal OnDemandJob Build() =>
+        new OnDemandJob
+        (
+            db,
+            jobKey ?? throw new ArgumentNullException(nameof(jobKey)),
+            jobActionFactory ?? throw new ArgumentNullException(nameof(jobActionFactory)),
+            data ?? throw new ArgumentNullException(nameof(data)),
+            deleteAfter
+        );
 }
 
 public sealed class OnDemandJobBuilder1
@@ -117,8 +103,5 @@ public sealed class OnDemandJobBuilderFinal
         return this;
     }
 
-    public Task<TriggeredJob[]> Run(CancellationToken stoppingToken) => builder.Run(stoppingToken);
-
-    public Task<TriggeredJob[]> RunUntilCompletion(CancellationToken stoppingToken) => 
-        builder.RunUntilCompletion(stoppingToken);
+    public OnDemandJob Build() => builder.Build();
 }

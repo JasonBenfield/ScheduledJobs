@@ -3,7 +3,7 @@
 public sealed class EventRegistration
 {
     private readonly IJobDb db;
-    private readonly List<EventBuilder> events = new();
+    private readonly List<RegisteredEventBuilder> events = new();
 
     public EventRegistration(IJobDb db)
     {
@@ -13,9 +13,9 @@ public sealed class EventRegistration
     public EventRegistration AddEvent(EventKey eventKey) =>
         AddEvent(eventKey, _ => { });
 
-    public EventRegistration AddEvent(EventKey eventKey, Action<EventBuilder> config)
+    public EventRegistration AddEvent(EventKey eventKey, Action<RegisteredEventBuilder> config)
     {
-        var builder = new EventBuilder(eventKey);
+        var builder = new RegisteredEventBuilder(eventKey);
         events.Add(builder);
         config(builder);
         return this;
