@@ -10,9 +10,8 @@ internal sealed class OnDemandJobTest
     {
         var host = TestHost.CreateDefault(XtiEnvironment.Development);
         await host.Setup();
-        await host.Register
+        await host.RegisterJobs
         (
-            events => { },
             jobs => BuildJobs(jobs)
         );
         var triggeredJobs = await host.TriggerJobOnDemand
@@ -26,16 +25,13 @@ internal sealed class OnDemandJobTest
         Console.WriteLine(XtiSerializer.Serialize(triggeredJobs.Select(tj => tj.Model),  new JsonSerializerOptions { WriteIndented = true }));
     }
 
-    private static JobRegistration BuildJobs(JobRegistration jobs) =>
-        jobs.AddJob
-        (
-            DemoJobs.DoSomething.JobKey,
-            job => job
-                .TimeoutAfter(TimeSpan.FromHours(1))
-                .AddTask(DemoJobs.DoSomething.Task01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.Task02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskFinal).TimeoutAfter(TimeSpan.FromMinutes(5))
-        );
+    private static JobRegistrationBuilder1 BuildJobs(JobRegistrationBuilder jobs) =>
+        jobs
+            .AddJob(DemoJobs.DoSomething.JobKey)
+            .TimeoutAfter(TimeSpan.FromHours(1))
+            .AddTasks
+            (
+                DemoJobs.DoSomething.GetAllTasks(),
+                (t, j) => j.TimeoutAfter(TimeSpan.FromMinutes(5))
+            );
 }

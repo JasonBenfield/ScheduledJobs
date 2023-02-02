@@ -1,8 +1,5 @@
 using System;
-using System.Linq;
-using System.Text.Json;
 using XTI_Core;
-using XTI_Core.Extensions;
 using XTI_Core.Fakes;
 
 namespace XTI_ScheduledJobTests;
@@ -54,29 +51,12 @@ internal sealed class TriggerJobTest
         Assert.That(errors.Length, Is.EqualTo(0));
     }
 
-    private static JobRegistration BuildJobs(JobRegistration jobs) =>
-        jobs.AddJob
-        (
-            DemoJobs.DoSomething.JobKey,
-            j =>
-            {
-                foreach (var task in DemoJobs.DoSomething.GetAllTasks())
-                {
-                    j.AddTask(task);
-                }
-            }
-        )
-        .AddJob
-        (
-            DemoJobs.DoSomethingElse.JobKey,
-            j =>
-            {
-                foreach (var task in DemoJobs.DoSomethingElse.GetAllTasks())
-                {
-                    j.AddTask(task);
-                }
-            }
-        );
+    private static JobRegistrationBuilder1 BuildJobs(JobRegistrationBuilder jobs) =>
+        jobs
+            .AddJob(DemoJobs.DoSomething.JobKey)
+            .AddTasks(DemoJobs.DoSomething.GetAllTasks())
+            .AddJob(DemoJobs.DoSomethingElse.JobKey)
+            .AddTasks(DemoJobs.DoSomethingElse.GetAllTasks());
 
     [Test]
     public async Task ShouldNotTriggerJob_WhenNotSubscribedToTheEvent()
@@ -135,11 +115,9 @@ internal sealed class TriggerJobTest
         var host = TestHost.CreateDefault();
         await host.Register
         (
-            events => events.AddEvent
-            (
-                DemoEventKeys.SomethingHappened,
-                evt => evt.IgnoreDuplicates().WhenSourceKeysAndDataAreEqual()
-            ),
+            events => events
+                .AddEvent(DemoEventKeys.SomethingHappened)
+                .IgnoreDuplicates().WhenSourceKeysAndDataAreEqual(),
             jobs => BuildJobs(jobs)
         );
         var eventNotifications1 = await host.RaiseEvent
@@ -161,11 +139,9 @@ internal sealed class TriggerJobTest
         var host = TestHost.CreateDefault();
         await host.Register
         (
-            events => events.AddEvent
-            (
-                DemoEventKeys.SomethingHappened,
-                evt => evt.KeepAll().WhenSourceKeysAndDataAreEqual()
-            ),
+            events => events
+                .AddEvent(DemoEventKeys.SomethingHappened)
+                .KeepAll(),
             jobs => BuildJobs(jobs)
         );
         var eventNotifications1 = await host.RaiseEvent
@@ -201,11 +177,9 @@ internal sealed class TriggerJobTest
         var host = TestHost.CreateDefault();
         await host.Register
         (
-            events => events.AddEvent
-            (
-                DemoEventKeys.SomethingHappened,
-                evt => evt.KeepOldest().WhenSourceKeysAndDataAreEqual()
-            ),
+            events => events
+                .AddEvent(DemoEventKeys.SomethingHappened)
+                .KeepOldest().WhenSourceKeysAndDataAreEqual(),
             jobs => BuildJobs(jobs)
         );
         var eventNotifications1 = await host.RaiseEvent
@@ -241,11 +215,9 @@ internal sealed class TriggerJobTest
         var host = TestHost.CreateDefault();
         await host.Register
         (
-            events => events.AddEvent
-            (
-                DemoEventKeys.SomethingHappened,
-                evt => evt.KeepNewest().WhenSourceKeysAndDataAreEqual()
-            ),
+            events => events
+                .AddEvent(DemoEventKeys.SomethingHappened)
+                .KeepNewest().WhenSourceKeysAndDataAreEqual(),
             jobs => BuildJobs(jobs)
         );
         var eventNotifications1 = await host.RaiseEvent
@@ -281,11 +253,9 @@ internal sealed class TriggerJobTest
         var host = TestHost.CreateDefault();
         await host.Register
         (
-            events => events.AddEvent
-            (
-                DemoEventKeys.SomethingHappened,
-                evt => evt.IgnoreDuplicates().WhenSourceKeysOnlyAreEqual()
-            ),
+            events => events
+                .AddEvent(DemoEventKeys.SomethingHappened)
+                .IgnoreDuplicates().WhenSourceKeysOnlyAreEqual(),
             jobs => BuildJobs(jobs)
         );
         var eventNotifications1 = await host.RaiseEvent
@@ -308,12 +278,10 @@ internal sealed class TriggerJobTest
         var activeFor = TimeSpan.FromMinutes(5);
         await host.Register
         (
-            events => events.AddEvent
-            (
-                DemoEventKeys.SomethingHappened,
-                evt => evt.IgnoreDuplicates().WhenSourceKeysOnlyAreEqual()
-                    .ActiveFor(activeFor)
-            ),
+            events => events
+                .AddEvent(DemoEventKeys.SomethingHappened)
+                .IgnoreDuplicates().WhenSourceKeysOnlyAreEqual()
+                .ActiveFor(activeFor),
             jobs => BuildJobs(jobs)
         );
         var clock = host.GetRequiredService<FakeClock>();
@@ -335,12 +303,10 @@ internal sealed class TriggerJobTest
         var clock = host.GetRequiredService<FakeClock>();
         await host.Register
         (
-            events => events.AddEvent
-            (
-                DemoEventKeys.SomethingHappened,
-                evt => evt.IgnoreDuplicates().WhenSourceKeysOnlyAreEqual()
-                    .StartNotifying(clock.Now().AddMinutes(5))
-            ),
+            events => events
+                .AddEvent(DemoEventKeys.SomethingHappened)
+                .IgnoreDuplicates().WhenSourceKeysOnlyAreEqual()
+                .StartNotifying(clock.Now().AddMinutes(5)),
             jobs => BuildJobs(jobs)
         );
         var eventNotifications = await host.RaiseEvent

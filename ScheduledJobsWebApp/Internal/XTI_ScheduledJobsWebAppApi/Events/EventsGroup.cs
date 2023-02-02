@@ -1,15 +1,12 @@
-﻿namespace XTI_ScheduledJobsWebAppApi.Events;
+﻿using XTI_ScheduledJobsWebAppApi.Recurring;
+
+namespace XTI_ScheduledJobsWebAppApi.Events;
 
 public sealed class EventsGroup : AppApiGroupWrapper
 {
     public EventsGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        AddJobScheduleNotifications = source.AddAction
-        (
-            nameof(AddJobScheduleNotifications),
-            () => sp.GetRequiredService<AddJobScheduleNotificationsAction>()
-        );
         AddOrUpdateRegisteredEvents = source.AddAction
         (
             nameof(AddOrUpdateRegisteredEvents),
@@ -25,7 +22,6 @@ public sealed class EventsGroup : AppApiGroupWrapper
         );
     }
 
-    public AppApiAction<EmptyRequest, EmptyActionResult> AddJobScheduleNotifications { get; }
     public AppApiAction<RegisteredEvent[], EmptyActionResult> AddOrUpdateRegisteredEvents { get; }
     public AppApiAction<AddNotificationsRequest, EventNotificationModel[]> AddNotifications { get; }
     public AppApiAction<TriggeredJobsRequest, TriggeredJobWithTasksModel[]> TriggeredJobs { get; }

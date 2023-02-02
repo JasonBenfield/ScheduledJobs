@@ -2,7 +2,7 @@
 using XTI_Core;
 using XTI_Schedule;
 
-namespace XTI_ScheduledJobsWebAppApi.Events;
+namespace XTI_ScheduledJobsWebAppApi.Recurring;
 
 internal sealed class AddJobScheduleNotificationsAction : AppAction<EmptyRequest, EmptyActionResult>
 {

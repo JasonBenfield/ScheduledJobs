@@ -45,7 +45,8 @@ public interface IJobDb
         NextTaskModel[] nextTasks,
         string category,
         string message,
-        string detail
+        string detail,
+        string sourceLogEntryKey
     );
 
     Task LogMessage

@@ -1,5 +1,6 @@
 ﻿import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
 import { Url } from '@jasonbenfield/sharedwebapp/Url';
+import { Apis } from '../../Apis';
 import { MainMenuPanel } from '../../MainMenuPanel';
 import { ScheduledJobsPage } from '../../ScheduledJobsPage';
 import { EditTaskDataPanel } from './EditTaskDataPanel';
@@ -19,8 +20,9 @@ class MainPage extends ScheduledJobsPage {
         super(new MainPageView());
         this.panels = new SingleActivePanel();
         this.jobDetailPanel = this.panels.add(new JobDetailPanel(this.defaultApi, this.view.jobDetailPanel));
+        const hubApi = new Apis(this.view.modalError).Hub();
         this.taskDetailPanel = this.panels.add(
-            new TaskDetailPanel(this.defaultApi, this.view.taskDetailPanel)
+            new TaskDetailPanel(hubApi, this.defaultApi, this.view.taskDetailPanel)
         );
         this.editTaskDataPanel = this.panels.add(
             new EditTaskDataPanel(this.defaultApi, this.view.editTaskDataPanel)
@@ -35,7 +37,7 @@ class MainPage extends ScheduledJobsPage {
         this.panels.activate(this.jobDetailPanel);
         const result = await this.jobDetailPanel.start();
         if (result.taskSelected) {
-            this.taskDetailPanel.setTasks(result.taskSelected.tasks);
+            this.taskDetailPanel.setTasks(result.taskSelected.tasks, result.taskSelected.sourceLogEntries);
             this.taskDetailPanel.setCurrentTask(result.taskSelected.selectedTask);
             this.activateTaskDetailPanel();
         }

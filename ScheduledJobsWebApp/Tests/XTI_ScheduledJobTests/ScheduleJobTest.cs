@@ -13,11 +13,7 @@ internal sealed class ScheduleJobTest
         var host = TestHost.CreateDefault();
         var clock = host.GetRequiredService<FakeClock>();
         clock.Set(new DateTime(2023, 1, 31, 8, 0, 0));
-        await host.Register
-        (
-            events => { },
-            jobs => BuildJobs(jobs)
-        );
+        await host.RegisterJobs(jobs => BuildJobs(jobs));
         await host.RegisterJobSchedule
         (
             DemoJobs.DoSomething.JobKey,
@@ -34,11 +30,7 @@ internal sealed class ScheduleJobTest
         var host = TestHost.CreateDefault();
         var clock = host.GetRequiredService<FakeClock>();
         clock.Set(new DateTime(2023, 1, 31, 8, 0, 0));
-        await host.Register
-        (
-            events => { },
-            jobs => BuildJobs(jobs)
-        );
+        await host.RegisterJobs(jobs => BuildJobs(jobs));
         await host.RegisterJobSchedule
         (
             DemoJobs.DoSomething.JobKey,
@@ -55,11 +47,7 @@ internal sealed class ScheduleJobTest
         var host = TestHost.CreateDefault();
         var clock = host.GetRequiredService<FakeClock>();
         clock.Set(new DateTime(2023, 1, 31, 8, 0, 0));
-        await host.Register
-        (
-            events => { },
-            jobs => BuildJobs(jobs)
-        );
+        await host.RegisterJobs(jobs => BuildJobs(jobs));
         await host.RegisterJobSchedule
         (
             DemoJobs.DoSomething.JobKey,
@@ -78,11 +66,7 @@ internal sealed class ScheduleJobTest
         var host = TestHost.CreateDefault();
         var clock = host.GetRequiredService<FakeClock>();
         clock.Set(new DateTime(2023, 1, 31, 8, 0, 0));
-        await host.Register
-        (
-            events => { },
-            jobs => BuildJobs(jobs)
-        );
+        await host.RegisterJobs(jobs => BuildJobs(jobs));
         await host.RegisterJobSchedule
         (
             DemoJobs.DoSomething.JobKey,
@@ -99,11 +83,7 @@ internal sealed class ScheduleJobTest
         var host = TestHost.CreateDefault();
         var clock = host.GetRequiredService<FakeClock>();
         clock.Set(new DateTime(2023, 1, 31, 8, 0, 0));
-        await host.Register
-        (
-            events => { },
-            jobs => BuildJobs(jobs)
-        );
+        await host.RegisterJobs(jobs => BuildJobs(jobs));
         await host.RegisterJobSchedule
         (
             DemoJobs.DoSomething.JobKey,
@@ -122,28 +102,11 @@ internal sealed class ScheduleJobTest
         Assert.That(triggeredJobs2.Length, Is.EqualTo(1), "Should trigger job when scheduled after schedule change");
     }
 
-    private static JobRegistration BuildJobs(JobRegistration jobs) =>
-        jobs.AddJob
-        (
-            DemoJobs.DoSomething.JobKey,
-            j =>
-            {
-                foreach (var task in DemoJobs.DoSomething.GetAllTasks())
-                {
-                    j.AddTask(task);
-                }
-            }
-        )
-        .AddJob
-        (
-            DemoJobs.DoSomethingElse.JobKey,
-            j =>
-            {
-                foreach (var task in DemoJobs.DoSomethingElse.GetAllTasks())
-                {
-                    j.AddTask(task);
-                }
-            }
-        );
+    private static JobRegistrationBuilder1 BuildJobs(JobRegistrationBuilder jobs) =>
+        jobs
+            .AddJob(DemoJobs.DoSomething.JobKey)
+            .AddTasks(DemoJobs.DoSomething.GetAllTasks())
+            .AddJob(DemoJobs.DoSomethingElse.JobKey)
+            .AddTasks(DemoJobs.DoSomethingElse.GetAllTasks());
 
 }

@@ -123,7 +123,8 @@ public sealed class SjcJobDb : IJobDb
         NextTaskModel[] nextTasks,
         string category,
         string message,
-        string detail
+        string detail,
+        string sourceLogEntryKey
     ) =>
         schdJobClient.Jobs.TaskFailed
         (
@@ -135,7 +136,8 @@ public sealed class SjcJobDb : IJobDb
                 NextTasks = nextTasks,
                 Category = category,
                 Message = message,
-                Detail = detail
+                Detail = detail,
+                SourceLogEntryKey = sourceLogEntryKey
             }
         );
 

@@ -10,12 +10,6 @@ public sealed partial class EventsController : Controller
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> AddJobScheduleNotifications(CancellationToken ct)
-    {
-        return api.Group("Events").Action<EmptyRequest, EmptyActionResult>("AddJobScheduleNotifications").Execute(new EmptyRequest(), ct);
-    }
-
-    [HttpPost]
     public Task<ResultContainer<EmptyActionResult>> AddOrUpdateRegisteredEvents([FromBody] RegisteredEvent[] model, CancellationToken ct)
     {
         return api.Group("Events").Action<RegisteredEvent[], EmptyActionResult>("AddOrUpdateRegisteredEvents").Execute(model, ct);

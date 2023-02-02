@@ -48,14 +48,17 @@ internal static class XtiTestHostExtensions
         hubClient.UseToken<AdminUserXtiToken>();
     }
 
-    public static async Task Register(this XtiHost host, Action<EventRegistration> configEvents, Action<JobRegistration> configJobs)
+    public static async Task Register(this XtiHost host, Func<EventRegistrationBuilder, EventRegistrationBuilder1> configEvents, Func<JobRegistrationBuilder, JobRegistrationBuilder1> configJobs)
     {
-        var events = host.GetRequiredService<EventRegistration>();
-        configEvents(events);
-        await events.Register();
-        var jobs = host.GetRequiredService<JobRegistration>();
-        configJobs(jobs);
-        await jobs.Register();
+        var events = host.GetRequiredService<EventRegistrationBuilder>();
+        await configEvents(events).Build().Register();
+        await host.RegisterJobs(configJobs);
+    }
+
+    public static Task RegisterJobs(this XtiHost host, Func<JobRegistrationBuilder, JobRegistrationBuilder1> configJobs)
+    {
+        var jobs = host.GetRequiredService<JobRegistrationBuilder>();
+        return configJobs(jobs).Build().Register();
     }
 
     public static Task RegisterJobSchedule(this XtiHost host, JobKey jobKey, params Schedule[] schedules)

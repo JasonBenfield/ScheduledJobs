@@ -8,14 +8,21 @@ namespace XTI_ScheduledJobTests;
 
 internal static class XtiTestHostExtensions
 {
-    public static async Task Register(this XtiHost host, Action<EventRegistration> configEvents, Action<JobRegistration> configJobs)
+    public static async Task Register
+    (
+        this XtiHost host, Func<EventRegistrationBuilder, EventRegistrationBuilder1> configEvents,
+        Func<JobRegistrationBuilder, JobRegistrationBuilder1> configJobs
+    )
     {
-        var events = host.GetRequiredService<EventRegistration>();
-        configEvents(events);
-        await events.Register();
-        var jobs = host.GetRequiredService<JobRegistration>();
-        configJobs(jobs);
-        await jobs.Register();
+        var events = host.GetRequiredService<EventRegistrationBuilder>();
+        await configEvents(events).Build().Register();
+        await host.RegisterJobs(configJobs);
+    }
+
+    public static Task RegisterJobs(this XtiHost host, Func<JobRegistrationBuilder, JobRegistrationBuilder1> configJobs)
+    {
+        var jobs = host.GetRequiredService<JobRegistrationBuilder>();
+        return configJobs(jobs).Build().Register();
     }
 
     public static Task RegisterJobSchedule(this XtiHost host, JobKey jobKey, params Schedule[] schedules)
@@ -89,16 +96,13 @@ internal static class XtiTestHostExtensions
     public static DateTimeOffset CurrentTime(this XtiHost host) =>
         host.GetRequiredService<IClock>().Now();
 
-    public static JobRegistration BuildJobs(this JobRegistration jobs) =>
-        jobs.AddJob
-        (
-            DemoJobs.DoSomething.JobKey,
-            job => job
-                .TimeoutAfter(TimeSpan.FromHours(1))
-                .AddTask(DemoJobs.DoSomething.Task01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.Task02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskFinal).TimeoutAfter(TimeSpan.FromMinutes(5))
-        );
+    public static JobRegistrationBuilder1 BuildJobs(this JobRegistrationBuilder jobs) =>
+        jobs
+            .AddJob(DemoJobs.DoSomething.JobKey)
+            .TimeoutAfter(TimeSpan.FromHours(1))
+            .AddTasks
+            (
+                DemoJobs.DoSomething.GetAllTasks(),
+                (t, j) => j.TimeoutAfter(TimeSpan.FromMinutes(5))
+            );
 }

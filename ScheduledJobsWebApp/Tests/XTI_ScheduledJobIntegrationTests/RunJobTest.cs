@@ -128,16 +128,13 @@ internal sealed class RunJobTest
         Assert.That(triggeredJobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should retry after error during transform source data");
     }
 
-    private static JobRegistration BuildJobs(JobRegistration jobs) =>
-        jobs.AddJob
-        (
-            DemoJobs.DoSomething.JobKey,
-            job => job
-                .TimeoutAfter(TimeSpan.FromHours(1))
-                .AddTask(DemoJobs.DoSomething.Task01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.Task02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskFinal).TimeoutAfter(TimeSpan.FromMinutes(5))
-        );
+    private static JobRegistrationBuilder1 BuildJobs(JobRegistrationBuilder jobs) =>
+        jobs
+            .AddJob(DemoJobs.DoSomething.JobKey)
+            .TimeoutAfter(TimeSpan.FromHours(1))
+            .AddTasks
+            (
+                DemoJobs.DoSomething.GetAllTasks(), 
+                (t, j) => j.TimeoutAfter(TimeSpan.FromMinutes(5))
+            );
 }

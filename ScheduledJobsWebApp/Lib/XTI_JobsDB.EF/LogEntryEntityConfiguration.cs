@@ -7,6 +7,7 @@ internal sealed class LogEntryEntityConfiguration : IEntityTypeConfiguration<Log
         builder.HasKey(e => e.ID);
         builder.Property(e => e.ID).ValueGeneratedOnAdd();
         builder.Property(e => e.Category).HasMaxLength(100);
+        builder.Property(e => e.SourceLogEntryKey).HasMaxLength(100);
         builder
             .HasOne<TriggeredJobTaskEntity>()
             .WithMany()
