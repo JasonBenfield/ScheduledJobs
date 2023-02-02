@@ -1,9 +1,11 @@
-﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
+﻿import { HubAppApi } from "@jasonbenfield/hubwebapp/Api/HubAppApi";
+import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { ModalConfirm } from "@jasonbenfield/sharedwebapp/Components/ModalConfirm";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { First } from "@jasonbenfield/sharedwebapp/Enumerable";
 import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
 import { JobTaskStatus } from "../../../Lib/Api/JobTaskStatus";
 import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
@@ -43,6 +45,7 @@ export class TaskDetailPanel implements IPanel {
     private readonly logEntries: ListGroup<LogEntryItem, LogEntryItemView>;
     private readonly alert: MessageAlert;
     private tasks: ITriggeredJobTaskModel[];
+    private sourceLogEntries: ISourceLogEntryModel[];
     private currentTask: ITriggeredJobTaskModel;
     private readonly timeoutTaskCommand: AsyncCommand;
     private readonly editTaskDataCommand: Command;
@@ -51,7 +54,7 @@ export class TaskDetailPanel implements IPanel {
     private readonly skipTaskCommand: AsyncCommand;
     private readonly modalConfirm: ModalConfirm;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
+    constructor(private readonly hubApi: HubAppApi, private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
         this.displayText = new TextComponent(view.displayText);
         this.status = new TextComponent(view.status);
         this.timeStarted = new TextComponent(view.timeStarted);
@@ -160,8 +163,9 @@ export class TaskDetailPanel implements IPanel {
         }
     }
 
-    setTasks(tasks: ITriggeredJobTaskModel[]) {
+    setTasks(tasks: ITriggeredJobTaskModel[], sourceLogEntries: ISourceLogEntryModel[]) {
         this.tasks = tasks;
+        this.sourceLogEntries = sourceLogEntries;
     }
 
     setCurrentTask(currentTask: ITriggeredJobTaskModel) {
@@ -185,7 +189,10 @@ export class TaskDetailPanel implements IPanel {
         }
         this.logEntries.setItems(
             currentTask.LogEntries,
-            (entry, itemView) => new LogEntryItem(entry, itemView)
+            (entry, itemView) => {
+                const sourceLogEntry = this.sourceLogEntries.find(le => le.LogEntryID === entry.ID);
+                return new LogEntryItem(this.hubApi, entry, sourceLogEntry, itemView);
+            }
         );
         const status = JobTaskStatus.values.value(currentTask.Status.Value);
         if (status.equals(JobTaskStatus.values.Failed)) {

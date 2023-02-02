@@ -14,9 +14,8 @@ internal sealed class AddScheduledJobNotificationsTest
         var host = TestHost.CreateDefault();
         var clock = host.GetRequiredService<FakeClock>();
         clock.Set(new DateTime(2023, 1, 31, 8, 0, 0));
-        await host.Register
+        await host.RegisterJobs
         (
-            events => { },
             jobs => BuildJobs(jobs)
         );
         await host.RegisterJobSchedule
@@ -26,38 +25,21 @@ internal sealed class AddScheduledJobNotificationsTest
         );
         clock.Set(new DateTime(2023, 2, 8, 8, 0, 0));
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
-        await api.Events.AddJobScheduleNotifications.Invoke(new EmptyRequest());
+        await api.Recurring.AddJobScheduleNotifications.Invoke(new EmptyRequest());
         clock.Set(new DateTime(2023, 2, 8, 10, 15, 0));
         var triggeredJobs = await host.MonitorScheduledJob(DemoJobs.DoSomething.JobKey);
         Assert.That(triggeredJobs.Length, Is.EqualTo(1), "Should add scheduled job notifications");
         clock.Set(new DateTime(2023, 2, 9, 8, 0, 0));
-        await api.Events.AddJobScheduleNotifications.Invoke(new EmptyRequest());
+        await api.Recurring.AddJobScheduleNotifications.Invoke(new EmptyRequest());
         clock.Set(new DateTime(2023, 2, 9, 10, 15, 0));
         triggeredJobs = await host.MonitorScheduledJob(DemoJobs.DoSomething.JobKey);
         Assert.That(triggeredJobs.Length, Is.EqualTo(0), "Should not trigger job when not scheduled");
     }
 
-    private static JobRegistration BuildJobs(JobRegistration jobs) =>
-        jobs.AddJob
-        (
-            DemoJobs.DoSomething.JobKey,
-            j =>
-            {
-                foreach (var task in DemoJobs.DoSomething.GetAllTasks())
-                {
-                    j.AddTask(task);
-                }
-            }
-        )
-        .AddJob
-        (
-            DemoJobs.DoSomethingElse.JobKey,
-            j =>
-            {
-                foreach (var task in DemoJobs.DoSomethingElse.GetAllTasks())
-                {
-                    j.AddTask(task);
-                }
-            }
-        );
+    private static JobRegistrationBuilder1 BuildJobs(JobRegistrationBuilder jobs) =>
+        jobs
+            .AddJob(DemoJobs.DoSomething.JobKey)
+            .AddTasks(DemoJobs.DoSomething.GetAllTasks())
+            .AddJob(DemoJobs.DoSomethingElse.JobKey)
+            .AddTasks(DemoJobs.DoSomethingElse.GetAllTasks());
 }

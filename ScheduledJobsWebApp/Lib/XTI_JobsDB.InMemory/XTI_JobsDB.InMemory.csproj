@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Description>In Memory Database Implementation of Scheduled Jobs $(XtiVersion)</Description>
-		<PackageTags>$(XtiVersion);$(XtiAppName);XTI Job Abstractions</PackageTags>
+		<PackageTags>$(XtiAppName);$(XtiVersion);DB;InMemory;</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

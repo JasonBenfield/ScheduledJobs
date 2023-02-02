@@ -21,12 +21,12 @@ public sealed class TriggeredJobTask
             ? new T()
             : XtiSerializer.Deserialize<T>(Model.TaskData);
 
-    public LogEntryModel[] Errors() =>
+    public JobLogEntryModel[] Errors() =>
         Model.LogEntries
             .Where(e => e.Severity.Equals(AppEventSeverity.Values.CriticalError))
             .ToArray();
 
-    public LogEntryModel[] Messages() =>
+    public JobLogEntryModel[] Messages() =>
         Model.LogEntries
             .Where(e => !e.Severity.Equals(AppEventSeverity.Values.CriticalError))
             .ToArray();

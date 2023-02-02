@@ -5,7 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Description>Web App Client for $(XtiAppName) $(XtiVersion)</Description>
-		<PackageTags>$(XtiVersion);$(XtiAppName);XTI Web App Client</PackageTags>
+		<PackageTags>$(XtiAppName);$(XtiVersion);App Client;</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

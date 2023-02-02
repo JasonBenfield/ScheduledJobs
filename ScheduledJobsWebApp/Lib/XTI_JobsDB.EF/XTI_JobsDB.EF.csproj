@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Description>Entity Framework Classes for Scheduled Jobs $(XtiVersion)</Description>
-		<PackageTags>$(XtiVersion);$(XtiAppName);</PackageTags>
+		<PackageTags>$(XtiAppName);$(XtiVersion);DB;EF;</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -13,7 +13,7 @@ internal sealed class AddJobScheduleNotificationsAction : AppAction<EmptyRequest
 
     public async Task<EmptyActionResult> Execute(EmptyRequest model, CancellationToken stoppingToken)
     {
-        await schdJobClient.Events.AddJobScheduleNotifications(stoppingToken);
+        await schdJobClient.Recurring.AddJobScheduleNotifications(stoppingToken);
         return new EmptyActionResult();
     }
 }

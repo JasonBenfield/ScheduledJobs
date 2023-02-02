@@ -1,13 +1,15 @@
 ﻿namespace XTI_Jobs;
 
-public sealed class RegisteredEventBuilder
+public sealed class EventRegistrationBuilder1
 {
+    private readonly EventRegistrationBuilder builder;
     private readonly EventKey eventKey;
     private TimeSpan deleteAfter = TimeSpan.FromDays(365);
     private TimeSpan activeFor = TimeSpan.MaxValue;
 
-    internal RegisteredEventBuilder(EventKey eventKey)
+    internal EventRegistrationBuilder1(EventRegistrationBuilder builder, EventKey eventKey)
     {
+        this.builder = builder;
         this.eventKey = eventKey;
     }
 
@@ -21,7 +23,11 @@ public sealed class RegisteredEventBuilder
 
     public EventDuplicationBuilder KeepOldest() => Duplicates(DuplicateHandling.Values.KeepOldest);
 
-    public EventDuplicationBuilder KeepAll() => Duplicates(DuplicateHandling.Values.KeepAll);
+    public EventRegistrationBuilder1 KeepAll()
+    {
+        Duplicates(DuplicateHandling.Values.KeepAll);
+        return this;
+    }
 
     private EventDuplicationBuilder Duplicates(DuplicateHandling duplicateHandling)
     {
@@ -29,25 +35,29 @@ public sealed class RegisteredEventBuilder
         return new EventDuplicationBuilder(this);
     }
 
-    public RegisteredEventBuilder StartNotifying(DateTimeOffset timeToStartNotifications)
+    public EventRegistrationBuilder1 StartNotifying(DateTimeOffset timeToStartNotifications)
     {
         TimeToStartNotification = timeToStartNotifications;
         return this;
     }
 
-    public RegisteredEventBuilder ActiveFor(TimeSpan activeFor)
+    public EventRegistrationBuilder1 ActiveFor(TimeSpan activeFor)
     {
         this.activeFor = activeFor;
         return this;
     }
 
-    public RegisteredEventBuilder DeleteAfter(TimeSpan deleteAfter)
+    public EventRegistrationBuilder1 DeleteAfter(TimeSpan deleteAfter)
     {
         this.deleteAfter = deleteAfter;
         return this;
     }
 
-    internal RegisteredEvent Build() => 
+    public EventRegistrationBuilder1 AddEvent(EventKey eventKey) => builder.AddEvent(eventKey);
+
+    public EventRegistration Build() => builder.Build();
+
+    internal RegisteredEvent BuildEvent() => 
         new RegisteredEvent
         (
             eventKey, 

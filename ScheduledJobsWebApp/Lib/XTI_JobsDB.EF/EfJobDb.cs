@@ -506,12 +506,21 @@ public sealed class EfJobDb : IJobDb
             }
         );
 
-    public async Task<TriggeredJobWithTasksModel> TaskFailed(int failedTaskID, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, string category, string message, string details)
+    public async Task<TriggeredJobWithTasksModel> TaskFailed
+    (
+        int failedTaskID, 
+        JobTaskStatus errorStatus, 
+        TimeSpan retryAfter, 
+        NextTaskModel[] nextTasks, 
+        string category, 
+        string message, 
+        string details,
+        string sourceLogEntryKey
+    )
     {
-        TriggeredJobTaskEntity? taskEntity = null;
-        await db.Transaction
+        var taskEntity = await db.Transaction
         (
-            async () => taskEntity = await _TaskFailed
+            () => _TaskFailed
             (
                 failedTaskID,
                 errorStatus,
@@ -519,14 +528,25 @@ public sealed class EfJobDb : IJobDb
                 nextTasks,
                 category,
                 message,
-                details
+                details,
+                sourceLogEntryKey
             )
         );
         var jobDetail = await GetTriggeredJob(taskEntity?.TriggeredJobID ?? 0);
         return jobDetail;
     }
 
-    private async Task<TriggeredJobTaskEntity> _TaskFailed(int failedTaskID, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, string category, string message, string details)
+    private async Task<TriggeredJobTaskEntity> _TaskFailed
+    (
+        int failedTaskID, 
+        JobTaskStatus errorStatus, 
+        TimeSpan retryAfter, 
+        NextTaskModel[] nextTasks, 
+        string category, 
+        string message, 
+        string details,
+        string sourceLogEntryKey
+    )
     {
         var now = clock.Now();
         await db.LogEntries.Create
@@ -538,7 +558,8 @@ public sealed class EfJobDb : IJobDb
                 Category = category,
                 Message = message,
                 Details = details,
-                TimeOccurred = now
+                TimeOccurred = now,
+                SourceLogEntryKey = sourceLogEntryKey
             }
         );
         var currentTaskEntity = await GetTask(failedTaskID);

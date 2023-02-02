@@ -34,8 +34,8 @@ internal sealed class TestHost
         host.Services.AddSingleton<ScheduledJobsAppClientVersion>();
         host.Services.AddScoped<ScheduledJobsAppClient>();
         host.Services.AddScoped<IJobDb, EfJobDb>();
-        host.Services.AddScoped<EventRegistration>();
-        host.Services.AddScoped<JobRegistration>();
+        host.Services.AddScoped<EventRegistrationBuilder>();
+        host.Services.AddScoped<JobRegistrationBuilder>();
         host.Services.AddScoped<IncomingEventFactory>();
         host.Services.AddScoped<EventMonitorBuilder>();
         host.Services.AddScoped<JobScheduleRegistrationBuilder>();

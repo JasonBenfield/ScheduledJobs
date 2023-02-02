@@ -23,10 +23,17 @@ builder.Services.AddThrottledLog<ScheduledJobsAppApi>
 (
     (api, throttled) =>
     {
-        throttled.Throttle(api.Jobs.DeleteJobsWithNoTasks).Requests().ForOneHour().Exceptions().For(5).Minutes()
+        throttled
+            .Throttle(api.Jobs.DeleteJobsWithNoTasks).Requests().ForOneHour().Exceptions().For(5).Minutes()
             .AndThrottle(api.Jobs.RetryJobs).Requests().ForOneHour().Exceptions().For(5).Minutes()
             .AndThrottle(api.Jobs.TriggerJobs).Requests().ForOneHour().Exceptions().For(5).Minutes()
-            .AndThrottle(api.Recurring.TimeoutTasks).Requests().ForOneHour().Exceptions().For(5).Minutes();
+            .AndThrottle(api.Jobs.StartJob).Requests().ForOneHour()
+            .AndThrottle(api.Jobs.StartTask).Requests().ForOneHour()
+            .AndThrottle(api.Jobs.TaskCompleted).Requests().ForOneHour()
+            .AndThrottle(api.Jobs.TaskFailed).Requests().ForOneHour()
+            .AndThrottle(api.Recurring.AddJobScheduleNotifications).Requests().ForOneHour().Exceptions().For(5).Minutes()
+            .AndThrottle(api.Recurring.TimeoutTasks).Requests().ForOneHour().Exceptions().For(5).Minutes()
+            .AndThrottle(api.Events.AddNotifications).Requests().ForOneHour();
     }
 );
 builder.Services

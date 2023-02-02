@@ -6,9 +6,8 @@ internal sealed class OnDemandJobTest
     public async Task ShouldTriggerJobOnDemand()
     {
         var host = TestHost.CreateDefault();
-        await host.Register
+        await host.RegisterJobs
         (
-            events => { },
             jobs => BuildJobs(jobs)
         );
         var triggeredJobs = await host.TriggerJobOnDemand
@@ -28,9 +27,8 @@ internal sealed class OnDemandJobTest
     public async Task ShouldTriggerMultipleJobsOnDemand()
     {
         var host = TestHost.CreateDefault();
-        await host.Register
+        await host.RegisterJobs
         (
-            events => { },
             jobs => BuildJobs(jobs)
         );
         var triggeredJobs = await host.TriggerJobOnDemand
@@ -60,11 +58,7 @@ internal sealed class OnDemandJobTest
     public async Task ShouldCompleteJobOnDemand()
     {
         var host = TestHost.CreateDefault();
-        await host.Register
-        (
-            events => { },
-            jobs => BuildJobs(jobs)
-        );
+        await host.RegisterJobs(jobs => BuildJobs(jobs));
         var triggeredJobs = await host.TriggerJobOnDemand
         (
             DemoJobs.DoSomething.JobKey,
@@ -89,11 +83,7 @@ internal sealed class OnDemandJobTest
     public async Task ShouldCompleteAllJobsOnDemand()
     {
         var host = TestHost.CreateDefault();
-        await host.Register
-        (
-            events => { },
-            jobs => BuildJobs(jobs)
-        );
+        await host.RegisterJobs(jobs => BuildJobs(jobs));
         var triggeredJobs = await host.TriggerJobOnDemand
         (
             DemoJobs.DoSomething.JobKey,
@@ -126,11 +116,7 @@ internal sealed class OnDemandJobTest
     public async Task ShouldProcessAllJobsOnDemand()
     {
         var host = TestHost.CreateDefault();
-        await host.Register
-        (
-            events => { },
-            jobs => BuildJobs(jobs)
-        );
+        await host.RegisterJobs(jobs => BuildJobs(jobs));
         var triggeredJobs = await host.TriggerJobOnDemand
         (
             DemoJobs.DoSomething.JobKey,
@@ -159,28 +145,10 @@ internal sealed class OnDemandJobTest
         );
     }
 
-    private static JobRegistration BuildJobs(JobRegistration jobs) =>
-        jobs.AddJob
-        (
-            DemoJobs.DoSomething.JobKey,
-            j =>
-            {
-                foreach (var task in DemoJobs.DoSomething.GetAllTasks())
-                {
-                    j.AddTask(task);
-                }
-            }
-        )
-        .AddJob
-        (
-            DemoJobs.DoSomethingElse.JobKey,
-            j =>
-            {
-                foreach (var task in DemoJobs.DoSomethingElse.GetAllTasks())
-                {
-                    j.AddTask(task);
-                }
-            }
-        );
-
+    private static JobRegistrationBuilder1 BuildJobs(JobRegistrationBuilder jobs) =>
+        jobs
+            .AddJob(DemoJobs.DoSomething.JobKey)
+            .AddTasks(DemoJobs.DoSomething.GetAllTasks())
+            .AddJob(DemoJobs.DoSomethingElse.JobKey)
+            .AddTasks(DemoJobs.DoSomethingElse.GetAllTasks());
 }

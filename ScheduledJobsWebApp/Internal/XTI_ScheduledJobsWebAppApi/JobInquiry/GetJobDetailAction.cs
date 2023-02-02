@@ -1,25 +1,39 @@
-﻿namespace XTI_ScheduledJobsWebAppApi.JobInquiry;
+﻿using XTI_HubAppClient;
 
-public sealed record TriggeredJobDetailModel
-(
-    TriggeredJobModel Job,
-    EventNotificationModel TriggeredBy,
-    TriggeredJobTaskModel[] Tasks
-);
+namespace XTI_ScheduledJobsWebAppApi.JobInquiry;
 
 internal sealed class GetJobDetailAction : AppAction<GetJobDetailRequest, TriggeredJobDetailModel>
 {
     private readonly JobDbContext db;
+    private readonly HubAppClient hubClient;
 
-    public GetJobDetailAction(JobDbContext db)
+    public GetJobDetailAction(JobDbContext db, HubAppClient hubClient)
     {
         this.db = db;
+        this.hubClient = hubClient;
     }
 
     public async Task<TriggeredJobDetailModel> Execute(GetJobDetailRequest model, CancellationToken stoppingToken)
     {
         var jobWithTasks = await new EfTriggeredJobDetail(db, model.JobID).Value();
-        var triggeredBy = await new EfEventNotificationInquiry(db).Notification(jobWithTasks.Job.EventNotificationID);
-        return new TriggeredJobDetailModel(jobWithTasks.Job, triggeredBy, jobWithTasks.Tasks);
+        var inquiry = new EfEventNotificationInquiry(db);
+        var triggeredBy = await inquiry.Notification(jobWithTasks.Job.EventNotificationID);
+        var logEntriesWithSource = jobWithTasks.Tasks
+            .SelectMany(t => t.LogEntries)
+            .Where(le => !string.IsNullOrWhiteSpace(le.SourceEventKey))
+            .ToArray();
+        var sourceLogEntries = new List<SourceLogEntryModel>();
+        foreach (var logEntry in logEntriesWithSource)
+        {
+            var sourceLogEntry = await hubClient.Logs.GetLogEntryByKey(logEntry.SourceEventKey, stoppingToken);
+            sourceLogEntries.Add(new SourceLogEntryModel(logEntry.ID, sourceLogEntry));
+        }
+        return new TriggeredJobDetailModel
+        (
+            jobWithTasks.Job, 
+            triggeredBy, 
+            jobWithTasks.Tasks, 
+            sourceLogEntries.ToArray()
+        );
     }
 }

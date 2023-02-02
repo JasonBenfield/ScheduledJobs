@@ -3,24 +3,17 @@
 public sealed class JobRegistration
 {
     private readonly IJobDb db;
-    private readonly List<JobBuilder> jobs = new();
+    private readonly JobRegistrationBuilder1[] jobs;
 
-    public JobRegistration(IJobDb db)
+    internal JobRegistration(IJobDb db, JobRegistrationBuilder1[] jobs)
     {
         this.db = db;
-    }
-
-    public JobRegistration AddJob(JobKey jobKey, Action<JobBuilder> config)
-    {
-        var job = new JobBuilder(jobKey);
-        jobs.Add(job);
-        config(job);
-        return this;
+        this.jobs = jobs;
     }
 
     public Task Register()
     {
-        var registeredJobs = jobs.Select(j => j.Build()).ToArray();
+        var registeredJobs = jobs.Select(j => j.BuildJob()).ToArray();
         return db.AddOrUpdateRegisteredJobs(registeredJobs);
     }
 }

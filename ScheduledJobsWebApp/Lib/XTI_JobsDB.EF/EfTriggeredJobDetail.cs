@@ -101,14 +101,15 @@ public sealed class EfTriggeredJobDetail
             entries
                 .Select
                 (
-                    e => new LogEntryModel
+                    e => new JobLogEntryModel
                     (
                         e.ID,
                         AppEventSeverity.Values.Value(e.Severity),
                         e.TimeOccurred,
                         e.Category,
                         e.Message,
-                        e.Details
+                        e.Details,
+                        e.SourceLogEntryKey
                     )
                 )
                 .ToArray()

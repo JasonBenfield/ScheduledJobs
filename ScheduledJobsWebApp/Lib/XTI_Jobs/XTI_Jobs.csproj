@@ -5,8 +5,12 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Description>Raise Events and Trigger Jobs $(XtiVersion)</Description>
-		<PackageTags>$(XtiVersion);$(XtiAppName);XTI Jobs</PackageTags>
+		<PackageTags>$(XtiAppName);$(XtiVersion);</PackageTags>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="XTI_Hub.Abstractions" Version="1.4.37-dev230201204246463" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\XTI_Jobs.Abstractions\XTI_Jobs.Abstractions.csproj" />

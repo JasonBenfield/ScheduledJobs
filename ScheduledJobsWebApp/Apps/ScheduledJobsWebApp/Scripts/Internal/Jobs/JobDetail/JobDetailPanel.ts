@@ -11,14 +11,18 @@ import { TaskListItemView } from "./TaskListItemView";
 
 interface IResult {
     menuRequested?: boolean;
-    taskSelected?: { tasks: ITriggeredJobTaskModel[], selectedTask: ITriggeredJobTaskModel };
+    taskSelected?: {
+        tasks: ITriggeredJobTaskModel[],
+        sourceLogEntries: ISourceLogEntryModel[],
+        selectedTask: ITriggeredJobTaskModel
+    };
 }
 
 class Result {
     static menuRequested() { return new Result({ menuRequested: true }); }
 
-    static taskSelected(tasks: ITriggeredJobTaskModel[], selectedTask: ITriggeredJobTaskModel) {
-        return new Result({ taskSelected: { tasks: tasks, selectedTask: selectedTask } });
+    static taskSelected(tasks: ITriggeredJobTaskModel[], sourceLogEntries: ISourceLogEntryModel[], selectedTask: ITriggeredJobTaskModel) {
+        return new Result({ taskSelected: { tasks: tasks, sourceLogEntries: sourceLogEntries, selectedTask: selectedTask } });
     }
 
     private constructor(private readonly results: IResult) { }
@@ -78,7 +82,7 @@ export class JobDetailPanel implements IPanel {
 
     private onTaskClicked(taskItem: TaskListItem) {
         this.awaitable.resolve(
-            Result.taskSelected(this.jobDetail.Tasks, taskItem.task)
+            Result.taskSelected(this.jobDetail.Tasks, this.jobDetail.SourceLogEntries, taskItem.task)
         );
     }
 

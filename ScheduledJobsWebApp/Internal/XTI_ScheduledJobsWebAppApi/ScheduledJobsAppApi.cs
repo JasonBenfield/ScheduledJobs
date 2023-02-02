@@ -54,9 +54,10 @@ public sealed partial class ScheduledJobsAppApi : WebAppApiWrapper
         (
             (temp, generators) =>
             {
-                if(generators == ApiCodeGenerators.Dotnet)
+                if (generators == ApiCodeGenerators.Dotnet)
                 {
-                    return temp.DataType.Namespace == "XTI_Jobs.Abstractions";
+                    var ns = temp.DataType.Namespace ?? "";
+                    return ns.StartsWith("XTI_Jobs.Abstractions") || ns.StartsWith("XTI_Hub.Abstractions");
                 }
                 return false;
             }

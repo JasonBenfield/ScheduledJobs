@@ -10,6 +10,12 @@ public sealed partial class RecurringController : Controller
     }
 
     [HttpPost]
+    public Task<ResultContainer<EmptyActionResult>> AddJobScheduleNotifications(CancellationToken ct)
+    {
+        return api.Group("Recurring").Action<EmptyRequest, EmptyActionResult>("AddJobScheduleNotifications").Execute(new EmptyRequest(), ct);
+    }
+
+    [HttpPost]
     public Task<ResultContainer<EmptyActionResult>> TimeoutTasks(CancellationToken ct)
     {
         return api.Group("Recurring").Action<EmptyRequest, EmptyActionResult>("TimeoutTasks").Execute(new EmptyRequest(), ct);

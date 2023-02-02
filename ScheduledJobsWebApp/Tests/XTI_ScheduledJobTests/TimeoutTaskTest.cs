@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XTI_App.Api;
 using XTI_ScheduledJobsWebAppApi;
 using XTI_ScheduledJobsWebAppApi.Tasks;
 

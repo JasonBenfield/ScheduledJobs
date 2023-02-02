@@ -1,4 +1,6 @@
-﻿namespace XTI_Jobs;
+﻿using XTI_App.Abstractions;
+
+namespace XTI_Jobs;
 
 public sealed class TriggeredJob
 {
@@ -46,9 +48,9 @@ public sealed class TriggeredJob
 
     public TriggeredJobTask[] Tasks() => tasks.ToArray();
 
-    public LogEntryModel[] Errors() => tasks.SelectMany(t => t.Errors()).ToArray();
+    public JobLogEntryModel[] Errors() => tasks.SelectMany(t => t.Errors()).ToArray();
 
-    public LogEntryModel[] Messages() => tasks.SelectMany(t => t.Messages()).ToArray();
+    public JobLogEntryModel[] Messages() => tasks.SelectMany(t => t.Messages()).ToArray();
 
     public JobTaskStatus Status() => tasks
         .Select(t => t.Model.Status)
@@ -94,6 +96,7 @@ public sealed class TriggeredJob
 
     internal async Task<TriggeredJobTask?> TaskFailed(TriggeredJobTask task, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, Exception ex)
     {
+        var clientException = ex as AppClientException;
         var updatedJob = await db.TaskFailed
         (
             task.Model.ID,
@@ -102,7 +105,8 @@ public sealed class TriggeredJob
             nextTasks,
             ex.GetType().Name,
             ex.Message,
-            ex.ToString()
+            ex.ToString(),
+            clientException?.LogEntryKey ?? ""
         );
         UpdateJob(updatedJob);
         var nextTask = await StartNextTask();

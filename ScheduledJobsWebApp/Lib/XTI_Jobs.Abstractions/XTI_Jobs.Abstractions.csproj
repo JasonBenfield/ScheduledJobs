@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Description>Abstractions for Scheduled Jobs $(XtiVersion)</Description>
-		<PackageTags>$(XtiVersion);$(XtiAppName);XTI Job Abstractions</PackageTags>
+		<PackageTags>$(XtiAppName);$(XtiVersion);Job Abstractions;</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

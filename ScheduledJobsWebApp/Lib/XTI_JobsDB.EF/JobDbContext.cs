@@ -59,4 +59,6 @@ public sealed class JobDbContext : DbContext
     public DataRepository<LogEntryEntity> LogEntries { get; }
 
     public Task Transaction(Func<Task> action) => unitOfWork.Execute(action);
+
+    public Task<T> Transaction<T>(Func<Task<T>> action) => unitOfWork.Execute(action);
 }
