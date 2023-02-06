@@ -9,4 +9,5 @@ public sealed class TaskFailedRequest
     public string Category { get; set; } = "";
     public string Message { get; set; } = "";
     public string Detail { get; set; } = "";
+    public string SourceLogEntryKey { get; set; } = "";
 }

@@ -9,6 +9,7 @@ internal static class TasksGroupExtensions
         services.AddScoped<CancelTaskAction>();
         services.AddScoped<RetryTaskAction>();
         services.AddScoped<EditTaskDataAction>();
+        services.AddScoped<SkipTaskAction>();
         services.AddScoped<TimeoutTaskAction>();
     }
 }

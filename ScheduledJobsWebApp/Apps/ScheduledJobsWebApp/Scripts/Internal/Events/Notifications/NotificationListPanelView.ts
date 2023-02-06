@@ -13,7 +13,7 @@ import { EventSummaryListItemView } from "./EventSummaryListItemView";
 export class NotificationListPanelView extends GridView {
     readonly heading: BasicTextComponentView;
     readonly alert: MessageAlertView;
-    readonly recentEvents: LinkListGroupView;
+    readonly recentEvents: LinkListGroupView<EventSummaryListItemView>;
     readonly menuButton: ButtonCommandView;
     readonly refreshButton: ButtonCommandView;
 
@@ -25,8 +25,7 @@ export class NotificationListPanelView extends GridView {
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         this.heading = mainContent.addView(TextHeading1View);
         this.alert = mainContent.addView(MessageAlertView);
-        this.recentEvents = mainContent.addView(LinkListGroupView);
-        this.recentEvents.setItemViewType(EventSummaryListItemView);
+        this.recentEvents = mainContent.addLinkListGroup(EventSummaryListItemView);
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );

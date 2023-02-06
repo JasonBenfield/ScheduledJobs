@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
-using XTI_App.Api;
 using XTI_Core;
 using XTI_JobsDB.EF;
 using XTI_ScheduledJobsWebAppApi;
@@ -27,7 +25,7 @@ internal sealed class PurgeJobsAndEventsTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -57,7 +55,7 @@ internal sealed class PurgeJobsAndEventsTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -87,7 +85,7 @@ internal sealed class PurgeJobsAndEventsTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -117,7 +115,7 @@ internal sealed class PurgeJobsAndEventsTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -140,18 +138,16 @@ internal sealed class PurgeJobsAndEventsTest
         var host = TestHost.CreateDefault();
         await host.Register
         (
-            events => events.AddEvent
-            (
-                DemoEventKeys.SomethingHappened,
-                evt => evt.DeleteAfter(TimeSpan.FromDays(365))
-            ),
+            events => events
+                .AddEvent(DemoEventKeys.SomethingHappened)
+                .DeleteAfter(TimeSpan.FromDays(365)),
             jobs => BuildJobs(jobs)
         );
         var somethingHappenedData = new SomethingHappenedData { ID = 2, Items = Enumerable.Range(1, 3).ToArray() };
         await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -171,18 +167,16 @@ internal sealed class PurgeJobsAndEventsTest
         var host = TestHost.CreateDefault();
         await host.Register
         (
-            events => events.AddEvent
-            (
-                DemoEventKeys.SomethingHappened,
-                evt => evt.DeleteAfter(TimeSpan.FromDays(1))
-            ),
+            events => events
+                .AddEvent(DemoEventKeys.SomethingHappened)
+                .DeleteAfter(TimeSpan.FromDays(1)),
             jobs => BuildJobs(jobs)
         );
         var somethingHappenedData = new SomethingHappenedData { ID = 2, Items = Enumerable.Range(1, 3).ToArray() };
         await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource
+            new XtiEventSource
             (
                 somethingHappenedData.ID.ToString(),
                 XtiSerializer.Serialize(somethingHappenedData)
@@ -197,17 +191,14 @@ internal sealed class PurgeJobsAndEventsTest
         Assert.That(eventNotifications.Length, Is.EqualTo(1), "Should not delete event notification when triggered job has not been deleted");
     }
 
-    private static JobRegistration BuildJobs(JobRegistration jobs) =>
-        jobs.AddJob
-        (
-            DemoJobs.DoSomething.JobKey,
-            job => job
-                .TimeoutAfter(TimeSpan.FromHours(1))
-                .DeleteAfter(TimeSpan.FromDays(365))
-                .AddTask(DemoJobs.DoSomething.Task01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.Task02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem01).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskItem02).TimeoutAfter(TimeSpan.FromMinutes(5))
-                .AddTask(DemoJobs.DoSomething.TaskFinal).TimeoutAfter(TimeSpan.FromMinutes(5))
-        );
+    public static JobRegistrationBuilder1 BuildJobs(JobRegistrationBuilder jobs) =>
+        jobs
+            .AddJob(DemoJobs.DoSomething.JobKey)
+            .TimeoutAfter(TimeSpan.FromHours(1))
+            .DeleteAfter(TimeSpan.FromDays(365))
+            .AddTasks
+            (
+                DemoJobs.DoSomething.GetAllTasks(),
+                (t, j) => j.TimeoutAfter(TimeSpan.FromMinutes(5))
+            );
 }

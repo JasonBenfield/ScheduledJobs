@@ -8,11 +8,11 @@ import { JobSummaryListItem } from "../Jobs/JobSummaryListItem";
 import { JobSummaryListItemView } from "../Jobs/JobSummaryListItemView";
 
 interface IResults {
-    back?: {};
+    back?: boolean;
 }
 
 export class JobListPanelResult {
-    static back() { return new JobListPanelResult({ back: {} }); }
+    static back() { return new JobListPanelResult({ back: true }); }
 
     private constructor(private readonly results: IResults) { }
 
@@ -22,7 +22,7 @@ export class JobListPanelResult {
 export class JobListPanel implements IPanel {
     private readonly awaitable = new Awaitable<JobListPanelResult>();
     private readonly alert: MessageAlert;
-    private readonly triggeredJobs: ListGroup;
+    private readonly triggeredJobs: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
     private jobDefinitionID: number;
 
@@ -43,7 +43,7 @@ export class JobListPanel implements IPanel {
         const jobs = await this.getRecentTriggeredJobs();
         this.triggeredJobs.setItems(
             jobs,
-            (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
+            (job, itemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
         );
     }
 

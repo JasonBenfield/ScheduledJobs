@@ -11,6 +11,11 @@ interface IResourcePathAccess {
 }
 interface IEmptyRequest {
 }
+interface ILinkModel {
+	LinkName: string;
+	DisplayText: string;
+	Url: string;
+}
 interface ILogoutRequest {
 	ReturnUrl: string;
 }
@@ -70,9 +75,9 @@ interface IRegisteredEvent {
 }
 interface IAddNotificationsRequest {
 	EventKey: IEventKey;
-	Sources: IEventSource[];
+	Sources: IXtiEventSource[];
 }
-interface IEventSource {
+interface IXtiEventSource {
 	SourceKey: string;
 	SourceData: string;
 }
@@ -100,7 +105,7 @@ interface ITriggeredJobTaskModel {
 	TimeStarted: Date;
 	TimeEnded: Date;
 	TaskData: string;
-	LogEntries: ILogEntryModel[];
+	LogEntries: IJobLogEntryModel[];
 }
 interface IJobTaskDefinitionModel {
 	ID: number;
@@ -110,13 +115,14 @@ interface IJobTaskKey {
 	Value: string;
 	DisplayText: string;
 }
-interface ILogEntryModel {
+interface IJobLogEntryModel {
 	ID: number;
 	Severity: IAppEventSeverity;
 	TimeOccurred: Date;
 	Category: string;
 	Message: string;
 	Details: string;
+	SourceEventKey: string;
 }
 interface IGetRecentTriggeredJobsByDefinitionRequest {
 	JobDefinitionID: number;
@@ -128,6 +134,25 @@ interface ITriggeredJobDetailModel {
 	Job: ITriggeredJobModel;
 	TriggeredBy: IEventNotificationModel;
 	Tasks: ITriggeredJobTaskModel[];
+	SourceLogEntries: ISourceLogEntryModel[];
+}
+interface ISourceLogEntryModel {
+	LogEntryID: number;
+	SourceLogEntry: IAppLogEntryModel;
+}
+interface IAppLogEntryModel {
+	ID: number;
+	RequestID: number;
+	TimeOccurred: Date;
+	Severity: IAppEventSeverity;
+	Caption: string;
+	Message: string;
+	Detail: string;
+}
+interface IAddOrUpdateJobSchedulesRequest {
+	JobKey: string;
+	Schedules: string;
+	DeleteAfter: string;
 }
 interface IRegisteredJob {
 	JobKey: IJobKey;
@@ -185,6 +210,7 @@ interface ITaskFailedRequest {
 	Category: string;
 	Message: string;
 	Detail: string;
+	SourceLogEntryKey: string;
 }
 interface ILogMessageRequest {
 	TaskID: number;

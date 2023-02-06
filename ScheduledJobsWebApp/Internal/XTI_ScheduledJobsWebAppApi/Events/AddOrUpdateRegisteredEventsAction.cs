@@ -1,6 +1,6 @@
 ﻿namespace XTI_ScheduledJobsWebAppApi.Events;
 
-public sealed class AddOrUpdateRegisteredEventsAction : AppAction<RegisteredEvent[], EmptyActionResult>
+internal sealed class AddOrUpdateRegisteredEventsAction : AppAction<RegisteredEvent[], EmptyActionResult>
 {
     private readonly IJobDb db;
 

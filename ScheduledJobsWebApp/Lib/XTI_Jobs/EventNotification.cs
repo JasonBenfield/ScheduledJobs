@@ -11,6 +11,8 @@ public sealed class EventNotification
         this.notification = notification;
     }
 
+    public EventNotificationModel ToModel() => notification;
+
     public async Task<TriggeredJob[]> TriggeredJobs()
     {
         var jobs = await db.TriggeredJobs(notification.ID);

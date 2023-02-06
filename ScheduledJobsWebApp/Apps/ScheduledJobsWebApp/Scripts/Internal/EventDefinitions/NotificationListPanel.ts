@@ -8,11 +8,11 @@ import { EventSummaryListItemView } from "../Events/Notifications/EventSummaryLi
 import { NotificationListPanelView } from "./NotificationListPanelView";
 
 interface IResults {
-    back?: {};
+    back?: boolean;
 }
 
 export class NotificationListPanelResult {
-    static back() { return new NotificationListPanelResult({ back: {} }); }
+    static back() { return new NotificationListPanelResult({ back: true }); }
 
     private constructor(private readonly results: IResults) { }
 
@@ -22,7 +22,7 @@ export class NotificationListPanelResult {
 export class NotificationListPanel implements IPanel {
     private readonly awaitable = new Awaitable<NotificationListPanelResult>();
     private readonly alert: MessageAlert;
-    private readonly notifications: ListGroup;
+    private readonly notifications: ListGroup<EventSummaryListItem, EventSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
     private eventDefinitionID: number;
     private sourceKey: string = '';
@@ -42,7 +42,7 @@ export class NotificationListPanel implements IPanel {
         const notifications = await this.getNotifications();
         this.notifications.setItems(
             notifications,
-            (notification, itemView: EventSummaryListItemView) =>
+            (notification, itemView) =>
                 new EventSummaryListItem(this.schdJobsApi, notification, itemView)
         );
     }

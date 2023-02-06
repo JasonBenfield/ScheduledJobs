@@ -13,7 +13,7 @@ import { JobSummaryListItemView } from "./JobSummaryListItemView";
 export class JobListPanelView extends GridView {
     readonly heading: BasicTextComponentView;
     readonly alert: MessageAlertView;
-    readonly jobs: LinkListGroupView;
+    readonly jobs: LinkListGroupView<JobSummaryListItemView>;
     readonly backButton: ButtonCommandView;
     readonly menuButton: ButtonCommandView;
     readonly refreshButton: ButtonCommandView;
@@ -26,8 +26,7 @@ export class JobListPanelView extends GridView {
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         this.heading = mainContent.addView(TextHeading1View);
         this.alert = mainContent.addView(MessageAlertView);
-        this.jobs = mainContent.addView(LinkListGroupView);
-        this.jobs.setItemViewType(JobSummaryListItemView);
+        this.jobs = mainContent.addLinkListGroup(JobSummaryListItemView);
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );

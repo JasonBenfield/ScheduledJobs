@@ -64,8 +64,7 @@ export class TaskDetailPanelView extends GridView {
         this.timeElapsed = topBlock.addView(TextSpanView);
         this.taskData = mainContent.addView(TextBlockView)
             .configure(b => b.setMargin(MarginCss.bottom(3)));
-        this.logEntries = mainContent.addView(ListGroupView);
-        this.logEntries.setItemViewType(LogEntryItemView);
+        this.logEntries = mainContent.addListGroup(LogEntryItemView);
         this.logEntries.setMargin(MarginCss.bottom(3));
         const nav = mainContent.addView(NavView);
         nav.pills();
@@ -96,6 +95,12 @@ export class TaskDetailPanelView extends GridView {
         this.cancelTaskButton.setText('Cancel Task');
         this.cancelTaskButton.setTextCss(new TextCss().start());
 
+        this.skipTaskButton = nav.addButtonCommand();
+        this.skipTaskButton.icon.makeFixedWidth();
+        this.skipTaskButton.icon.solidStyle('forward');
+        this.skipTaskButton.setText('Skip Task');
+        this.skipTaskButton.setTextCss(new TextCss().start());
+
         this.alert = mainContent.addView(MessageAlertView);
 
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(this.addCell().addView(ToolbarView));
@@ -114,11 +119,12 @@ export class TaskDetailPanelView extends GridView {
     readonly timeStarted: BasicTextComponentView;
     readonly timeElapsed: BasicTextComponentView;
     readonly taskData: TextBlockView;
-    readonly logEntries: ListGroupView;
+    readonly logEntries: ListGroupView<LogEntryItemView>;
     readonly timeoutTaskButton: ButtonCommandView;
     readonly editTaskDataButton: ButtonCommandView;
     readonly retryTaskButton: ButtonCommandView;
     readonly cancelTaskButton: ButtonCommandView;
+    readonly skipTaskButton: ButtonCommandView;
     readonly backButton: ButtonCommandView;
     readonly modalConfirm: ModalConfirmView;
 

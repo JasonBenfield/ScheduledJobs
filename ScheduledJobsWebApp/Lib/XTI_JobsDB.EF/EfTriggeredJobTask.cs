@@ -58,6 +58,12 @@ public sealed class EfTriggeredJobTask
 
     public Task Complete(bool preserveData) => End(JobTaskStatus.Values.Completed, preserveData);
 
+    public async Task Skip()
+    {
+        await End(JobTaskStatus.Values.Skip, true);
+        await LogMessage(JobErrors.TaskSkippedCategory, JobErrors.TaskSkippedMessage, "");
+    }
+
     public async Task Retry(DateTimeOffset timeToRetry)
     {
         await ResequenceTasks(1);
@@ -70,7 +76,7 @@ public sealed class EfTriggeredJobTask
                 t.TimeEnded = clock.Now();
             }
         );
-        await LogMessage("Retried", "Retried", "");
+        await LogMessage(JobErrors.TaskRetriedCategory, JobErrors.TaskRetriedMessage, "");
         var retryTask = new TriggeredJobTaskEntity
         {
             Status = JobTaskStatus.Values.Retry.Value,
@@ -151,4 +157,5 @@ public sealed class EfTriggeredJobTask
             );
         }
     }
+
 }

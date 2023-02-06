@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XTI_App.Api;
 using XTI_ScheduledJobsWebAppApi;
 using XTI_ScheduledJobsWebAppApi.Tasks;
 
@@ -28,7 +23,7 @@ internal sealed class TimeoutTaskTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoActionContext<DemoAction01>>();
         demoContext01.Delay = TimeSpan.FromHours(1);
@@ -69,7 +64,7 @@ internal sealed class TimeoutTaskTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -109,7 +104,7 @@ internal sealed class TimeoutTaskTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext01 = host.GetRequiredService<DemoActionContext<DemoAction01>>();
         demoContext01.Delay = TimeSpan.FromHours(1);

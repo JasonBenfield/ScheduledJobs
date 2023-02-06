@@ -1,5 +1,4 @@
-﻿using XTI_App.Api;
-using XTI_ScheduledJobsWebAppApi;
+﻿using XTI_ScheduledJobsWebAppApi;
 using XTI_ScheduledJobsWebAppApi.Tasks;
 
 namespace XTI_ScheduledJobTests;
@@ -23,7 +22,7 @@ internal sealed class CancelTaskTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
@@ -59,7 +58,7 @@ internal sealed class CancelTaskTest
         var eventNotifications = await host.RaiseEvent
         (
             DemoEventKeys.SomethingHappened,
-            new EventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
+            new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);

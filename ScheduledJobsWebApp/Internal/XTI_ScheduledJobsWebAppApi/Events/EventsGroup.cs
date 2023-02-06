@@ -1,4 +1,6 @@
-﻿namespace XTI_ScheduledJobsWebAppApi.Events;
+﻿using XTI_ScheduledJobsWebAppApi.Recurring;
+
+namespace XTI_ScheduledJobsWebAppApi.Events;
 
 public sealed class EventsGroup : AppApiGroupWrapper
 {

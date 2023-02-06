@@ -22,7 +22,7 @@ export class NotificationDetailPanelView extends GridView {
     readonly sourceKey: FormGroupTextView;
     readonly sourceData: FormGroupTextView;
     readonly triggeredJobsTitle: BasicTextComponentView;
-    readonly triggeredJobs: LinkListGroupView;
+    readonly triggeredJobs: LinkListGroupView<JobSummaryListItemView>;
     readonly menuButton: ButtonCommandView;
     readonly refreshButton: ButtonCommandView;
 
@@ -42,8 +42,7 @@ export class NotificationDetailPanelView extends GridView {
         this.sourceData = formGroupContainer.addFormGroup(FormGroupTextView);
         const card = this.detailBlock.addView(CardView);
         this.triggeredJobsTitle = card.addCardTitleHeader();
-        this.triggeredJobs = card.addLinkListGroup();
-        this.triggeredJobs.setItemViewType(JobSummaryListItemView);
+        this.triggeredJobs = card.addLinkListGroup(JobSummaryListItemView);
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );

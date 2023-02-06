@@ -8,12 +8,12 @@ import { JobDefinitionListItemView } from "./JobDefinitionListItemView";
 import { JobDefinitionListPanelView } from "./JobDefinitionListPanelView";
 
 interface IResults {
-    menuRequested?: {};
+    menuRequested?: boolean;
     jobDefinitionSelected?: { jobDefinitionID: number; }
 }
 
 export class JobDefinitionListPanelResult {
-    static menuRequested() { return new JobDefinitionListPanelResult({ menuRequested: {} }); }
+    static menuRequested() { return new JobDefinitionListPanelResult({ menuRequested: true }); }
 
     static jobDefinitionSelected(jobDefinitionID: number) {
         return new JobDefinitionListPanelResult({
@@ -31,7 +31,7 @@ export class JobDefinitionListPanelResult {
 export class JobDefinitionListPanel implements IPanel {
     private readonly awaitable = new Awaitable<JobDefinitionListPanelResult>();
     private readonly alert: MessageAlert;
-    private readonly jobDefinitions: ListGroup;
+    private readonly jobDefinitions: ListGroup<JobDefinitionListItem, JobDefinitionListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobDefinitionListPanelView) {
@@ -50,7 +50,7 @@ export class JobDefinitionListPanel implements IPanel {
         let jobDefs = await this.getJobDefinitions();
         this.jobDefinitions.setItems(
             jobDefs,
-            (jobDef, itemView: JobDefinitionListItemView) => new JobDefinitionListItem(jobDef, itemView)
+            (jobDef, itemView) => new JobDefinitionListItem(jobDef, itemView)
         );
         if (jobDefs.length === 0) {
             this.alert.danger('No job definitions were found');

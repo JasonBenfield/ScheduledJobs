@@ -18,6 +18,7 @@ internal sealed class TaskFailedAction : AppAction<TaskFailedRequest, TriggeredJ
             model.NextTasks,
             model.Category,
             model.Message,
-            model.Detail
+            model.Detail,
+            model.SourceLogEntryKey
         );
 }

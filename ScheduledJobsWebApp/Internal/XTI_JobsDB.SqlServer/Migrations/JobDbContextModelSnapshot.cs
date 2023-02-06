@@ -8,7 +8,7 @@ using XTI_JobsDB.EF;
 
 #nullable disable
 
-namespace XTI_JobsDB.SqlServer.Migrations
+namespace XTIJobsDB.SqlServer.Migrations
 {
     [DbContext(typeof(JobDbContext))]
     partial class JobDbContextModelSnapshot : ModelSnapshot
@@ -17,17 +17,21 @@ namespace XTI_JobsDB.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "7.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("XTI_JobsDB.EF.ExpandedTriggeredJobEntity", b =>
                 {
                     b.Property<int>("JobID")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobID"), 1L, 1);
+                    b.Property<int>("EventNotificationID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JobDefinitionID")
+                        .HasColumnType("int");
 
                     b.Property<string>("JobDisplayText")
                         .IsRequired()
@@ -47,7 +51,9 @@ namespace XTI_JobsDB.SqlServer.Migrations
 
                     b.HasKey("JobID");
 
-                    b.ToView("ExpandedTriggeredJobs");
+                    b.ToTable((string)null);
+
+                    b.ToView("ExpandedTriggeredJobs", (string)null);
                 });
 
             modelBuilder.Entity("XTI_JobsDB.EF.HierarchicalTriggeredJobTaskEntity", b =>
@@ -56,7 +62,7 @@ namespace XTI_JobsDB.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<int>("ChildTaskID")
                         .HasColumnType("int");
@@ -79,7 +85,7 @@ namespace XTI_JobsDB.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("DeleteAfter")
                         .IsRequired()
@@ -107,13 +113,36 @@ namespace XTI_JobsDB.SqlServer.Migrations
                     b.ToTable("JobDefinitions", (string)null);
                 });
 
+            modelBuilder.Entity("XTI_JobsDB.EF.JobScheduleEntity", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("JobDefinitionID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Serialized")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("JobDefinitionID")
+                        .IsUnique();
+
+                    b.ToTable("JobSchedules", (string)null);
+                });
+
             modelBuilder.Entity("XTI_JobsDB.EF.JobTaskDefinitionEntity", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("DisplayText")
                         .IsRequired()
@@ -146,7 +175,7 @@ namespace XTI_JobsDB.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -163,6 +192,11 @@ namespace XTI_JobsDB.SqlServer.Migrations
 
                     b.Property<int>("Severity")
                         .HasColumnType("int");
+
+                    b.Property<string>("SourceLogEntryKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("TaskID")
                         .HasColumnType("int");
@@ -183,7 +217,7 @@ namespace XTI_JobsDB.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<int>("EventNotificationID")
                         .HasColumnType("int");
@@ -212,7 +246,7 @@ namespace XTI_JobsDB.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<int>("Generation")
                         .HasColumnType("int");
@@ -263,7 +297,7 @@ namespace XTI_JobsDB.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("ActiveFor")
                         .IsRequired()
@@ -306,7 +340,7 @@ namespace XTI_JobsDB.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<int>("EventDefinitionID")
                         .HasColumnType("int");
@@ -349,6 +383,15 @@ namespace XTI_JobsDB.SqlServer.Migrations
                     b.HasOne("XTI_JobsDB.EF.TriggeredJobTaskEntity", null)
                         .WithMany()
                         .HasForeignKey("ParentTaskID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("XTI_JobsDB.EF.JobScheduleEntity", b =>
+                {
+                    b.HasOne("XTI_JobsDB.EF.JobDefinitionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("JobDefinitionID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

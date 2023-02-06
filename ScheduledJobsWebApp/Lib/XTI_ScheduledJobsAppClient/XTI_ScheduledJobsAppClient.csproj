@@ -1,15 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Description>Web App Client for $(XtiAppName) $(XtiVersion)</Description>
+		<PackageTags>$(XtiAppName);$(XtiVersion);App Client;</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_App.Api" Version="1.8.30" />
-		<PackageReference Include="XTI_WebAppClient" Version="1.8.30" />
-		<PackageReference Include="XTI_TempLog.Abstractions" Version="1.2.28" />
+		<PackageReference Include="XTI_Hub.Abstractions" Version="1.4.37" />
+		<PackageReference Include="XTI_WebAppClient" Version="1.8.34" />
+		<PackageReference Include="XTI_TempLog.Abstractions" Version="1.2.31" />
 	</ItemGroup>
 
 	<ItemGroup>

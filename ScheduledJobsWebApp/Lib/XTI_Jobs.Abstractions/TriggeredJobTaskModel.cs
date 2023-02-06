@@ -9,5 +9,5 @@ public sealed record TriggeredJobTaskModel
     DateTimeOffset TimeStarted,
     DateTimeOffset TimeEnded,
     string TaskData, 
-    LogEntryModel[] LogEntries
+    JobLogEntryModel[] LogEntries
 );

@@ -2,28 +2,38 @@
 
 public sealed class EventRegistration
 {
-    private readonly IJobDb storedEvents;
-    private readonly List<EventBuilder> events = new();
+    private readonly IJobDb db;
+    private readonly EventRegistrationBuilder1[] events;
 
-    public EventRegistration(IJobDb storedEvents)
+    public EventRegistration(IJobDb db, EventRegistrationBuilder1[] events)
     {
-        this.storedEvents = storedEvents;
-    }
-
-    public EventRegistration AddEvent(EventKey eventKey) =>
-        AddEvent(eventKey, _ => { });
-
-    public EventRegistration AddEvent(EventKey eventKey, Action<EventBuilder> config)
-    {
-        var builder = new EventBuilder(eventKey);
-        events.Add(builder);
-        config(builder);
-        return this;
+        this.db = db;
+        this.events = events;
     }
 
     public Task Register()
     {
-        var registeredEvents = events.Select(evt => evt.Build()).ToArray();
-        return storedEvents.AddOrUpdateRegisteredEvents(registeredEvents);
+        var registeredEvents = events.Select(evt => evt.BuildEvent()).ToArray();
+        return db.AddOrUpdateRegisteredEvents(registeredEvents);
     }
+}
+
+public sealed class EventRegistrationBuilder
+{
+    private readonly IJobDb db;
+    private readonly List<EventRegistrationBuilder1> events = new();
+
+    public EventRegistrationBuilder(IJobDb db)
+    {
+        this.db = db;
+    }
+
+    public EventRegistrationBuilder1 AddEvent(EventKey eventKey)
+    {
+        var evt = new EventRegistrationBuilder1(this, eventKey);
+        events.Add(evt);
+        return evt;
+    }
+
+    internal EventRegistration Build() => new EventRegistration(db, events.ToArray());
 }

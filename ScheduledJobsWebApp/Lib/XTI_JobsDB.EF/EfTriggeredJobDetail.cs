@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XTI_Core;
+﻿using XTI_Core;
 using XTI_Jobs.Abstractions;
 
 namespace XTI_JobsDB.EF;
@@ -106,14 +101,15 @@ public sealed class EfTriggeredJobDetail
             entries
                 .Select
                 (
-                    e => new LogEntryModel
+                    e => new JobLogEntryModel
                     (
                         e.ID,
                         AppEventSeverity.Values.Value(e.Severity),
                         e.TimeOccurred,
                         e.Category,
                         e.Message,
-                        e.Details
+                        e.Details,
+                        e.SourceLogEntryKey
                     )
                 )
                 .ToArray()

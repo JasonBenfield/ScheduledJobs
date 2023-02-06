@@ -7,6 +7,7 @@ internal static class JobsGroupExtensions
     public static void AddJobsGroupServices(this IServiceCollection services)
     {
         services.AddScoped<AddOrUpdateRegisteredJobsAction>();
+        services.AddScoped<AddOrUpdateJobSchedulesAction>();
         services.AddScoped<TriggerJobsAction>();
         services.AddScoped<DeleteJobsWithNoTasksAction>();
         services.AddScoped<RetryJobsAction>();

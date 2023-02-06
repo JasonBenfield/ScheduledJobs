@@ -9,11 +9,11 @@ import { JobSummaryListItem } from "../JobSummaryListItem";
 import { JobSummaryListItemView } from "../JobSummaryListItemView";
 
 interface IResults {
-    menuRequested?: {};
+    menuRequested?: boolean;
 }
 
 export class RecentJobsPanelResult {
-    static menuRequested() { return new RecentJobsPanelResult({ menuRequested: {} }); }
+    static menuRequested() { return new RecentJobsPanelResult({ menuRequested: true }); }
 
     private constructor(private readonly results: IResults) { }
 
@@ -23,12 +23,12 @@ export class RecentJobsPanelResult {
 export class RecentJobsPanel implements IPanel {
     private readonly awaitable = new Awaitable<RecentJobsPanelResult>();
     private readonly alert: MessageAlert;
-    private readonly failedJobsList: ListGroup;
+    private readonly recentJobsList: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
     constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobListPanelView) {
         this.alert = new MessageAlert(view.alert);
-        this.failedJobsList = new ListGroup(view.jobs);
+        this.recentJobsList = new ListGroup(view.jobs);
         new TextComponent(view.heading).setText('Recent Jobs');
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
@@ -39,25 +39,21 @@ export class RecentJobsPanel implements IPanel {
     private requestMenu() { this.awaitable.resolve(RecentJobsPanelResult.menuRequested()); }
 
     private async doRefresh() {
-        const failedJobs = await this.getRecentJobs();
-        this.failedJobsList.setItems(
-            failedJobs,
-            (job, itemView: JobSummaryListItemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
+        const recentJobs = await this.getRecentJobs();
+        this.recentJobsList.setItems(
+            recentJobs,
+            (job, itemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
         );
-        if (failedJobs.length === 0) {
+        if (recentJobs.length === 0) {
             this.alert.danger('No jobs were found.');
         }
     }
 
-    private async getRecentJobs() {
-        let recentJobs: IJobSummaryModel[];
-        await this.alert.infoAction(
+    private getRecentJobs() {
+        return this.alert.infoAction(
             'Loading...',
-            async () => {
-                recentJobs = await this.schdJobsApi.JobInquiry.GetRecentJobs();
-            }
+            () => this.schdJobsApi.JobInquiry.GetRecentJobs()
         );
-        return recentJobs;
     }
 
     refresh() { return this.refreshCommand.execute(); }

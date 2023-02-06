@@ -1,5 +1,6 @@
 ﻿using XTI_Core;
 using XTI_Jobs.Abstractions;
+using XTI_Schedule;
 
 namespace XTI_JobsDB.EF;
 
@@ -18,22 +19,91 @@ public sealed class EfJobDb : IJobDb
     {
         foreach (var registeredEvent in registeredEvents)
         {
-            var evtDefEntity = await db.EventDefinitions.Retrieve()
-                .FirstOrDefaultAsync(ed => ed.EventKey == registeredEvent.EventKey.Value);
-            if (evtDefEntity == null)
+            await AddOrUpdateRegisteredEvent(registeredEvent);
+        }
+    }
+
+    private async Task<EventDefinitionEntity> AddOrUpdateRegisteredEvent(RegisteredEvent registeredEvent)
+    {
+        var evtDefEntity = await db.EventDefinitions.Retrieve()
+            .FirstOrDefaultAsync(ed => ed.EventKey == registeredEvent.EventKey.Value);
+        if (evtDefEntity == null)
+        {
+            evtDefEntity = new EventDefinitionEntity
             {
-                evtDefEntity = new EventDefinitionEntity
+                EventKey = registeredEvent.EventKey.Value,
+                DisplayText = registeredEvent.EventKey.DisplayText,
+                CompareSourceKeyAndDataForDuplication = registeredEvent.CompareSourceKeyAndDataForDuplication,
+                DuplicateHandling = registeredEvent.DuplicateHandling,
+                TimeToStartNotifications = registeredEvent.TimeToStartNotifications,
+                ActiveFor = registeredEvent.ActiveFor,
+                DeleteAfter = registeredEvent.DeleteAfter
+            };
+            await db.EventDefinitions.Create(evtDefEntity);
+        }
+        return evtDefEntity;
+    }
+
+    public Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule aggregateSchedule, TimeSpan deleteAfter) =>
+        db.Transaction(() => _AddOrUpdateJobSchedules(jobKey, aggregateSchedule, deleteAfter));
+
+    private async Task _AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule aggregateSchedule, TimeSpan deleteAfter)
+    {
+        var jobDefEntity = await GetJobDefinition(jobKey);
+        if (jobDefEntity == null)
+        {
+            throw new Exception($"Job '{jobKey.DisplayText} not found");
+        }
+        var evtDefEntity = await AddOrUpdateRegisteredEvent
+        (
+            new RegisteredEvent
+            (
+                EventKey.Scheduled(jobKey),
+                false,
+                DuplicateHandling.Values.Ignore,
+                DateTimeOffset.MinValue,
+                TimeSpan.Zero,
+                deleteAfter
+            )
+        );
+        await AddOrUpdateJobSchedule(jobDefEntity, aggregateSchedule);
+        var minTime = clock.Now().Add(TimeSpan.FromMinutes(5));
+        var dateTimeRanges = aggregateSchedule.DateTimeRanges(DateRange.From(clock.Now().Date).ForOneDay())
+            .Where(dtr => dtr.Start >= minTime)
+            .ToArray();
+        var futureEventNotifications = await db.EventNotifications.Retrieve()
+            .Where(en => en.EventDefinitionID == evtDefEntity.ID && en.TimeActive >= minTime)
+            .ToArrayAsync();
+        var eventNotificationsToDelete = futureEventNotifications
+            .Where(en => !dateTimeRanges.Any(dtr => en.TimeActive == dtr.Start && en.TimeInactive == dtr.End))
+            .ToArray();
+        await db.EventNotifications.DeleteRange(eventNotificationsToDelete);
+        await new EfEventNotificationCreator(db, clock).AddJobScheduleNotifications(evtDefEntity, dateTimeRanges);
+    }
+
+    private async Task AddOrUpdateJobSchedule(JobDefinitionEntity jobDefEntity, AggregateSchedule aggregateSchedule)
+    {
+        var serialized = aggregateSchedule.Serialize();
+        var schdEntity = await db.JobSchedules.Retrieve()
+            .FirstOrDefaultAsync(s => s.JobDefinitionID == jobDefEntity.ID);
+        if (schdEntity == null)
+        {
+            await db.JobSchedules.Create
+            (
+                new JobScheduleEntity
                 {
-                    EventKey = registeredEvent.EventKey.Value,
-                    DisplayText = registeredEvent.EventKey.DisplayText,
-                    CompareSourceKeyAndDataForDuplication = registeredEvent.CompareSourceKeyAndDataForDuplication,
-                    DuplicateHandling = registeredEvent.DuplicateHandling,
-                    TimeToStartNotifications = registeredEvent.TimeToStartNotifications,
-                    ActiveFor = registeredEvent.ActiveFor,
-                    DeleteAfter = registeredEvent.DeleteAfter
-                };
-                await db.EventDefinitions.Create(evtDefEntity);
-            }
+                    JobDefinitionID = jobDefEntity.ID,
+                    Serialized = serialized
+                }
+            );
+        }
+        else
+        {
+            await db.JobSchedules.Update
+            (
+                schdEntity,
+                s => s.Serialized = serialized
+            );
         }
     }
 
@@ -51,8 +121,7 @@ public sealed class EfJobDb : IJobDb
 
     private async Task<JobDefinitionEntity> AddOrUpdateJobDefinition(RegisteredJob registeredJob)
     {
-        var jobDefEntity = await db.JobDefinitions.Retrieve()
-            .FirstOrDefaultAsync(jd => jd.JobKey == registeredJob.JobKey.Value);
+        var jobDefEntity = await GetJobDefinition(registeredJob.JobKey);
         if (jobDefEntity == null)
         {
             jobDefEntity = new JobDefinitionEntity
@@ -74,6 +143,10 @@ public sealed class EfJobDb : IJobDb
         }
         return jobDefEntity;
     }
+
+    private Task<JobDefinitionEntity?> GetJobDefinition(JobKey jobKey) =>
+        db.JobDefinitions.Retrieve()
+            .FirstOrDefaultAsync(jd => jd.JobKey == jobKey.Value);
 
     private async Task AddOrUpdateTaskDefinition(JobDefinitionEntity jobDefinitionEntity, RegisteredJobTask task)
     {
@@ -100,117 +173,29 @@ public sealed class EfJobDb : IJobDb
         }
     }
 
-    public async Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, EventSource[] sources)
+    public async Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources)
     {
-        var eventNotifications = new List<EventNotificationModel>();
         var evtDefEntity = await db.EventDefinitions.Retrieve()
             .FirstOrDefaultAsync(ed => ed.EventKey == eventKey.Value);
         if (evtDefEntity == null)
         {
             throw new ArgumentException($"Event '{eventKey.DisplayText}' not found");
         }
-        var now = clock.Now();
-        if (now >= evtDefEntity.TimeToStartNotifications)
-        {
-            var duplicateHandling = DuplicateHandling.Values.Value(evtDefEntity.DuplicateHandling);
-            foreach (var source in sources)
-            {
-                var duplicateNotifications = await GetDuplicateNotifications(evtDefEntity, duplicateHandling, source);
-                var timeActive = now;
-                var activeFor = evtDefEntity.ActiveFor;
-                var timeInactive = activeFor == TimeSpan.MaxValue
-                    ? DateTimeOffset.MaxValue
-                    : now.Add(activeFor);
-                if (duplicateHandling.Equals(DuplicateHandling.Values.KeepOldest) && duplicateNotifications.Any())
-                {
-                    timeActive = DateTimeOffset.MaxValue;
-                    timeInactive = now;
-                }
-                if (duplicateHandling.Equals(DuplicateHandling.Values.KeepNewest))
-                {
-                    await DeactiveDuplicateEventNotifications(now, duplicateNotifications);
-                }
-                if (!duplicateHandling.Equals(DuplicateHandling.Values.Ignore) || !duplicateNotifications.Any())
-                {
-                    var notificationEntity = new EventNotificationEntity
-                    {
-                        EventDefinitionID = evtDefEntity.ID,
-                        SourceKey = source.SourceKey,
-                        SourceData = source.SourceData,
-                        TimeAdded = now,
-                        TimeActive = timeActive,
-                        TimeInactive = timeInactive,
-                        TimeToDelete = now.Add(evtDefEntity.DeleteAfter)
-                    };
-                    await db.EventNotifications.Create(notificationEntity);
-                    eventNotifications.Add
-                    (
-                        new EventNotificationModel
-                        (
-                            notificationEntity.ID,
-                            new EventDefinitionModel(evtDefEntity.ID, new EventKey(evtDefEntity.DisplayText)),
-                            notificationEntity.SourceKey,
-                            notificationEntity.SourceData,
-                            notificationEntity.TimeAdded,
-                            notificationEntity.TimeActive,
-                            notificationEntity.TimeInactive
-                        )
-                    );
-                }
-            }
-        }
-        return eventNotifications.ToArray();
-    }
-
-    private async Task<EventNotificationEntity[]> GetDuplicateNotifications(EventDefinitionEntity eventDefinition, DuplicateHandling duplicateHandling, EventSource source)
-    {
-        EventNotificationEntity[] duplicateNotifications;
-        if (duplicateHandling.Equals(DuplicateHandling.Values.KeepAll))
-        {
-            duplicateNotifications = new EventNotificationEntity[0];
-        }
-        else
-        {
-            var duplicateNotificationsQuery = db.EventNotifications.Retrieve()
-                .Where
-                (
-                    en =>
-                        en.EventDefinitionID == eventDefinition.ID
-                        && en.SourceKey == source.SourceKey
-                );
-            if (eventDefinition.CompareSourceKeyAndDataForDuplication)
-            {
-                duplicateNotificationsQuery = duplicateNotificationsQuery
-                    .Where
-                    (
-                        en => en.SourceData == source.SourceData
-                    );
-            }
-            duplicateNotifications = await duplicateNotificationsQuery.ToArrayAsync();
-        }
-        return duplicateNotifications;
-    }
-
-
-    private async Task DeactiveDuplicateEventNotifications(DateTimeOffset now, EventNotificationEntity[] duplicateNotifications)
-    {
-        foreach (var duplicateNotification in duplicateNotifications)
-        {
-            await db.EventNotifications.Update
-            (
-                duplicateNotification,
-                dn => dn.TimeInactive = now.AddMinutes(-1)
-            );
-        }
+        var timeActive = clock.Now();
+        var activeFor = evtDefEntity.ActiveFor;
+        var creator = new EfEventNotificationCreator(db, clock);
+        var eventNotifications = await creator.AddEventNotifications(sources, evtDefEntity, timeActive, activeFor);
+        return eventNotifications;
     }
 
     public async Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey)
     {
+        var now = clock.Now();
         var eventDefinitionID = db.EventDefinitions.Retrieve()
             .Where(ed => ed.EventKey == eventKey.Value)
             .Select(ed => ed.ID);
         var eventNotificationIDs = db.EventNotifications.Retrieve()
-            .Where(en => eventDefinitionID.Contains(en.EventDefinitionID))
+            .Where(en => eventDefinitionID.Contains(en.EventDefinitionID) && en.TimeActive <= now)
             .Select(en => en.ID);
         var jobDefinitionID = db.JobDefinitions.Retrieve()
             .Where(jd => jd.JobKey == jobKey.Value)
@@ -220,13 +205,13 @@ public sealed class EfJobDb : IJobDb
         var jobs = await db.TriggeredJobs.Retrieve()
             .Where
             (
-                tj => 
-                    eventNotificationIDs.Contains(tj.EventNotificationID) && 
-                    jobDefinitionID.Contains(tj.JobDefinitionID) && 
+                tj =>
+                    eventNotificationIDs.Contains(tj.EventNotificationID) &&
+                    jobDefinitionID.Contains(tj.JobDefinitionID) &&
                     !jobIDsForTasks.Contains(tj.ID)
             )
             .ToArrayAsync();
-        foreach(var job in jobs)
+        foreach (var job in jobs)
         {
             await db.TriggeredJobs.Delete(job);
         }
@@ -246,8 +231,8 @@ public sealed class EfJobDb : IJobDb
         var triggeredJobIDs = db.TriggeredJobs.Retrieve()
             .Where
             (
-                tj => 
-                    eventNotificationIDs.Contains(tj.EventNotificationID) && 
+                tj =>
+                    eventNotificationIDs.Contains(tj.EventNotificationID) &&
                     jobDefinitionID.Contains(tj.JobDefinitionID)
             )
             .Select(tj => tj.ID);
@@ -269,9 +254,27 @@ public sealed class EfJobDb : IJobDb
                 t => t.Status = JobTaskStatus.Values.Pending.Value
             );
         }
+        var skipTasks = await db.TriggeredJobTasks.Retrieve()
+            .Where
+            (
+                t =>
+                    triggeredJobIDs.Contains(t.TriggeredJobID) &&
+                    t.Status == JobTaskStatus.Values.Skip.Value &&
+                    now >= t.TimeActive
+            )
+            .ToArrayAsync();
+        foreach (var skipTask in skipTasks)
+        {
+            await db.TriggeredJobTasks.Update
+            (
+                skipTask,
+                t => t.Status = JobTaskStatus.Values.Completed.Value
+            );
+        }
         var retryJobIDs = retryTasks.Select(rt => rt.TriggeredJobID).Distinct().ToList();
+        var skipJobIDs = skipTasks.Select(rt => rt.TriggeredJobID).Distinct().ToList();
         var pendingJobIDs = db.TriggeredJobTasks.Retrieve()
-            .Where(tjt => retryJobIDs.Contains(tjt.TriggeredJobID))
+            .Where(tjt => retryJobIDs.Contains(tjt.TriggeredJobID) || skipJobIDs.Contains(tjt.TriggeredJobID))
             .GroupBy(jt => jt.TriggeredJobID)
             .Select(grouped => new { JobID = grouped.Key, Status = grouped.Min(t => t.Status) })
             .Where(grouped => grouped.Status == JobTaskStatus.Values.Pending.Value)
@@ -503,12 +506,21 @@ public sealed class EfJobDb : IJobDb
             }
         );
 
-    public async Task<TriggeredJobWithTasksModel> TaskFailed(int failedTaskID, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, string category, string message, string details)
+    public async Task<TriggeredJobWithTasksModel> TaskFailed
+    (
+        int failedTaskID, 
+        JobTaskStatus errorStatus, 
+        TimeSpan retryAfter, 
+        NextTaskModel[] nextTasks, 
+        string category, 
+        string message, 
+        string details,
+        string sourceLogEntryKey
+    )
     {
-        TriggeredJobTaskEntity? taskEntity = null;
-        await db.Transaction
+        var taskEntity = await db.Transaction
         (
-            async () => taskEntity = await _TaskFailed
+            () => _TaskFailed
             (
                 failedTaskID,
                 errorStatus,
@@ -516,14 +528,25 @@ public sealed class EfJobDb : IJobDb
                 nextTasks,
                 category,
                 message,
-                details
+                details,
+                sourceLogEntryKey
             )
         );
         var jobDetail = await GetTriggeredJob(taskEntity?.TriggeredJobID ?? 0);
         return jobDetail;
     }
 
-    private async Task<TriggeredJobTaskEntity> _TaskFailed(int failedTaskID, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, string category, string message, string details)
+    private async Task<TriggeredJobTaskEntity> _TaskFailed
+    (
+        int failedTaskID, 
+        JobTaskStatus errorStatus, 
+        TimeSpan retryAfter, 
+        NextTaskModel[] nextTasks, 
+        string category, 
+        string message, 
+        string details,
+        string sourceLogEntryKey
+    )
     {
         var now = clock.Now();
         await db.LogEntries.Create
@@ -535,7 +558,8 @@ public sealed class EfJobDb : IJobDb
                 Category = category,
                 Message = message,
                 Details = details,
-                TimeOccurred = now
+                TimeOccurred = now,
+                SourceLogEntryKey = sourceLogEntryKey
             }
         );
         var currentTaskEntity = await GetTask(failedTaskID);

@@ -1,12 +1,16 @@
-﻿namespace XTI_Jobs.Abstractions;
+﻿using XTI_Schedule;
+
+namespace XTI_Jobs.Abstractions;
 
 public interface IJobDb
 {
+    Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule schedule, TimeSpan deleteAfter);
+
     Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents);
 
     Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs);
 
-    Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, EventSource[] sources);
+    Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources);
 
     Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID);
 
@@ -41,7 +45,8 @@ public interface IJobDb
         NextTaskModel[] nextTasks,
         string category,
         string message,
-        string detail
+        string detail,
+        string sourceLogEntryKey
     );
 
     Task LogMessage

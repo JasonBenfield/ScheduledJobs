@@ -14,6 +14,7 @@ public sealed class JobDbContext : DbContext
         EventDefinitions = new EfDataRepository<EventDefinitionEntity>(this);
         EventNotifications = new EfDataRepository<EventNotificationEntity>(this);
         JobDefinitions = new EfDataRepository<JobDefinitionEntity>(this);
+        JobSchedules = new EfDataRepository<JobScheduleEntity>(this);
         JobTaskDefinitions = new EfDataRepository<JobTaskDefinitionEntity>(this);
         TriggeredJobs = new EfDataRepository<TriggeredJobEntity>(this);
         ExpandedTriggeredJobs = new EfDataRepository<ExpandedTriggeredJobEntity>(this);
@@ -28,6 +29,7 @@ public sealed class JobDbContext : DbContext
         modelBuilder.ApplyConfiguration(new EventDefinitionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new EventNotificationEntityConfiguration());
         modelBuilder.ApplyConfiguration(new JobDefinitionEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new JobScheduleEntityConfiguration());
         modelBuilder.ApplyConfiguration(new JobTaskDefinitionEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TriggeredJobEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ExpandedTriggeredJobEntityConfiguration());
@@ -42,6 +44,8 @@ public sealed class JobDbContext : DbContext
 
     public DataRepository<JobDefinitionEntity> JobDefinitions { get; }
 
+    public DataRepository<JobScheduleEntity> JobSchedules { get; }
+
     public DataRepository<JobTaskDefinitionEntity> JobTaskDefinitions { get; }
 
     public DataRepository<TriggeredJobEntity> TriggeredJobs { get; }
@@ -55,4 +59,6 @@ public sealed class JobDbContext : DbContext
     public DataRepository<LogEntryEntity> LogEntries { get; }
 
     public Task Transaction(Func<Task> action) => unitOfWork.Execute(action);
+
+    public Task<T> Transaction<T>(Func<Task<T>> action) => unitOfWork.Execute(action);
 }

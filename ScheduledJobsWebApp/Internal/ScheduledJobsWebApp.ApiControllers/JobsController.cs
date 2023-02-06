@@ -10,6 +10,12 @@ public sealed partial class JobsController : Controller
     }
 
     [HttpPost]
+    public Task<ResultContainer<EmptyActionResult>> AddOrUpdateJobSchedules([FromBody] AddOrUpdateJobSchedulesRequest model, CancellationToken ct)
+    {
+        return api.Group("Jobs").Action<AddOrUpdateJobSchedulesRequest, EmptyActionResult>("AddOrUpdateJobSchedules").Execute(model, ct);
+    }
+
+    [HttpPost]
     public Task<ResultContainer<EmptyActionResult>> AddOrUpdateRegisteredJobs([FromBody] RegisteredJob[] model, CancellationToken ct)
     {
         return api.Group("Jobs").Action<RegisteredJob[], EmptyActionResult>("AddOrUpdateRegisteredJobs").Execute(model, ct);

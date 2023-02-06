@@ -1,15 +1,13 @@
-﻿import { BasicPage } from '@jasonbenfield/sharedwebapp/Components/BasicPage';
-import { Apis } from '../Apis';
-import { MainMenuPanel } from '../MainMenuPanel';
+﻿import { MainMenuPanel } from '../MainMenuPanel';
+import { ScheduledJobsPage } from '../ScheduledJobsPage';
 import { MainPageView } from './MainPageView';
 
-class MainPage extends BasicPage {
+class MainPage extends ScheduledJobsPage {
     protected readonly view: MainPageView;
 
     constructor() {
         super(new MainPageView());
-        const schdJobsApi = new Apis(this.view.modalError).ScheduledJobs();
-        new MainMenuPanel(schdJobsApi, this.view.menuPanel);
+        new MainMenuPanel(this.defaultApi, this.view.menuPanel);
     }
 }
 new MainPage();

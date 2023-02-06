@@ -1,9 +1,11 @@
-﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
+﻿import { HubAppApi } from "@jasonbenfield/hubwebapp/Api/HubAppApi";
+import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { ModalConfirm } from "@jasonbenfield/sharedwebapp/Components/ModalConfirm";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { First } from "@jasonbenfield/sharedwebapp/Enumerable";
 import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
 import { JobTaskStatus } from "../../../Lib/Api/JobTaskStatus";
 import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
@@ -40,17 +42,19 @@ export class TaskDetailPanel implements IPanel {
     private readonly timeStarted: TextComponent;
     private readonly timeElapsed: TextComponent;
     private readonly taskData: TextComponent;
-    private readonly logEntries: ListGroup;
+    private readonly logEntries: ListGroup<LogEntryItem, LogEntryItemView>;
     private readonly alert: MessageAlert;
     private tasks: ITriggeredJobTaskModel[];
+    private sourceLogEntries: ISourceLogEntryModel[];
     private currentTask: ITriggeredJobTaskModel;
     private readonly timeoutTaskCommand: AsyncCommand;
     private readonly editTaskDataCommand: Command;
     private readonly cancelTaskCommand: AsyncCommand;
     private readonly retryTaskCommand: AsyncCommand;
+    private readonly skipTaskCommand: AsyncCommand;
     private readonly modalConfirm: ModalConfirm;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
+    constructor(private readonly hubApi: HubAppApi, private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
         this.displayText = new TextComponent(view.displayText);
         this.status = new TextComponent(view.status);
         this.timeStarted = new TextComponent(view.timeStarted);
@@ -70,6 +74,9 @@ export class TaskDetailPanel implements IPanel {
         this.retryTaskCommand = new AsyncCommand(this.retryTask.bind(this));
         this.retryTaskCommand.hide();
         this.retryTaskCommand.add(view.retryTaskButton);
+        this.skipTaskCommand = new AsyncCommand(this.skipTask.bind(this));
+        this.skipTaskCommand.hide();
+        this.skipTaskCommand.add(view.skipTaskButton);
         this.editTaskDataCommand = new Command(this.editTask.bind(this));
         this.editTaskDataCommand.add(view.editTaskDataButton);
         this.editTaskDataCommand.hide();
@@ -111,6 +118,19 @@ export class TaskDetailPanel implements IPanel {
         }
     }
 
+    private async skipTask() {
+        const confirmed = await this.modalConfirm.confirm('Skip this task?', 'Confirm skip');
+        if (confirmed) {
+            await this.alert.infoAction(
+                'Skipping task...',
+                () => this.schdJobsApi.Tasks.SkipTask({ TaskID: this.currentTask.ID })
+            );
+            this.awaitable.resolve(
+                Result.backRequested(true)
+            );
+        }
+    }
+
     private editTask() {
         this.awaitable.resolve(Result.editTaskRequested(this.currentTask));
     }
@@ -122,8 +142,8 @@ export class TaskDetailPanel implements IPanel {
     }
 
     private previousTask() {
-        let currentIndex = this.tasks.indexOf(this.currentTask);
-        let previousTask = this.tasks[currentIndex - 1];
+        const currentIndex = this.tasks.indexOf(this.currentTask);
+        const previousTask = this.tasks[currentIndex - 1];
         if (previousTask) {
             this.setCurrentTask(previousTask);
         }
@@ -133,8 +153,8 @@ export class TaskDetailPanel implements IPanel {
     }
 
     private nextTask() {
-        let currentIndex = this.tasks.indexOf(this.currentTask);
-        let nextTask = this.tasks[currentIndex + 1];
+        const currentIndex = this.tasks.indexOf(this.currentTask);
+        const nextTask = this.tasks[currentIndex + 1];
         if (nextTask) {
             this.setCurrentTask(nextTask);
         }
@@ -143,8 +163,9 @@ export class TaskDetailPanel implements IPanel {
         }
     }
 
-    setTasks(tasks: ITriggeredJobTaskModel[]) {
+    setTasks(tasks: ITriggeredJobTaskModel[], sourceLogEntries: ISourceLogEntryModel[]) {
         this.tasks = tasks;
+        this.sourceLogEntries = sourceLogEntries;
     }
 
     setCurrentTask(currentTask: ITriggeredJobTaskModel) {
@@ -168,17 +189,22 @@ export class TaskDetailPanel implements IPanel {
         }
         this.logEntries.setItems(
             currentTask.LogEntries,
-            (entry, itemView: LogEntryItemView) => new LogEntryItem(entry, itemView)
+            (entry, itemView) => {
+                const sourceLogEntry = this.sourceLogEntries.find(le => le.LogEntryID === entry.ID);
+                return new LogEntryItem(this.hubApi, entry, sourceLogEntry, itemView);
+            }
         );
         const status = JobTaskStatus.values.value(currentTask.Status.Value);
         if (status.equals(JobTaskStatus.values.Failed)) {
             this.cancelTaskCommand.show();
             this.retryTaskCommand.show();
+            this.skipTaskCommand.show();
             this.editTaskDataCommand.show();
         }
         else {
             this.cancelTaskCommand.hide();
             this.retryTaskCommand.hide();
+            this.skipTaskCommand.hide();
             this.editTaskDataCommand.hide();
         }
         if (status.equals(JobTaskStatus.values.Running)) {
