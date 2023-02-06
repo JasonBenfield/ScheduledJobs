@@ -1,5 +1,5 @@
-﻿using XTI_ScheduledJobsWebAppApi;
-using XTI_WebApp.Abstractions;
+﻿using XTI_App.Abstractions;
+using XTI_ScheduledJobsWebAppApi;
 using XTI_WebApp.Api;
 
 namespace ScheduledJobsWebApp;

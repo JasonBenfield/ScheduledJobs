@@ -8,9 +8,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_Core.Fakes" Version="1.10.19-dev230131223516093" />
-		<PackageReference Include="XTI_Core.Extensions" Version="1.10.19-dev230131223516093" />
-		<PackageReference Include="XTI_HubAppClient.Extensions" Version="1.4.37-dev230201204246463" />
+		<PackageReference Include="XTI_Core.Fakes" Version="1.10.19" />
+		<PackageReference Include="XTI_Core.Extensions" Version="1.10.19" />
+		<PackageReference Include="XTI_HubAppClient.Extensions" Version="1.4.37" />
 	</ItemGroup>
 
 	<ItemGroup>
