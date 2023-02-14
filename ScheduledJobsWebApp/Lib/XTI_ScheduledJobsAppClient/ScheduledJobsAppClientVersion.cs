@@ -12,7 +12,7 @@ public sealed class ScheduledJobsAppClientVersion
         string value;
         if (hostEnv.IsProduction())
         {
-            value = "V17";
+            value = "V18";
         }
         else
         {

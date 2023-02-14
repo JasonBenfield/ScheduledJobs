@@ -26,7 +26,7 @@ internal sealed class ScheduledJobsAppSetup : IAppSetup
         (
             new SetUserAccessRequest
             (
-                systemUserName.Value,
+                systemUserName.UserName,
                 new SetUserAccessRoleRequest
                 (
                     AppKey.WebApp(hubClient.AppName),
