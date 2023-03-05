@@ -18,7 +18,7 @@ public sealed partial class UserController : Controller
     public async Task<IActionResult> UserProfile(CancellationToken ct)
     {
         var result = await api.Group("User").Action<EmptyRequest, WebRedirectResult>("UserProfile").Execute(new EmptyRequest(), ct);
-        return Redirect(result.Data.Url);
+        return Redirect(result.Data!.Url);
     }
 
     [HttpPost]
@@ -30,6 +30,6 @@ public sealed partial class UserController : Controller
     public async Task<IActionResult> Logout(LogoutRequest model, CancellationToken ct)
     {
         var result = await api.Group("User").Action<LogoutRequest, WebRedirectResult>("Logout").Execute(model, ct);
-        return Redirect(result.Data.Url);
+        return Redirect(result.Data!.Url);
     }
 }

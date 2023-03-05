@@ -12,7 +12,7 @@ public sealed partial class JobDefinitionsController : Controller
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var result = await api.Group("JobDefinitions").Action<EmptyRequest, WebViewResult>("Index").Execute(new EmptyRequest(), ct);
-        return View(result.Data.ViewName);
+        return View(result.Data!.ViewName);
     }
 
     [HttpPost]
