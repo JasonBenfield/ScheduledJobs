@@ -12,7 +12,7 @@ public sealed partial class JobInquiryController : Controller
     public async Task<IActionResult> FailedJobs(CancellationToken ct)
     {
         var result = await api.Group("JobInquiry").Action<EmptyRequest, WebViewResult>("FailedJobs").Execute(new EmptyRequest(), ct);
-        return View(result.Data.ViewName);
+        return View(result.Data!.ViewName);
     }
 
     [HttpPost]
@@ -24,7 +24,7 @@ public sealed partial class JobInquiryController : Controller
     public async Task<IActionResult> RecentJobs(CancellationToken ct)
     {
         var result = await api.Group("JobInquiry").Action<EmptyRequest, WebViewResult>("RecentJobs").Execute(new EmptyRequest(), ct);
-        return View(result.Data.ViewName);
+        return View(result.Data!.ViewName);
     }
 
     [HttpPost]
@@ -36,7 +36,7 @@ public sealed partial class JobInquiryController : Controller
     public async Task<IActionResult> JobDetail(GetJobDetailRequest model, CancellationToken ct)
     {
         var result = await api.Group("JobInquiry").Action<GetJobDetailRequest, WebViewResult>("JobDetail").Execute(model, ct);
-        return View(result.Data.ViewName);
+        return View(result.Data!.ViewName);
     }
 
     [HttpPost]

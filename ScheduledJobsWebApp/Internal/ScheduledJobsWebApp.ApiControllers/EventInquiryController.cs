@@ -12,7 +12,7 @@ public sealed partial class EventInquiryController : Controller
     public async Task<IActionResult> Notifications(CancellationToken ct)
     {
         var result = await api.Group("EventInquiry").Action<EmptyRequest, WebViewResult>("Notifications").Execute(new EmptyRequest(), ct);
-        return View(result.Data.ViewName);
+        return View(result.Data!.ViewName);
     }
 
     [HttpPost]
@@ -24,7 +24,7 @@ public sealed partial class EventInquiryController : Controller
     public async Task<IActionResult> NotificationDetail(GetNotificationDetailRequest model, CancellationToken ct)
     {
         var result = await api.Group("EventInquiry").Action<GetNotificationDetailRequest, WebViewResult>("NotificationDetail").Execute(model, ct);
-        return View(result.Data.ViewName);
+        return View(result.Data!.ViewName);
     }
 
     [HttpPost]
