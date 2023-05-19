@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="XTI_Hub.Abstractions" Version="1.4.40" />
+	  <PackageReference Include="XTI_Hub.Abstractions" Version="1.4.41" />
 	</ItemGroup>
 
 	<ItemGroup>

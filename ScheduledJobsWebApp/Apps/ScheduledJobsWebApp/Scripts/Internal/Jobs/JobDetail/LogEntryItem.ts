@@ -26,11 +26,13 @@ export class LogEntryItem extends BasicComponent {
         const detailsComponent = new TextComponent(view.details);
         detailsComponent.setText(logEntry.Details);
         detailsComponent.syncTitleWithText();
-        if (sourceLogEntry) {
+        if (sourceLogEntry && sourceLogEntry.SourceLogEntry.RequestID) {
             const sourceLogEntryLink = new TextLinkComponent(view.sourceLogEntryLink);
-            // TODO: change to the actual url
             sourceLogEntryLink.setHref(
-                hubApi.Logs.LogEntries.getUrl({ RequestID: sourceLogEntry.SourceLogEntry.RequestID, InstallationID: null })
+                hubApi.Logs.LogEntries.getUrl({
+                    RequestID: sourceLogEntry.SourceLogEntry.RequestID,
+                    InstallationID: null
+                })
             );
         }
         else {

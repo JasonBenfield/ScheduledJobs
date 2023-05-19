@@ -36,7 +36,7 @@ export class SelectSourceKeyPanelView extends GridView {
         );
     }
 
-    handleFormSubmitted(action: (el: HTMLElement, evt: JQueryEventObject) => void) {
+    handleFormSubmitted(action: (el: HTMLElement, evt: JQuery.Event) => void) {
         this.form.onSubmit()
             .execute(action)
             .subscribe();
