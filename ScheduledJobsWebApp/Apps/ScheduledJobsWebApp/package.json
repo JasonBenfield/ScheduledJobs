@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@jasonbenfield/hubwebapp": "^1.4.38",
-    "@jasonbenfield/sharedwebapp": "^1.9.23"
+    "@jasonbenfield/sharedwebapp": "^1.9.25"
   },
   "devDependencies": {
     "@types/node": "^18.11.15",

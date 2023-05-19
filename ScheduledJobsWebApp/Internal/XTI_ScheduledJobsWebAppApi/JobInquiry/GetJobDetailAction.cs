@@ -1,4 +1,6 @@
-﻿using XTI_HubAppClient;
+﻿using XTI_Core;
+using XTI_Hub.Abstractions;
+using XTI_HubAppClient;
 
 namespace XTI_ScheduledJobsWebAppApi.JobInquiry;
 
@@ -25,8 +27,31 @@ internal sealed class GetJobDetailAction : AppAction<GetJobDetailRequest, Trigge
         var sourceLogEntries = new List<SourceLogEntryModel>();
         foreach (var logEntry in logEntriesWithSource)
         {
-            var sourceLogEntry = await hubClient.Logs.GetLogEntryByKey(logEntry.SourceEventKey, stoppingToken);
-            sourceLogEntries.Add(new SourceLogEntryModel(logEntry.ID, sourceLogEntry));
+            try
+            {
+                var sourceLogEntry = await hubClient.Logs.GetLogEntryByKey(logEntry.SourceEventKey, stoppingToken);
+                sourceLogEntries.Add(new SourceLogEntryModel(logEntry.ID, sourceLogEntry));
+            }
+            catch
+            {
+                sourceLogEntries.Add
+                (
+                    new SourceLogEntryModel
+                    (
+                        0, 
+                        new AppLogEntryModel
+                        (
+                            ID: 0,
+                            RequestID: 0,
+                            TimeOccurred: DateTimeOffset.MaxValue,
+                            Severity: AppEventSeverity.Values.NotSet,
+                            Caption: "",
+                            Message: "Placeholder",
+                            Detail: ""
+                        )
+                    )
+                );
+            }
         }
         return new TriggeredJobDetailModel
         (
