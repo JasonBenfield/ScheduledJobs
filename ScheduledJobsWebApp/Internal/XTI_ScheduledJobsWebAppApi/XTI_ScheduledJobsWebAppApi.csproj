@@ -8,7 +8,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="XTI_App.Extensions" Version="1.8.38" />
-		<PackageReference Include="XTI_HubAppClient" Version="1.4.41" />
+		<PackageReference Include="XTI_HubAppClient" Version="1.4.42" />
 		<PackageReference Include="XTI_WebApp.Api" Version="1.8.38" />
 	</ItemGroup>
 
