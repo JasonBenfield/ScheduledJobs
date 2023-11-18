@@ -2,7 +2,7 @@
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
-import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { JobDefinitionListItem } from "./JobDefinitionListItem";
 import { JobDefinitionListItemView } from "./JobDefinitionListItemView";
 import { JobDefinitionListPanelView } from "./JobDefinitionListPanelView";
@@ -34,10 +34,10 @@ export class JobDefinitionListPanel implements IPanel {
     private readonly jobDefinitions: ListGroup<JobDefinitionListItem, JobDefinitionListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobDefinitionListPanelView) {
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobDefinitionListPanelView) {
         this.alert = new MessageAlert(view.alert);
         this.jobDefinitions = new ListGroup(view.jobDefinitions);
-        this.jobDefinitions.registerItemClicked(this.onJobClicked.bind(this));
+        this.jobDefinitions.when.itemClicked.then(this.onJobClicked.bind(this));
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
@@ -60,7 +60,7 @@ export class JobDefinitionListPanel implements IPanel {
     private getJobDefinitions() {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.JobDefinitions.GetJobDefinitions()
+            () => this.schdJobsClient.JobDefinitions.GetJobDefinitions()
         );
     }
 

@@ -15,13 +15,13 @@ class MainPage extends ScheduledJobsPage {
     constructor() {
         super(new MainPageView());
         this.jobDefinitionsPanel = this.panels.add(
-            new JobDefinitionListPanel(this.defaultApi, this.view.jobDefinitionsPanel)
+            new JobDefinitionListPanel(this.schdJobsClient, this.view.jobDefinitionsPanel)
         );
         this.jobsPanel = this.panels.add(
-            new JobListPanel(this.defaultApi, this.view.jobsPanel)
+            new JobListPanel(this.schdJobsClient, this.view.jobsPanel)
         );
         this.menuPanel = this.panels.add(
-            new MainMenuPanel(this.defaultApi, this.view.menuPanel)
+            new MainMenuPanel(this.schdJobsClient, this.view.menuPanel)
         );
         this.jobDefinitionsPanel.refresh();
         this.activateJobDefinitionsPanel();

@@ -1,13 +1,13 @@
-﻿import { HubAppApi } from "@jasonbenfield/hubwebapp/Api/HubAppApi";
+﻿import { HubAppClient } from "@jasonbenfield/hubwebapp/Http/HubAppClient";
 import { BasicComponent } from "@jasonbenfield/sharedwebapp/Components/BasicComponent";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
 import { TextLinkComponent } from "@jasonbenfield/sharedwebapp/Components/TextLinkComponent";
 import { ContextualClass } from "@jasonbenfield/sharedwebapp/ContextualClass";
-import { AppEventSeverity } from '../../../Lib/Api/AppEventSeverity';
+import { AppEventSeverity } from '../../../Lib/Http/AppEventSeverity';
 import { LogEntryItemView } from "./LogEntryItemView";
 
 export class LogEntryItem extends BasicComponent {
-    constructor(hubApi: HubAppApi, logEntry: IJobLogEntryModel, sourceLogEntry: ISourceLogEntryModel, view: LogEntryItemView) {
+    constructor(hubClient: HubAppClient, logEntry: IJobLogEntryModel, sourceLogEntry: ISourceLogEntryModel, view: LogEntryItemView) {
         super(view);
         const categoryComponent = new TextComponent(view.category);
         categoryComponent.setText(logEntry.Category);
@@ -29,7 +29,7 @@ export class LogEntryItem extends BasicComponent {
         if (sourceLogEntry && sourceLogEntry.SourceLogEntry.RequestID) {
             const sourceLogEntryLink = new TextLinkComponent(view.sourceLogEntryLink);
             sourceLogEntryLink.setHref(
-                hubApi.Logs.LogEntries.getUrl({
+                hubClient.Logs.LogEntries.getUrl({
                     RequestID: sourceLogEntry.SourceLogEntry.RequestID,
                     InstallationID: null
                 })

@@ -1,8 +1,8 @@
 // Generated code
 
-import { AppApi } from "@jasonbenfield/sharedwebapp/Api/AppApi";
-import { AppApiEvents } from "@jasonbenfield/sharedwebapp/Api/AppApiEvents";
-import { AppApiQuery } from "@jasonbenfield/sharedwebapp/Api/AppApiQuery";
+import { AppClient } from "@jasonbenfield/sharedwebapp/Http/AppClient";
+import { AppClientEvents } from "@jasonbenfield/sharedwebapp/Http/AppClientEvents";
+import { AppClientQuery } from "@jasonbenfield/sharedwebapp/Http/AppClientQuery";
 import { HomeGroup } from "./HomeGroup";
 import { RecurringGroup } from "./RecurringGroup";
 import { EventDefinitionsGroup } from "./EventDefinitionsGroup";
@@ -14,9 +14,13 @@ import { JobsGroup } from "./JobsGroup";
 import { TasksGroup } from "./TasksGroup";
 
 
-export class ScheduledJobsAppApi extends AppApi {
-	constructor(events: AppApiEvents) {
-		super(events, 'ScheduledJobs');
+export class ScheduledJobsAppClient extends AppClient {
+	constructor(events: AppClientEvents) {
+		super(
+			events, 
+			'ScheduledJobs', 
+			pageContext.EnvironmentName === 'Production' || pageContext.EnvironmentName === 'Staging' ? 'Current' : 'Current'
+		);
 		this.Home = this.addGroup((evts, resourceUrl) => new HomeGroup(evts, resourceUrl));
 		this.Recurring = this.addGroup((evts, resourceUrl) => new RecurringGroup(evts, resourceUrl));
 		this.EventDefinitions = this.addGroup((evts, resourceUrl) => new EventDefinitionsGroup(evts, resourceUrl));

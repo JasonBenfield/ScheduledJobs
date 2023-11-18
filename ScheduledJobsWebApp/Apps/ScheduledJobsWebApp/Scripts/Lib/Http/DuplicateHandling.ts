@@ -24,4 +24,8 @@ export class DuplicateHandling extends NumericValue implements IDuplicateHandlin
 	private constructor(Value: number, DisplayText: string) {
 		super(Value, DisplayText);
 	}
+	
+	equalsAny: (...other: this[] | IDuplicateHandling[] | number[] | string[]) => boolean;
+	
+	equals: (other: this | IDuplicateHandling | number | string) => boolean;
 }

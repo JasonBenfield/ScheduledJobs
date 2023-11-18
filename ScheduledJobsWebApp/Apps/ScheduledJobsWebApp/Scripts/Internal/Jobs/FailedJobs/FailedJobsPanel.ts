@@ -3,7 +3,7 @@ import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Co
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
-import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
 import { JobListPanelView } from "../JobListPanelView";
 import { JobSummaryListItem } from "../JobSummaryListItem";
 import { JobSummaryListItemView } from "../JobSummaryListItemView";
@@ -26,7 +26,7 @@ export class FailedJobsPanel implements IPanel {
     private readonly failedJobsList: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobListPanelView) {
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobListPanelView) {
         this.alert = new MessageAlert(view.alert);
         this.failedJobsList = new ListGroup(view.jobs);
         new TextComponent(view.heading).setText('Failed Jobs');
@@ -42,7 +42,7 @@ export class FailedJobsPanel implements IPanel {
         const failedJobs = await this.getFailedJobs();
         this.failedJobsList.setItems(
             failedJobs,
-            (job, itemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
+            (job, itemView) => new JobSummaryListItem(this.schdJobsClient, job, itemView)
         );
         if (failedJobs.length === 0) {
             this.alert.success('No failed jobs were found.');
@@ -52,7 +52,7 @@ export class FailedJobsPanel implements IPanel {
     private getFailedJobs() {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.JobInquiry.GetFailedJobs()
+            () => this.schdJobsClient.JobInquiry.GetFailedJobs()
         );
     }
 

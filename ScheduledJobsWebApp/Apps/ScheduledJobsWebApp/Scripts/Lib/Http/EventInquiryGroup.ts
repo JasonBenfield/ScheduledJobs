@@ -1,13 +1,13 @@
 // Generated code
 
-import { AppApiGroup } from "@jasonbenfield/sharedwebapp/Api/AppApiGroup";
-import { AppApiAction } from "@jasonbenfield/sharedwebapp/Api/AppApiAction";
-import { AppApiView } from "@jasonbenfield/sharedwebapp/Api/AppApiView";
-import { AppApiEvents } from "@jasonbenfield/sharedwebapp/Api/AppApiEvents";
-import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Api/AppResourceUrl";
+import { AppClientGroup } from "@jasonbenfield/sharedwebapp/Http/AppClientGroup";
+import { AppClientAction } from "@jasonbenfield/sharedwebapp/Http/AppClientAction";
+import { AppClientView } from "@jasonbenfield/sharedwebapp/Http/AppClientView";
+import { AppClientEvents } from "@jasonbenfield/sharedwebapp/Http/AppClientEvents";
+import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Http/AppResourceUrl";
 
-export class EventInquiryGroup extends AppApiGroup {
-	constructor(events: AppApiEvents, resourceUrl: AppResourceUrl) {
+export class EventInquiryGroup extends AppClientGroup {
+	constructor(events: AppClientEvents, resourceUrl: AppResourceUrl) {
 		super(events, resourceUrl, 'EventInquiry');
 		this.Notifications = this.createView<IEmptyRequest>('Notifications');
 		this.GetRecentNotificationsAction = this.createAction<IEmptyRequest,IEventSummaryModel[]>('GetRecentNotifications', 'Get Recent Notifications');
@@ -15,10 +15,10 @@ export class EventInquiryGroup extends AppApiGroup {
 		this.GetNotificationDetailAction = this.createAction<IGetNotificationDetailRequest,IEventNotificationDetailModel>('GetNotificationDetail', 'Get Notification Detail');
 	}
 	
-	readonly Notifications: AppApiView<IEmptyRequest>;
-	readonly GetRecentNotificationsAction: AppApiAction<IEmptyRequest,IEventSummaryModel[]>;
-	readonly NotificationDetail: AppApiView<IGetNotificationDetailRequest>;
-	readonly GetNotificationDetailAction: AppApiAction<IGetNotificationDetailRequest,IEventNotificationDetailModel>;
+	readonly Notifications: AppClientView<IEmptyRequest>;
+	readonly GetRecentNotificationsAction: AppClientAction<IEmptyRequest,IEventSummaryModel[]>;
+	readonly NotificationDetail: AppClientView<IGetNotificationDetailRequest>;
+	readonly GetNotificationDetailAction: AppClientAction<IGetNotificationDetailRequest,IEventNotificationDetailModel>;
 	
 	GetRecentNotifications(errorOptions?: IActionErrorOptions) {
 		return this.GetRecentNotificationsAction.execute({}, errorOptions || {});

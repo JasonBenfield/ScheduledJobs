@@ -1,7 +1,7 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
 import { Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { MenuComponent } from "@jasonbenfield/sharedwebapp/Components/MenuComponent";
-import { ScheduledJobsAppApi } from "../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../Lib/Http/ScheduledJobsAppClient";
 import { MainMenuPanelView } from "./MainMenuPanelVIew";
 
 interface IResults {
@@ -19,8 +19,8 @@ export class MainMenuPanelResult {
 export class MainMenuPanel implements IPanel {
     private readonly awaitable = new Awaitable<MainMenuPanelResult>();
 
-    constructor(schdJobsApi: ScheduledJobsAppApi, private readonly view: MainMenuPanelView) {
-        const menu = new MenuComponent(schdJobsApi, 'main', view.menu);
+    constructor(schdJobsClient: ScheduledJobsAppClient, private readonly view: MainMenuPanelView) {
+        const menu = new MenuComponent(schdJobsClient, 'main', view.menu);
         menu.refresh();
         new Command(this.done.bind(this)).add(this.view.doneButton);
     }

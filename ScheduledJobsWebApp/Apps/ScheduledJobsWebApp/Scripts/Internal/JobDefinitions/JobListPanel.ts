@@ -2,7 +2,7 @@
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
-import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { JobListPanelView } from "../Jobs/JobListPanelView";
 import { JobSummaryListItem } from "../Jobs/JobSummaryListItem";
 import { JobSummaryListItemView } from "../Jobs/JobSummaryListItemView";
@@ -26,7 +26,7 @@ export class JobListPanel implements IPanel {
     private readonly refreshCommand: AsyncCommand;
     private jobDefinitionID: number;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobListPanelView) {
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobListPanelView) {
         view.menuButton.hide();
         view.backButton.show();
         this.alert = new MessageAlert(view.alert);
@@ -43,14 +43,14 @@ export class JobListPanel implements IPanel {
         const jobs = await this.getRecentTriggeredJobs();
         this.triggeredJobs.setItems(
             jobs,
-            (job, itemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
+            (job, itemView) => new JobSummaryListItem(this.schdJobsClient, job, itemView)
         );
     }
 
     private getRecentTriggeredJobs() {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.JobDefinitions.GetRecentTriggeredJobs({
+            () => this.schdJobsClient.JobDefinitions.GetRecentTriggeredJobs({
                 JobDefinitionID: this.jobDefinitionID
             })
         );

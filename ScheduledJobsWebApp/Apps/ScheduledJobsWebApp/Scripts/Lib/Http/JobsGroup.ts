@@ -1,13 +1,13 @@
 // Generated code
 
-import { AppApiGroup } from "@jasonbenfield/sharedwebapp/Api/AppApiGroup";
-import { AppApiAction } from "@jasonbenfield/sharedwebapp/Api/AppApiAction";
-import { AppApiView } from "@jasonbenfield/sharedwebapp/Api/AppApiView";
-import { AppApiEvents } from "@jasonbenfield/sharedwebapp/Api/AppApiEvents";
-import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Api/AppResourceUrl";
+import { AppClientGroup } from "@jasonbenfield/sharedwebapp/Http/AppClientGroup";
+import { AppClientAction } from "@jasonbenfield/sharedwebapp/Http/AppClientAction";
+import { AppClientView } from "@jasonbenfield/sharedwebapp/Http/AppClientView";
+import { AppClientEvents } from "@jasonbenfield/sharedwebapp/Http/AppClientEvents";
+import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Http/AppResourceUrl";
 
-export class JobsGroup extends AppApiGroup {
-	constructor(events: AppApiEvents, resourceUrl: AppResourceUrl) {
+export class JobsGroup extends AppClientGroup {
+	constructor(events: AppClientEvents, resourceUrl: AppResourceUrl) {
 		super(events, resourceUrl, 'Jobs');
 		this.AddOrUpdateJobSchedulesAction = this.createAction<IAddOrUpdateJobSchedulesRequest,IEmptyActionResult>('AddOrUpdateJobSchedules', 'Add Or Update Job Schedules');
 		this.AddOrUpdateRegisteredJobsAction = this.createAction<IRegisteredJob[],IEmptyActionResult>('AddOrUpdateRegisteredJobs', 'Add Or Update Registered Jobs');
@@ -22,17 +22,17 @@ export class JobsGroup extends AppApiGroup {
 		this.LogMessageAction = this.createAction<ILogMessageRequest,IEmptyActionResult>('LogMessage', 'Log Message');
 	}
 	
-	readonly AddOrUpdateJobSchedulesAction: AppApiAction<IAddOrUpdateJobSchedulesRequest,IEmptyActionResult>;
-	readonly AddOrUpdateRegisteredJobsAction: AppApiAction<IRegisteredJob[],IEmptyActionResult>;
-	readonly TriggerJobsAction: AppApiAction<ITriggerJobsRequest,IPendingJobModel[]>;
-	readonly DeleteJobsWithNoTasksAction: AppApiAction<IDeleteJobsWithNoTasksRequest,IEmptyActionResult>;
-	readonly RetryJobsAction: AppApiAction<IRetryJobsRequest,ITriggeredJobWithTasksModel[]>;
-	readonly StartJobAction: AppApiAction<IStartJobRequest,ITriggeredJobWithTasksModel>;
-	readonly StartTaskAction: AppApiAction<IStartTaskRequest,IEmptyActionResult>;
-	readonly JobCancelledAction: AppApiAction<IJobCancelledRequest,IEmptyActionResult>;
-	readonly TaskCompletedAction: AppApiAction<ITaskCompletedRequest,ITriggeredJobWithTasksModel>;
-	readonly TaskFailedAction: AppApiAction<ITaskFailedRequest,ITriggeredJobWithTasksModel>;
-	readonly LogMessageAction: AppApiAction<ILogMessageRequest,IEmptyActionResult>;
+	readonly AddOrUpdateJobSchedulesAction: AppClientAction<IAddOrUpdateJobSchedulesRequest,IEmptyActionResult>;
+	readonly AddOrUpdateRegisteredJobsAction: AppClientAction<IRegisteredJob[],IEmptyActionResult>;
+	readonly TriggerJobsAction: AppClientAction<ITriggerJobsRequest,IPendingJobModel[]>;
+	readonly DeleteJobsWithNoTasksAction: AppClientAction<IDeleteJobsWithNoTasksRequest,IEmptyActionResult>;
+	readonly RetryJobsAction: AppClientAction<IRetryJobsRequest,ITriggeredJobWithTasksModel[]>;
+	readonly StartJobAction: AppClientAction<IStartJobRequest,ITriggeredJobWithTasksModel>;
+	readonly StartTaskAction: AppClientAction<IStartTaskRequest,IEmptyActionResult>;
+	readonly JobCancelledAction: AppClientAction<IJobCancelledRequest,IEmptyActionResult>;
+	readonly TaskCompletedAction: AppClientAction<ITaskCompletedRequest,ITriggeredJobWithTasksModel>;
+	readonly TaskFailedAction: AppClientAction<ITaskFailedRequest,ITriggeredJobWithTasksModel>;
+	readonly LogMessageAction: AppClientAction<ILogMessageRequest,IEmptyActionResult>;
 	
 	AddOrUpdateJobSchedules(model: IAddOrUpdateJobSchedulesRequest, errorOptions?: IActionErrorOptions) {
 		return this.AddOrUpdateJobSchedulesAction.execute(model, errorOptions || {});
