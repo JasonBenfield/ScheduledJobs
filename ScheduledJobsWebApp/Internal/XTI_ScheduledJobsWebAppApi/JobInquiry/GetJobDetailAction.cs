@@ -29,7 +29,7 @@ internal sealed class GetJobDetailAction : AppAction<GetJobDetailRequest, Trigge
         {
             try
             {
-                var sourceLogEntry = await hubClient.Logs.GetLogEntryByKey(logEntry.SourceEventKey, stoppingToken);
+                var sourceLogEntry = await hubClient.Logs.GetLogEntryOrDefaultByKey(logEntry.SourceEventKey, stoppingToken);
                 sourceLogEntries.Add(new SourceLogEntryModel(logEntry.ID, sourceLogEntry));
             }
             catch
@@ -47,7 +47,8 @@ internal sealed class GetJobDetailAction : AppAction<GetJobDetailRequest, Trigge
                             Severity: AppEventSeverity.Values.NotSet,
                             Caption: "",
                             Message: "Placeholder",
-                            Detail: ""
+                            Detail: "",
+                            Category: ""
                         )
                     )
                 );

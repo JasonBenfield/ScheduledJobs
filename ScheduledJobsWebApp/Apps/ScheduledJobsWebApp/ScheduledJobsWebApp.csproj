@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_HubAppClient.WebApp.Extensions" Version="1.4.43" />
-		<PackageReference Include="XTI_WebApp.RCL" Version="1.8.38" />
+		<PackageReference Include="XTI_HubAppClient.WebApp.Extensions" Version="1.4.44-dev231118175222046" />
+		<PackageReference Include="XTI_WebApp.RCL" Version="1.8.40-dev231118172153455" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.9.5">
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.2.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

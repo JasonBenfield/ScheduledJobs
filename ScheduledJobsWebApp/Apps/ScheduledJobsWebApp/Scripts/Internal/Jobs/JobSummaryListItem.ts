@@ -1,14 +1,14 @@
-﻿import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
+﻿import { BasicComponent } from "@jasonbenfield/sharedwebapp/Components/BasicComponent";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
-import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
+import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
+import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { FormattedTimeSpan } from "../FormattedTimeSpan";
 import { JobSummaryListItemView } from "./JobSummaryListItemView";
-import { BasicComponent } from "@jasonbenfield/sharedwebapp/Components/BasicComponent";
 
 export class JobSummaryListItem extends BasicComponent {
-    constructor(schdJobsApp: ScheduledJobsAppApi, job: IJobSummaryModel, itemView: JobSummaryListItemView) {
+    constructor(schdJobsClient: ScheduledJobsAppClient, job: IJobSummaryModel, itemView: JobSummaryListItemView) {
         super(itemView);
-        itemView.setHref(schdJobsApp.JobInquiry.JobDetail.getUrl({ JobID: job.ID }).value());
+        itemView.setHref(schdJobsClient.JobInquiry.JobDetail.getUrl({ JobID: job.ID }).value());
         new TextComponent(itemView.displayText).setText(job.JobKey.DisplayText);
         new TextComponent(itemView.status).setText(job.Status.DisplayText);
         new TextComponent(itemView.timeStarted).setText(new FormattedDate(job.TimeStarted).formatDateTime());

@@ -1,7 +1,7 @@
 ﻿import { BasicComponent } from "@jasonbenfield/sharedwebapp/Components/BasicComponent";
 import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
-import { JobTaskStatus } from "../../../Lib/Api/JobTaskStatus";
+import { JobTaskStatus } from "../../../Lib/Http/JobTaskStatus";
 import { FormattedTimeSpan } from "../../FormattedTimeSpan";
 import { TaskListItemView } from "./TaskListItemView";
 

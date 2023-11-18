@@ -1,13 +1,13 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
-import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
-import { TextValueFormGroup } from "@jasonbenfield/sharedwebapp/Forms/TextValueFormGroup";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
-import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
+import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { FormGroupText } from "@jasonbenfield/sharedwebapp/Forms/FormGroupText";
 import { JobSummaryListItem } from "../../Jobs/JobSummaryListItem";
 import { JobSummaryListItemView } from "../../Jobs/JobSummaryListItemView";
 import { NotificationDetailPanelView } from "./NotificationDetailPanelView";
+import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
 
 interface IResults {
     menuRequested?: boolean;
@@ -23,19 +23,19 @@ export class NotificationDetailPanelResult {
 
 export class NotificationDetailPanel implements IPanel {
     private readonly awaitable = new Awaitable<NotificationDetailPanelResult>();
-    private readonly sourceKey: TextValueFormGroup;
-    private readonly sourceData: TextValueFormGroup;
+    private readonly sourceKey: FormGroupText;
+    private readonly sourceData: FormGroupText;
     private readonly triggeredJobs: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly alert: MessageAlert;
     private readonly refreshCommand: AsyncCommand;
     private notificationID: number;
     private readonly eventDisplayText: TextComponent;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: NotificationDetailPanelView) {
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: NotificationDetailPanelView) {
         this.alert = new MessageAlert(this.view.alert);
-        this.sourceKey = new TextValueFormGroup(view.sourceKey);
+        this.sourceKey = new FormGroupText(view.sourceKey);
         this.sourceKey.setCaption('Source Key');
-        this.sourceData = new TextValueFormGroup(view.sourceData);
+        this.sourceData = new FormGroupText(view.sourceData);
         this.view.hideJobDetail();
         new TextComponent(this.view.triggeredJobsTitle).setText('Triggered Jobs');
         this.eventDisplayText = new TextComponent(this.view.eventDisplayText);
@@ -57,7 +57,7 @@ export class NotificationDetailPanel implements IPanel {
         this.sourceData.setValue(notificationDetail.Event.SourceData);
         this.triggeredJobs.setItems(
             notificationDetail.TriggeredJobs,
-            (job, itemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
+            (job, itemView) => new JobSummaryListItem(this.schdJobsClient, job, itemView)
         );
         this.view.showJobDetail();
     }
@@ -65,7 +65,7 @@ export class NotificationDetailPanel implements IPanel {
     private getNotificationDetail(notificationID: number) {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.EventInquiry.GetNotificationDetail(
+            () => this.schdJobsClient.EventInquiry.GetNotificationDetail(
                 { NotificationID: notificationID }
             )
         );

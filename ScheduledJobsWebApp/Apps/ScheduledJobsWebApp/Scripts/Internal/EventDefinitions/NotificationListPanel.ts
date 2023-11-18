@@ -2,7 +2,7 @@
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
-import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { EventSummaryListItem } from "../Events/Notifications/EventSummaryListItem";
 import { EventSummaryListItemView } from "../Events/Notifications/EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
@@ -27,7 +27,7 @@ export class NotificationListPanel implements IPanel {
     private eventDefinitionID: number;
     private sourceKey: string = '';
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: NotificationListPanelView) {
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: NotificationListPanelView) {
         this.alert = new MessageAlert(view.alert);
         this.notifications = new ListGroup(view.notifications);
         new Command(this.back.bind(this)).add(view.backButton);
@@ -43,14 +43,14 @@ export class NotificationListPanel implements IPanel {
         this.notifications.setItems(
             notifications,
             (notification, itemView) =>
-                new EventSummaryListItem(this.schdJobsApi, notification, itemView)
+                new EventSummaryListItem(this.schdJobsClient, notification, itemView)
         );
     }
 
     private getNotifications() {
         return this.alert.infoAction(
             'Loading',
-            () => this.schdJobsApi.EventDefinitions.GetRecentNotifications({
+            () => this.schdJobsClient.EventDefinitions.GetRecentNotifications({
                 EventDefinitionID: this.eventDefinitionID,
                 SourceKey: this.sourceKey
             })

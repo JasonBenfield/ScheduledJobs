@@ -2,7 +2,7 @@
 namespace XTI_ScheduledJobsAppClient;
 public sealed partial class ScheduledJobsAppClient : AppClient
 {
-    public ScheduledJobsAppClient(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, ScheduledJobsAppClientVersion version) : base(httpClientFactory, xtiTokenAccessor, clientUrl, "ScheduledJobs", version.Value)
+    public ScheduledJobsAppClient(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, IAppClientRequestKey requestKey, ScheduledJobsAppClientVersion version) : base(httpClientFactory, xtiTokenAccessor, clientUrl, requestKey, "ScheduledJobs", version.Value)
     {
         Home = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new HomeGroup(_clientFactory, _tokenAccessor, _url, _options));
         Recurring = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new RecurringGroup(_clientFactory, _tokenAccessor, _url, _options));
@@ -18,20 +18,12 @@ public sealed partial class ScheduledJobsAppClient : AppClient
     public ScheduledJobsRoleNames RoleNames { get; } = ScheduledJobsRoleNames.Instance;
     public string AppName { get; } = "ScheduledJobs";
     public HomeGroup Home { get; }
-
     public RecurringGroup Recurring { get; }
-
     public EventDefinitionsGroup EventDefinitions { get; }
-
     public EventInquiryGroup EventInquiry { get; }
-
     public EventsGroup Events { get; }
-
     public JobDefinitionsGroup JobDefinitions { get; }
-
     public JobInquiryGroup JobInquiry { get; }
-
     public JobsGroup Jobs { get; }
-
     public TasksGroup Tasks { get; }
 }

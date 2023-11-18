@@ -34,7 +34,7 @@ export class SelectSourceKeyPanel implements IPanel {
         view.handleFormSubmitted(this.onFormSubmitted.bind(this));
     }
 
-    private onFormSubmitted(el: HTMLElement, evt: JQueryEventObject) {
+    private onFormSubmitted(el: HTMLElement, evt: JQuery.Event) {
         evt.preventDefault();
         this.next();
     }

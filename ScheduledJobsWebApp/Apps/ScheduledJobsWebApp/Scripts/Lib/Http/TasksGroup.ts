@@ -1,13 +1,13 @@
 // Generated code
 
-import { AppApiGroup } from "@jasonbenfield/sharedwebapp/Api/AppApiGroup";
-import { AppApiAction } from "@jasonbenfield/sharedwebapp/Api/AppApiAction";
-import { AppApiView } from "@jasonbenfield/sharedwebapp/Api/AppApiView";
-import { AppApiEvents } from "@jasonbenfield/sharedwebapp/Api/AppApiEvents";
-import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Api/AppResourceUrl";
+import { AppClientGroup } from "@jasonbenfield/sharedwebapp/Http/AppClientGroup";
+import { AppClientAction } from "@jasonbenfield/sharedwebapp/Http/AppClientAction";
+import { AppClientView } from "@jasonbenfield/sharedwebapp/Http/AppClientView";
+import { AppClientEvents } from "@jasonbenfield/sharedwebapp/Http/AppClientEvents";
+import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Http/AppResourceUrl";
 
-export class TasksGroup extends AppApiGroup {
-	constructor(events: AppApiEvents, resourceUrl: AppResourceUrl) {
+export class TasksGroup extends AppClientGroup {
+	constructor(events: AppClientEvents, resourceUrl: AppResourceUrl) {
 		super(events, resourceUrl, 'Tasks');
 		this.CancelTaskAction = this.createAction<IGetTaskRequest,IEmptyActionResult>('CancelTask', 'Cancel Task');
 		this.RetryTaskAction = this.createAction<IGetTaskRequest,IEmptyActionResult>('RetryTask', 'Retry Task');
@@ -16,11 +16,11 @@ export class TasksGroup extends AppApiGroup {
 		this.EditTaskDataAction = this.createAction<IEditTaskDataRequest,IEmptyActionResult>('EditTaskData', 'Edit Task Data');
 	}
 	
-	readonly CancelTaskAction: AppApiAction<IGetTaskRequest,IEmptyActionResult>;
-	readonly RetryTaskAction: AppApiAction<IGetTaskRequest,IEmptyActionResult>;
-	readonly SkipTaskAction: AppApiAction<IGetTaskRequest,IEmptyActionResult>;
-	readonly TimeoutTaskAction: AppApiAction<IGetTaskRequest,IEmptyActionResult>;
-	readonly EditTaskDataAction: AppApiAction<IEditTaskDataRequest,IEmptyActionResult>;
+	readonly CancelTaskAction: AppClientAction<IGetTaskRequest,IEmptyActionResult>;
+	readonly RetryTaskAction: AppClientAction<IGetTaskRequest,IEmptyActionResult>;
+	readonly SkipTaskAction: AppClientAction<IGetTaskRequest,IEmptyActionResult>;
+	readonly TimeoutTaskAction: AppClientAction<IGetTaskRequest,IEmptyActionResult>;
+	readonly EditTaskDataAction: AppClientAction<IEditTaskDataRequest,IEmptyActionResult>;
 	
 	CancelTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
 		return this.CancelTaskAction.execute(model, errorOptions || {});

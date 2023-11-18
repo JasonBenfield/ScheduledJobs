@@ -2,7 +2,7 @@
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { TextAreaControl } from "@jasonbenfield/sharedwebapp/Components/TextAreaControl";
-import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
 import { EditTaskDataPanelView } from "./EditTaskDataPanelView";
 
 interface IResult {
@@ -28,7 +28,7 @@ export class EditTaskDataPanel implements IPanel {
     private readonly taskData: TextAreaControl;
     private taskID: number;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: EditTaskDataPanelView) {
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: EditTaskDataPanelView) {
         this.alert = new MessageAlert(view.alert);
         this.taskData = new TextAreaControl(view.taskDataFormGroup.textArea);
         new Command(this.cancel.bind(this)).add(view.cancelButton);
@@ -40,7 +40,7 @@ export class EditTaskDataPanel implements IPanel {
     private async save() {
         await this.alert.infoAction(
             'Saving...',
-            () => this.schdJobsApi.Tasks.EditTaskData({
+            () => this.schdJobsClient.Tasks.EditTaskData({
                 TaskID: this.taskID,
                 TaskData: this.taskData.getValue()
             })

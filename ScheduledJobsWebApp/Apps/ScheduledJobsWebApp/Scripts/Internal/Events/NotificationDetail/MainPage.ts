@@ -14,9 +14,9 @@ class MainPage extends ScheduledJobsPage {
     constructor() {
         super(new MainPageView());
         this.notificationDetailPanel = this.panels.add(
-            new NotificationDetailPanel(this.defaultApi, this.view.notificationDetailPanel)
+            new NotificationDetailPanel(this.schdJobsClient, this.view.notificationDetailPanel)
         );
-        this.menuPanel = this.panels.add(new MainMenuPanel(this.defaultApi, this.view.menuPanel));
+        this.menuPanel = this.panels.add(new MainMenuPanel(this.schdJobsClient, this.view.menuPanel));
         this.notificationDetailPanel.setNotificationID(
             Number(Url.current().getQueryValue('NotificationID'))
         );

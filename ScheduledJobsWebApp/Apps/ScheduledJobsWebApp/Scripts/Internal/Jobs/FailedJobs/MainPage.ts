@@ -12,8 +12,8 @@ class MainPage extends ScheduledJobsPage {
 
     constructor() {
         super(new MainPageView());
-        this.failedJobsPanel = this.panels.add(new FailedJobsPanel(this.defaultApi, this.view.jobListPanel));
-        this.menuPanel = this.panels.add(new MainMenuPanel(this.defaultApi, this.view.menuPanel));
+        this.failedJobsPanel = this.panels.add(new FailedJobsPanel(this.schdJobsClient, this.view.jobListPanel));
+        this.menuPanel = this.panels.add(new MainMenuPanel(this.schdJobsClient, this.view.menuPanel));
         this.failedJobsPanel.refresh();
         this.activateFailedJobsPanel();
     }

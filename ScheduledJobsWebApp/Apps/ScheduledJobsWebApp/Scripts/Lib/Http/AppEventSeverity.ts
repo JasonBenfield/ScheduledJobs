@@ -28,4 +28,8 @@ export class AppEventSeverity extends NumericValue implements IAppEventSeverity 
 	private constructor(Value: number, DisplayText: string) {
 		super(Value, DisplayText);
 	}
+	
+	equalsAny: (...other: this[] | IAppEventSeverity[] | number[] | string[]) => boolean;
+	
+	equals: (other: this | IAppEventSeverity | number | string) => boolean;
 }

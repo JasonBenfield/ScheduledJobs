@@ -2,7 +2,7 @@
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
-import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { EventDefinitionListItem } from "./EventDefinitionListItem";
 import { EventDefinitionListItemView } from "./EventDefinitionListItemView";
 import { EventDefinitionListPanelView } from "./EventDefinitionListPanelView";
@@ -34,10 +34,10 @@ export class EventDefinitionListPanel implements IPanel {
     private readonly eventDefinitions: ListGroup<EventDefinitionListItem, EventDefinitionListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: EventDefinitionListPanelView) {
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: EventDefinitionListPanelView) {
         this.alert = new MessageAlert(view.alert);
         this.eventDefinitions = new ListGroup(view.eventDefinitions);
-        this.eventDefinitions.registerItemClicked(this.onDefinitionClicked.bind(this));
+        this.eventDefinitions.when.itemClicked.then(this.onDefinitionClicked.bind(this));
         new Command(this.menu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
@@ -64,7 +64,7 @@ export class EventDefinitionListPanel implements IPanel {
     private getEventDefinitions() {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.EventDefinitions.GetEventDefinitions()
+            () => this.schdJobsClient.EventDefinitions.GetEventDefinitions()
         );
     }
 

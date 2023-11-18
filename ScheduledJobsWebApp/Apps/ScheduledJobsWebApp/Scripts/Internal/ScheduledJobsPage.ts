@@ -1,12 +1,14 @@
 ﻿import { BasicPage } from "@jasonbenfield/sharedwebapp/Components/BasicPage";
 import { BasicPageView } from "@jasonbenfield/sharedwebapp/Views/BasicPageView";
-import { ScheduledJobsAppApi } from "../Lib/Api/ScheduledJobsAppApi";
-import { Apis } from "./Apis";
+import { ScheduledJobsAppClient } from "../Lib/Http/ScheduledJobsAppClient";
+import { AppClients } from "./AppClients";
 
 export class ScheduledJobsPage extends BasicPage {
-    protected readonly defaultApi: ScheduledJobsAppApi;
+    protected readonly schdJobsClient: ScheduledJobsAppClient;
 
     constructor(view: BasicPageView) {
-        super(new Apis(view.modalError).ScheduledJobs(), view);
+        const schdJobsClient = new AppClients(view.modalError).ScheduledJobs();
+        super(schdJobsClient, view);
+        this.schdJobsClient = schdJobsClient;
     }
 }

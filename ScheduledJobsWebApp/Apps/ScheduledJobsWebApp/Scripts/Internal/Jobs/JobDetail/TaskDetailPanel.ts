@@ -1,14 +1,13 @@
-﻿import { HubAppApi } from "@jasonbenfield/hubwebapp/Api/HubAppApi";
+﻿import { HubAppClient } from "@jasonbenfield/hubwebapp/Http/HubAppClient";
 import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { ModalConfirm } from "@jasonbenfield/sharedwebapp/Components/ModalConfirm";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
-import { First } from "@jasonbenfield/sharedwebapp/Enumerable";
 import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
-import { JobTaskStatus } from "../../../Lib/Api/JobTaskStatus";
-import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
+import { JobTaskStatus } from "../../../Lib/Http/JobTaskStatus";
+import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
 import { FormattedTimeSpan } from "../../FormattedTimeSpan";
 import { LogEntryItem } from "./LogEntryItem";
 import { LogEntryItemView } from "./LogEntryItemView";
@@ -54,7 +53,7 @@ export class TaskDetailPanel implements IPanel {
     private readonly skipTaskCommand: AsyncCommand;
     private readonly modalConfirm: ModalConfirm;
 
-    constructor(private readonly hubApi: HubAppApi, private readonly schdJobsApi: ScheduledJobsAppApi, private view: TaskDetailPanelView) {
+    constructor(private readonly hubClient: HubAppClient, private readonly schdJobsClient: ScheduledJobsAppClient, private view: TaskDetailPanelView) {
         this.displayText = new TextComponent(view.displayText);
         this.status = new TextComponent(view.status);
         this.timeStarted = new TextComponent(view.timeStarted);
@@ -88,7 +87,7 @@ export class TaskDetailPanel implements IPanel {
         if (confirmed) {
             await this.alert.infoAction(
                 'Timing out task...',
-                () => this.schdJobsApi.Tasks.TimeoutTask({ TaskID: this.currentTask.ID })
+                () => this.schdJobsClient.Tasks.TimeoutTask({ TaskID: this.currentTask.ID })
             );
             this.awaitable.resolve(Result.backRequested(true));
         }
@@ -99,7 +98,7 @@ export class TaskDetailPanel implements IPanel {
         if (confirmed) {
             await this.alert.infoAction(
                 'Canceling task...',
-                () => this.schdJobsApi.Tasks.CancelTask({ TaskID: this.currentTask.ID })
+                () => this.schdJobsClient.Tasks.CancelTask({ TaskID: this.currentTask.ID })
             );
             this.awaitable.resolve(Result.backRequested(true));
         }
@@ -110,7 +109,7 @@ export class TaskDetailPanel implements IPanel {
         if (confirmed) {
             await this.alert.infoAction(
                 'Retrying task...',
-                () => this.schdJobsApi.Tasks.RetryTask({ TaskID: this.currentTask.ID })
+                () => this.schdJobsClient.Tasks.RetryTask({ TaskID: this.currentTask.ID })
             );
             this.awaitable.resolve(
                 Result.backRequested(true)
@@ -123,7 +122,7 @@ export class TaskDetailPanel implements IPanel {
         if (confirmed) {
             await this.alert.infoAction(
                 'Skipping task...',
-                () => this.schdJobsApi.Tasks.SkipTask({ TaskID: this.currentTask.ID })
+                () => this.schdJobsClient.Tasks.SkipTask({ TaskID: this.currentTask.ID })
             );
             this.awaitable.resolve(
                 Result.backRequested(true)
@@ -191,7 +190,7 @@ export class TaskDetailPanel implements IPanel {
             currentTask.LogEntries,
             (entry, itemView) => {
                 const sourceLogEntry = this.sourceLogEntries.find(le => le.LogEntryID === entry.ID);
-                return new LogEntryItem(this.hubApi, entry, sourceLogEntry, itemView);
+                return new LogEntryItem(this.hubClient, entry, sourceLogEntry, itemView);
             }
         );
         const status = JobTaskStatus.values.value(currentTask.Status.Value);

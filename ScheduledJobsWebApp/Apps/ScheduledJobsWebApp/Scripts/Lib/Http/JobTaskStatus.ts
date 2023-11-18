@@ -32,4 +32,8 @@ export class JobTaskStatus extends NumericValue implements IJobTaskStatus {
 	private constructor(Value: number, DisplayText: string) {
 		super(Value, DisplayText);
 	}
+	
+	equalsAny: (...other: this[] | IJobTaskStatus[] | number[] | string[]) => boolean;
+	
+	equals: (other: this | IJobTaskStatus | number | string) => boolean;
 }

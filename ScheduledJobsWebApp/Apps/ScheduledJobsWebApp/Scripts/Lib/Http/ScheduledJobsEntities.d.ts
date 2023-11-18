@@ -15,6 +15,7 @@ interface ILinkModel {
 	LinkName: string;
 	DisplayText: string;
 	Url: string;
+	IsAuthenticationRequired: boolean;
 }
 interface ILogoutRequest {
 	ReturnUrl: string;
@@ -148,6 +149,7 @@ interface IAppLogEntryModel {
 	Caption: string;
 	Message: string;
 	Detail: string;
+	Category: string;
 }
 interface IAddOrUpdateJobSchedulesRequest {
 	JobKey: string;

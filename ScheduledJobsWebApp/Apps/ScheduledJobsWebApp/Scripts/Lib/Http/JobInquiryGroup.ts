@@ -1,13 +1,13 @@
 // Generated code
 
-import { AppApiGroup } from "@jasonbenfield/sharedwebapp/Api/AppApiGroup";
-import { AppApiAction } from "@jasonbenfield/sharedwebapp/Api/AppApiAction";
-import { AppApiView } from "@jasonbenfield/sharedwebapp/Api/AppApiView";
-import { AppApiEvents } from "@jasonbenfield/sharedwebapp/Api/AppApiEvents";
-import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Api/AppResourceUrl";
+import { AppClientGroup } from "@jasonbenfield/sharedwebapp/Http/AppClientGroup";
+import { AppClientAction } from "@jasonbenfield/sharedwebapp/Http/AppClientAction";
+import { AppClientView } from "@jasonbenfield/sharedwebapp/Http/AppClientView";
+import { AppClientEvents } from "@jasonbenfield/sharedwebapp/Http/AppClientEvents";
+import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Http/AppResourceUrl";
 
-export class JobInquiryGroup extends AppApiGroup {
-	constructor(events: AppApiEvents, resourceUrl: AppResourceUrl) {
+export class JobInquiryGroup extends AppClientGroup {
+	constructor(events: AppClientEvents, resourceUrl: AppResourceUrl) {
 		super(events, resourceUrl, 'JobInquiry');
 		this.FailedJobs = this.createView<IEmptyRequest>('FailedJobs');
 		this.GetFailedJobsAction = this.createAction<IEmptyRequest,IJobSummaryModel[]>('GetFailedJobs', 'Get Failed Jobs');
@@ -17,12 +17,12 @@ export class JobInquiryGroup extends AppApiGroup {
 		this.GetJobDetailAction = this.createAction<IGetJobDetailRequest,ITriggeredJobDetailModel>('GetJobDetail', 'Get Job Detail');
 	}
 	
-	readonly FailedJobs: AppApiView<IEmptyRequest>;
-	readonly GetFailedJobsAction: AppApiAction<IEmptyRequest,IJobSummaryModel[]>;
-	readonly RecentJobs: AppApiView<IEmptyRequest>;
-	readonly GetRecentJobsAction: AppApiAction<IEmptyRequest,IJobSummaryModel[]>;
-	readonly JobDetail: AppApiView<IGetJobDetailRequest>;
-	readonly GetJobDetailAction: AppApiAction<IGetJobDetailRequest,ITriggeredJobDetailModel>;
+	readonly FailedJobs: AppClientView<IEmptyRequest>;
+	readonly GetFailedJobsAction: AppClientAction<IEmptyRequest,IJobSummaryModel[]>;
+	readonly RecentJobs: AppClientView<IEmptyRequest>;
+	readonly GetRecentJobsAction: AppClientAction<IEmptyRequest,IJobSummaryModel[]>;
+	readonly JobDetail: AppClientView<IGetJobDetailRequest>;
+	readonly GetJobDetailAction: AppClientAction<IGetJobDetailRequest,ITriggeredJobDetailModel>;
 	
 	GetFailedJobs(errorOptions?: IActionErrorOptions) {
 		return this.GetFailedJobsAction.execute({}, errorOptions || {});
