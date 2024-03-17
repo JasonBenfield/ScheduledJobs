@@ -6,7 +6,8 @@ public static class ScheduledJobsAppClientExtensions
 {
     public static void AddScheduledJobsAppClient(this IServiceCollection services)
     {
-        services.AddScoped<ScheduledJobsAppClient>();
+        services.AddScoped<ScheduledJobsAppClientFactory>();
+        services.AddScoped(sp => sp.GetRequiredService<ScheduledJobsAppClientFactory>().Create());
         services.AddScoped<ScheduledJobsAppClientVersion>();
     }
 }

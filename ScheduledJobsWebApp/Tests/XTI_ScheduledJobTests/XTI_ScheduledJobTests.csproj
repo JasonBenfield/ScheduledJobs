@@ -7,8 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_Core.Fakes" Version="1.10.21-dev231118105150033" />
-		<PackageReference Include="XTI_Core.Extensions" Version="1.10.21-dev231118105150033" />
+		<PackageReference Include="XTI_Core.Fakes" Version="1.10.21-dev240312074712013" />
+		<PackageReference Include="XTI_Core.Extensions" Version="1.10.21-dev240312074712013" />
 	</ItemGroup>
 
 	<ItemGroup>

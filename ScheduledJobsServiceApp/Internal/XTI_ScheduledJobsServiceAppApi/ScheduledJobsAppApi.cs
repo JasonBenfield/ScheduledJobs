@@ -14,7 +14,8 @@ public sealed partial class ScheduledJobsAppApi : AppApiWrapper
                 ScheduledJobsInfo.AppKey,
                 user,
                 ResourceAccess.AllowAuthenticated()
-                    .WithAllowed(AppRoleName.Admin)
+                    .WithAllowed(AppRoleName.Admin),
+                ""
             )
         )
     {

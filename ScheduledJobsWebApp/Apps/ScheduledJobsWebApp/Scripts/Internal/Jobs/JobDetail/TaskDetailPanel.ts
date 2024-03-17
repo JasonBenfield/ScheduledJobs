@@ -5,10 +5,8 @@ import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { ModalConfirm } from "@jasonbenfield/sharedwebapp/Components/ModalConfirm";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
-import { FormattedDate } from "@jasonbenfield/sharedwebapp/FormattedDate";
 import { JobTaskStatus } from "../../../Lib/Http/JobTaskStatus";
 import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
-import { FormattedTimeSpan } from "../../FormattedTimeSpan";
 import { LogEntryItem } from "./LogEntryItem";
 import { LogEntryItemView } from "./LogEntryItemView";
 import { TaskDetailPanelView } from "./TaskDetailPanelView";
@@ -172,12 +170,14 @@ export class TaskDetailPanel implements IPanel {
         this.displayText.setText(currentTask.TaskDefinition.TaskKey.DisplayText);
         this.status.setText(currentTask.Status.DisplayText);
         this.timeStarted.setText(
-            currentTask.TimeStarted.getFullYear() < 9999 ?
-                new FormattedDate(currentTask.TimeStarted).formatDateTime() :
-                ''
+            currentTask.TimeStarted.isMaxYear ?
+                '' :
+                currentTask.TimeStarted.format()
         );
         this.timeElapsed.setText(
-            new FormattedTimeSpan(currentTask.TimeStarted, currentTask.TimeEnded).format()
+            currentTask.TimeStarted.isMaxYear || currentTask.TimeEnded.isMaxYear ?
+                '' :
+                currentTask.TimeEnded.minus(currentTask.TimeStarted).format()
         );
         this.taskData.setText(currentTask.TaskData);
         if (currentTask.TaskData) {

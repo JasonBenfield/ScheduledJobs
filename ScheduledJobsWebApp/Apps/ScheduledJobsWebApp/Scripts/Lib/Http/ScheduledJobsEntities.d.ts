@@ -43,9 +43,9 @@ interface IEventNotificationModel {
 	Definition: IEventDefinitionModel;
 	SourceKey: string;
 	SourceData: string;
-	TimeAdded: Date;
-	TimeActive: Date;
-	TimeInactive: Date;
+	TimeAdded: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
+	TimeActive: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
+	TimeInactive: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
 }
 interface IGetNotificationDetailRequest {
 	NotificationID: number;
@@ -58,8 +58,8 @@ interface IJobSummaryModel {
 	ID: number;
 	JobKey: IJobKey;
 	Status: IJobTaskStatus;
-	TimeStarted: Date;
-	TimeEnded: Date;
+	TimeStarted: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
+	TimeEnded: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
 	TaskCount: number;
 }
 interface IJobKey {
@@ -70,9 +70,9 @@ interface IRegisteredEvent {
 	EventKey: IEventKey;
 	CompareSourceKeyAndDataForDuplication: boolean;
 	DuplicateHandling: IDuplicateHandling;
-	TimeToStartNotifications: Date;
-	ActiveFor: string;
-	DeleteAfter: string;
+	TimeToStartNotifications: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
+	ActiveFor: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
+	DeleteAfter: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 }
 interface IAddNotificationsRequest {
 	EventKey: IEventKey;
@@ -103,8 +103,8 @@ interface ITriggeredJobTaskModel {
 	TaskDefinition: IJobTaskDefinitionModel;
 	Status: IJobTaskStatus;
 	Generation: number;
-	TimeStarted: Date;
-	TimeEnded: Date;
+	TimeStarted: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
+	TimeEnded: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
 	TaskData: string;
 	LogEntries: IJobLogEntryModel[];
 }
@@ -119,7 +119,7 @@ interface IJobTaskKey {
 interface IJobLogEntryModel {
 	ID: number;
 	Severity: IAppEventSeverity;
-	TimeOccurred: Date;
+	TimeOccurred: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
 	Category: string;
 	Message: string;
 	Details: string;
@@ -144,7 +144,7 @@ interface ISourceLogEntryModel {
 interface IAppLogEntryModel {
 	ID: number;
 	RequestID: number;
-	TimeOccurred: Date;
+	TimeOccurred: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
 	Severity: IAppEventSeverity;
 	Caption: string;
 	Message: string;
@@ -154,22 +154,22 @@ interface IAppLogEntryModel {
 interface IAddOrUpdateJobSchedulesRequest {
 	JobKey: string;
 	Schedules: string;
-	DeleteAfter: string;
+	DeleteAfter: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 }
 interface IRegisteredJob {
 	JobKey: IJobKey;
-	Timeout: string;
-	DeleteAfter: string;
+	Timeout: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
+	DeleteAfter: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 	Tasks: IRegisteredJobTask[];
 }
 interface IRegisteredJobTask {
 	TaskKey: IJobTaskKey;
-	Timeout: string;
+	Timeout: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 }
 interface ITriggerJobsRequest {
 	EventKey: IEventKey;
 	JobKey: IJobKey;
-	EventRaisedStartTime: Date;
+	EventRaisedStartTime: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
 }
 interface IPendingJobModel {
 	Job: ITriggeredJobModel;
@@ -207,7 +207,7 @@ interface ITaskCompletedRequest {
 interface ITaskFailedRequest {
 	FailedTaskID: number;
 	ErrorStatus: IJobTaskStatus;
-	RetryAfter: string;
+	RetryAfter: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 	NextTasks: INextTaskModel[];
 	Category: string;
 	Message: string;

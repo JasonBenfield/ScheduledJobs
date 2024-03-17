@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_Schedule" Version="1.10.21-dev231118105150033" />
+		<PackageReference Include="XTI_Schedule" Version="1.10.21-dev240312074712013" />
 	</ItemGroup>
 
 	<ItemGroup>

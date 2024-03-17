@@ -45,6 +45,9 @@ export class JobListPanel implements IPanel {
             jobs,
             (job, itemView) => new JobSummaryListItem(this.schdJobsClient, job, itemView)
         );
+        if (jobs.length === 0) {
+            this.alert.danger('No Recent Jobs were found.');
+        }
     }
 
     private getRecentTriggeredJobs() {
