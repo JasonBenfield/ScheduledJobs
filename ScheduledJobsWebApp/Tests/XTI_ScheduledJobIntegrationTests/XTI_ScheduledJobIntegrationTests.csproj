@@ -8,9 +8,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_Core.Fakes" Version="1.10.21-dev231118105150033" />
-		<PackageReference Include="XTI_Core.Extensions" Version="1.10.21-dev231118105150033" />
-		<PackageReference Include="XTI_HubAppClient.Extensions" Version="1.4.44-dev231118175222046" />
+		<PackageReference Include="XTI_Core.Fakes" Version="1.10.21-dev240312074712013" />
+		<PackageReference Include="XTI_Core.Extensions" Version="1.10.21-dev240312074712013" />
+		<PackageReference Include="XTI_HubAppClient.Extensions" Version="1.4.44-dev240315081737669" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -25,6 +25,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="XTI_Secrets.Extensions" Version="1.8.10-dev231118165338904" />
 	</ItemGroup>
 
 	<ItemGroup>

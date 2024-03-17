@@ -20,7 +20,7 @@ export class NotificationListPanelView extends GridView {
     constructor(container: BasicComponentView) {
         super(container);
         this.height100();
-        this.layout();
+        this.styleAsLayout();
         this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         this.heading = mainContent.addView(TextHeading1View);

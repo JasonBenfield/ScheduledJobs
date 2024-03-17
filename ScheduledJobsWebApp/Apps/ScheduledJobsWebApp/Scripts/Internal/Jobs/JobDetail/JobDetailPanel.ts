@@ -70,6 +70,9 @@ export class JobDetailPanel implements IPanel {
             this.jobDetail.Tasks,
             (task, itemView) => new TaskListItem(task, itemView)
         );
+        if (this.jobDetail.Tasks.length === 0) {
+            this.alert.danger('No Tasks have been started for this  job.');
+        }
         this.view.showJob();
     }
 

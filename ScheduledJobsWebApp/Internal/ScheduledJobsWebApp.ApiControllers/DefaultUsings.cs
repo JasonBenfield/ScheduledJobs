@@ -11,4 +11,5 @@ global using XTI_ScheduledJobsWebAppApi.JobDefinitions;
 global using XTI_ScheduledJobsWebAppApi.JobInquiry;
 global using XTI_ScheduledJobsWebAppApi.Jobs;
 global using XTI_ScheduledJobsWebAppApi.Tasks;
+global using XTI_WebApp.Abstractions;
 global using XTI_WebApp.Api;

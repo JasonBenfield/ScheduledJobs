@@ -1,5 +1,6 @@
 // Generated code
 
+import * as xti from "@jasonbenfield/sharedwebapp/Common";
 import { AppClientGroup } from "@jasonbenfield/sharedwebapp/Http/AppClientGroup";
 import { AppClientAction } from "@jasonbenfield/sharedwebapp/Http/AppClientAction";
 import { AppClientView } from "@jasonbenfield/sharedwebapp/Http/AppClientView";

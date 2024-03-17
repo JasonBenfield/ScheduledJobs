@@ -28,7 +28,7 @@ class MainPage extends ScheduledJobsPage {
             new EditTaskDataPanel(this.schdJobsClient, this.view.editTaskDataPanel)
         );
         this.menuPanel = this.panels.add(new MainMenuPanel(this.schdJobsClient, this.view.menuPanel));
-        this.jobDetailPanel.setJobID(Number(Url.current().getQueryValue('JobID')));
+        this.jobDetailPanel.setJobID(Url.current().query.getNumberValue('JobID'));
         this.jobDetailPanel.refresh();
         this.activateJobDetailPanel();
     }

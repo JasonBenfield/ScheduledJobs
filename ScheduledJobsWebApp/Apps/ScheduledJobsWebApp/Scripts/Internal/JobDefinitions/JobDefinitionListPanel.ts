@@ -47,7 +47,7 @@ export class JobDefinitionListPanel implements IPanel {
     private requestMenu() { this.awaitable.resolve(JobDefinitionListPanelResult.menuRequested()); }
 
     private async doRefresh() {
-        let jobDefs = await this.getJobDefinitions();
+        const jobDefs = await this.getJobDefinitions();
         this.jobDefinitions.setItems(
             jobDefs,
             (jobDef, itemView) => new JobDefinitionListItem(jobDef, itemView)

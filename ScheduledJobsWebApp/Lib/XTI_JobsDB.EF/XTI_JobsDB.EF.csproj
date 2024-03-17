@@ -10,8 +10,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
-		<PackageReference Include="XTI_Core.EF" Version="1.10.21-dev231118105150033" />
-		<PackageReference Include="XTI_DB" Version="1.10.21-dev231118105150033" />
+		<PackageReference Include="XTI_Core.EF" Version="1.10.21-dev240312074712013" />
+		<PackageReference Include="XTI_DB" Version="1.10.21-dev240312074712013" />
 	</ItemGroup>
 
 	<ItemGroup>

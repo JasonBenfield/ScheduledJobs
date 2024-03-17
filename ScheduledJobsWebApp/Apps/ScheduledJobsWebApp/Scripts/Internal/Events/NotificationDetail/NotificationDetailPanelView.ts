@@ -6,7 +6,7 @@ import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicT
 import { BlockView } from "@jasonbenfield/sharedwebapp/Views/BlockView";
 import { CardView } from "@jasonbenfield/sharedwebapp/Views/Card";
 import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
-import { FormGroupGridView, FormGroupTextView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
+import { FormGroupTextView } from "@jasonbenfield/sharedwebapp/Views/FormGroup";
 import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
 import { LinkListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
 import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
@@ -14,6 +14,7 @@ import { TextHeading1View } from "@jasonbenfield/sharedwebapp/Views/TextHeadings
 import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { JobSummaryListItemView } from "../../Jobs/JobSummaryListItemView";
 import { ScheduledJobsTheme } from "../../ScheduledJobsTheme";
+import { FormGroupContainerView } from "@jasonbenfield/sharedwebapp/Views/FormGroupContainerView";
 
 export class NotificationDetailPanelView extends GridView {
     readonly alert: MessageAlertView;
@@ -29,17 +30,17 @@ export class NotificationDetailPanelView extends GridView {
     constructor(container: BasicComponentView) {
         super(container);
         this.height100();
-        this.layout();
+        this.styleAsLayout();
         this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         this.alert = mainContent.addView(MessageAlertView);
         this.detailBlock = mainContent.addView(BlockView);
         this.eventDisplayText = this.detailBlock.addView(TextHeading1View)
             .configure(th => th.setMargin(MarginCss.bottom(3)));
-        const formGroupContainer = this.detailBlock.addView(FormGroupGridView)
-        this.sourceKey = formGroupContainer.addFormGroup(FormGroupTextView);
+        const formGroupContainer = this.detailBlock.addView(FormGroupContainerView)
+        this.sourceKey = formGroupContainer.addFormGroupTextView();
         this.sourceKey.captionCell.setTextCss(new TextCss().end());
-        this.sourceData = formGroupContainer.addFormGroup(FormGroupTextView);
+        this.sourceData = formGroupContainer.addFormGroupTextView();
         const card = this.detailBlock.addView(CardView);
         this.triggeredJobsTitle = card.addCardTitleHeader();
         this.triggeredJobs = card.addLinkListGroup(JobSummaryListItemView);
