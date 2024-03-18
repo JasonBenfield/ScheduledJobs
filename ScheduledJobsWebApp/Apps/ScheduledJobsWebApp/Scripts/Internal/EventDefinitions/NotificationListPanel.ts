@@ -45,6 +45,9 @@ export class NotificationListPanel implements IPanel {
             (notification, itemView) =>
                 new EventSummaryListItem(this.schdJobsClient, notification, itemView)
         );
+        if (notifications.length === 0) {
+            this.alert.danger('No Event Notifications were found.');
+        }
     }
 
     private getNotifications() {
