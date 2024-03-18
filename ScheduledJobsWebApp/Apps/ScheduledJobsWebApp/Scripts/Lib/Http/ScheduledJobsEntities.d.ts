@@ -1,26 +1,10 @@
 // Generated code
 
-interface IResourcePath {
-	Group: string;
-	Action: string;
-	ModKey: string;
-}
-interface IResourcePathAccess {
-	Path: IResourcePath;
-	HasAccess: boolean;
-}
-interface IEmptyRequest {
-}
 interface ILinkModel {
 	LinkName: string;
 	DisplayText: string;
 	Url: string;
 	IsAuthenticationRequired: boolean;
-}
-interface ILogoutRequest {
-	ReturnUrl: string;
-}
-interface IEmptyActionResult {
 }
 interface IEventDefinitionModel {
 	ID: number;
@@ -75,7 +59,7 @@ interface IRegisteredEvent {
 	DeleteAfter: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 }
 interface IAddNotificationsRequest {
-	EventKey: IEventKey;
+	EventKey: string;
 	Sources: IXtiEventSource[];
 }
 interface IXtiEventSource {
@@ -167,8 +151,8 @@ interface IRegisteredJobTask {
 	Timeout: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 }
 interface ITriggerJobsRequest {
-	EventKey: IEventKey;
-	JobKey: IJobKey;
+	EventKey: string;
+	JobKey: string;
 	EventRaisedStartTime: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
 }
 interface IPendingJobModel {
@@ -177,12 +161,12 @@ interface IPendingJobModel {
 	SourceData: string;
 }
 interface IDeleteJobsWithNoTasksRequest {
-	EventKey: IEventKey;
-	JobKey: IJobKey;
+	EventKey: string;
+	JobKey: string;
 }
 interface IRetryJobsRequest {
-	EventKey: IEventKey;
-	JobKey: IJobKey;
+	EventKey: string;
+	JobKey: string;
 }
 interface IStartJobRequest {
 	JobID: number;
@@ -206,7 +190,7 @@ interface ITaskCompletedRequest {
 }
 interface ITaskFailedRequest {
 	FailedTaskID: number;
-	ErrorStatus: IJobTaskStatus;
+	ErrorStatus: number;
 	RetryAfter: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 	NextTasks: INextTaskModel[];
 	Category: string;

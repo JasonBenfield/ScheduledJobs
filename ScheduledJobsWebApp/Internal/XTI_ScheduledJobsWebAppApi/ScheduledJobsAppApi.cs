@@ -51,6 +51,7 @@ public sealed partial class ScheduledJobsAppApi : WebAppApiWrapper
 
     protected override void ConfigureTemplate(AppApiTemplate template)
     {
+        base.ConfigureTemplate(template);
         template.ExcludeValueTemplates
         (
             (temp, generators) =>

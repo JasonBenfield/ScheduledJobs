@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using XTI_ScheduledJobsWebAppApi.JobInquiry;
 
 namespace XTI_ScheduledJobsWebAppApi.EventInquiry;
 
