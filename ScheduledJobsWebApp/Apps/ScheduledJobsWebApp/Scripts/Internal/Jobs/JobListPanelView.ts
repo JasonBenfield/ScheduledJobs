@@ -1,18 +1,24 @@
-﻿import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
+﻿import { ColumnCss } from "@jasonbenfield/sharedwebapp/ColumnCss";
+import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
 import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
 import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicTextComponentView";
 import { ButtonCommandView } from "@jasonbenfield/sharedwebapp/Views/Command";
 import { GridView } from "@jasonbenfield/sharedwebapp/Views/Grid";
 import { LinkListGroupView } from "@jasonbenfield/sharedwebapp/Views/ListGroup";
 import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlertView";
-import { TextHeading1View } from "@jasonbenfield/sharedwebapp/Views/TextHeadings";
+import { RowView } from "@jasonbenfield/sharedwebapp/Views/RowView";
+import { TextHeading3View } from "@jasonbenfield/sharedwebapp/Views/TextHeadings";
+import { TextSpanView } from "@jasonbenfield/sharedwebapp/Views/TextSpanView";
 import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { ScheduledJobsTheme } from "../ScheduledJobsTheme";
 import { JobSummaryListItemView } from "./JobSummaryListItemView";
+import { ContextualClass } from "@jasonbenfield/sharedwebapp/ContextualClass";
+import { CardAlertView, CardView } from "@jasonbenfield/sharedwebapp/Views/Card";
 
 export class JobListPanelView extends GridView {
-    readonly heading: BasicTextComponentView;
-    readonly alert: MessageAlertView;
+    readonly titleTextView: BasicTextComponentView;
+    readonly countTextView: BasicTextComponentView;
+    readonly alert: CardAlertView;
     readonly jobs: LinkListGroupView<JobSummaryListItemView>;
     readonly backButton: ButtonCommandView;
     readonly menuButton: ButtonCommandView;
@@ -24,9 +30,18 @@ export class JobListPanelView extends GridView {
         this.styleAsLayout();
         this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
-        this.heading = mainContent.addView(TextHeading1View);
-        this.alert = mainContent.addView(MessageAlertView);
-        this.jobs = mainContent.addLinkListGroup(JobSummaryListItemView);
+        const cardView = mainContent.addView(CardView);
+        const headingRowView = cardView.addCardHeader().addView(RowView)
+        const headingCol1 = headingRowView.addColumn();
+        this.titleTextView = headingCol1.addView(TextHeading3View);
+        const headingCol2 = headingRowView.addColumn();
+        headingCol2.setColumnCss(ColumnCss.xs('auto'));
+        this.countTextView = headingCol2.addView(TextSpanView);
+        this.countTextView.addCssName('badge');
+        this.countTextView.addCssName('rounded-corners');
+        this.countTextView.setBackgroundContext(ContextualClass.secondary);
+        this.alert = cardView.addCardAlert();
+        this.jobs = cardView.addLinkListGroup(JobSummaryListItemView);
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );
