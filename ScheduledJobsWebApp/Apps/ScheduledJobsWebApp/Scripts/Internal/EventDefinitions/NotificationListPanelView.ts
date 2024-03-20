@@ -7,10 +7,11 @@ import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlert
 import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { EventSummaryListItemView } from "../Events/Notifications/EventSummaryListItemView";
 import { ScheduledJobsTheme } from "../ScheduledJobsTheme";
+import { MarginCss } from "@jasonbenfield/sharedwebapp/MarginCss";
 
 export class NotificationListPanelView extends GridView {
     readonly alert: MessageAlertView;
-    readonly notifications: LinkListGroupView<EventSummaryListItemView>;
+    readonly notificationListView: LinkListGroupView<EventSummaryListItemView>;
     readonly backButton: ButtonCommandView;
     readonly refreshButton: ButtonCommandView;
 
@@ -21,7 +22,8 @@ export class NotificationListPanelView extends GridView {
         this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         this.alert = mainContent.addView(MessageAlertView);
-        this.notifications = mainContent.addLinkListGroup(EventSummaryListItemView);
+        this.notificationListView = mainContent.addLinkListGroup(EventSummaryListItemView);
+        this.notificationListView.setMargin(MarginCss.bottom(3));
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );

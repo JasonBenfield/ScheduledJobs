@@ -7,10 +7,11 @@ import { MessageAlertView } from "@jasonbenfield/sharedwebapp/Views/MessageAlert
 import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { ScheduledJobsTheme } from "../ScheduledJobsTheme";
 import { EventDefinitionListItemView } from "./EventDefinitionListItemView";
+import { MarginCss } from "@jasonbenfield/sharedwebapp/MarginCss";
 
 export class EventDefinitionListPanelView extends GridView {
     readonly alert: MessageAlertView;
-    readonly eventDefinitions: ButtonListGroupView<EventDefinitionListItemView>;
+    readonly eventDefinitionListView: ButtonListGroupView<EventDefinitionListItemView>;
     readonly menuButton: ButtonCommandView;
     readonly refreshButton: ButtonCommandView;
 
@@ -21,7 +22,8 @@ export class EventDefinitionListPanelView extends GridView {
         this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         this.alert = mainContent.addView(MessageAlertView);
-        this.eventDefinitions = mainContent.addButtonListGroup(EventDefinitionListItemView);
+        this.eventDefinitionListView = mainContent.addButtonListGroup(EventDefinitionListItemView);
+        this.eventDefinitionListView.setMargin(MarginCss.bottom(3));
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );

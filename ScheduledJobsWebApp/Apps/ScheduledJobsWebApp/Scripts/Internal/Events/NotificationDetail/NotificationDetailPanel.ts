@@ -39,7 +39,7 @@ export class NotificationDetailPanel implements IPanel {
         this.view.hideJobDetail();
         new TextComponent(this.view.triggeredJobsTitle).setText('Triggered Jobs');
         this.eventDisplayText = new TextComponent(this.view.eventDisplayText);
-        this.triggeredJobs = new ListGroup(this.view.triggeredJobs);
+        this.triggeredJobs = new ListGroup(this.view.triggeredJobListView);
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);

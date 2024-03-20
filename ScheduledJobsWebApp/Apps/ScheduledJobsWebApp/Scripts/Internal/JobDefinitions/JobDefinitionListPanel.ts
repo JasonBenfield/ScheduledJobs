@@ -36,7 +36,7 @@ export class JobDefinitionListPanel implements IPanel {
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobDefinitionListPanelView) {
         this.alert = new MessageAlert(view.alert);
-        this.jobDefinitions = new ListGroup(view.jobDefinitions);
+        this.jobDefinitions = new ListGroup(view.jobDefinitionListView);
         this.jobDefinitions.when.itemClicked.then(this.onJobClicked.bind(this));
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));

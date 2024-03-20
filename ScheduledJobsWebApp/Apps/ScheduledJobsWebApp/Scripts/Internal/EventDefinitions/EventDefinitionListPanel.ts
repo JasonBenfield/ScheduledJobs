@@ -36,7 +36,7 @@ export class EventDefinitionListPanel implements IPanel {
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: EventDefinitionListPanelView) {
         this.alert = new MessageAlert(view.alert);
-        this.eventDefinitions = new ListGroup(view.eventDefinitions);
+        this.eventDefinitions = new ListGroup(view.eventDefinitionListView);
         this.eventDefinitions.when.itemClicked.then(this.onDefinitionClicked.bind(this));
         new Command(this.menu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));

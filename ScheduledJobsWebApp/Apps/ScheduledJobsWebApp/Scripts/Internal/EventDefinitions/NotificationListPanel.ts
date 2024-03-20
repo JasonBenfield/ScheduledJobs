@@ -29,7 +29,7 @@ export class NotificationListPanel implements IPanel {
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: NotificationListPanelView) {
         this.alert = new MessageAlert(view.alert);
-        this.notifications = new ListGroup(view.notifications);
+        this.notifications = new ListGroup(view.notificationListView);
         new Command(this.back.bind(this)).add(view.backButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
