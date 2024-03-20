@@ -31,7 +31,7 @@ export class NotificationListPanel implements IPanel {
         private readonly view: NotificationListPanelView
     ) {
         this.alert = new MessageAlert(view.alert);
-        this.recentEventsList = new ListGroup(view.recentEvents);
+        this.recentEventsList = new ListGroup(view.recentEventListView);
         new TextComponent(view.heading).setText('Events');
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));

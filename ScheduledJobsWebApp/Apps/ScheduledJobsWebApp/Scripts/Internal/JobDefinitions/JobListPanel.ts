@@ -37,7 +37,7 @@ export class JobListPanel implements IPanel {
         this.titleTextComponet.setText('Recent Jobs');
         this.countTextComponent = new TextComponent(view.countTextView);
         this.alert = new CardAlert(view.alert).alert;
-        this.triggeredJobs = new ListGroup(view.jobs);
+        this.triggeredJobs = new ListGroup(view.jobListView);
         new Command(this.back.bind(this)).add(view.backButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);

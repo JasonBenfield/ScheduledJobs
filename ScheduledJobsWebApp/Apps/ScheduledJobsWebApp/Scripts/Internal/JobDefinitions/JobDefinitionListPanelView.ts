@@ -10,7 +10,7 @@ import { JobDefinitionListItemView } from "./JobDefinitionListItemView";
 
 export class JobDefinitionListPanelView extends GridView {
     readonly alert: MessageAlertView;
-    readonly jobDefinitions: ButtonListGroupView<JobDefinitionListItemView>;
+    readonly jobDefinitionListView: ButtonListGroupView<JobDefinitionListItemView>;
     readonly menuButton: ButtonCommandView;
     readonly refreshButton: ButtonCommandView;
 
@@ -21,7 +21,7 @@ export class JobDefinitionListPanelView extends GridView {
         this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         this.alert = mainContent.addView(MessageAlertView);
-        this.jobDefinitions = mainContent.addButtonListGroup(JobDefinitionListItemView);
+        this.jobDefinitionListView = mainContent.addButtonListGroup(JobDefinitionListItemView);
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(
             this.addCell().addView(ToolbarView)
         );

@@ -30,7 +30,7 @@ export class RecentJobsPanel implements IPanel {
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobListPanelView) {
         this.alert = new CardAlert(view.alert).alert;
-        this.recentJobsList = new ListGroup(view.jobs);
+        this.recentJobsList = new ListGroup(view.jobListView);
         new TextComponent(view.titleTextView).setText('Recent Jobs');
         this.countTextComponent = new TextComponent(view.countTextView);
         new Command(this.requestMenu.bind(this)).add(view.menuButton);

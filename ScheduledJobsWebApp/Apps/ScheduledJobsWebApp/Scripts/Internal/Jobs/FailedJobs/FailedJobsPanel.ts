@@ -30,7 +30,7 @@ export class FailedJobsPanel implements IPanel {
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobListPanelView) {
         this.alert = new CardAlert(view.alert).alert;
-        this.failedJobsList = new ListGroup(view.jobs);
+        this.failedJobsList = new ListGroup(view.jobListView);
         new TextComponent(view.titleTextView).setText('Failed Jobs');
         this.countTextComponent = new TextComponent(view.countTextView);
         new Command(this.requestMenu.bind(this)).add(view.menuButton);

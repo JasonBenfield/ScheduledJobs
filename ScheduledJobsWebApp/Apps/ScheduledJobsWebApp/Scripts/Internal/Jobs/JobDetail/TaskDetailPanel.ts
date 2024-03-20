@@ -57,7 +57,7 @@ export class TaskDetailPanel implements IPanel {
         this.timeStarted = new TextComponent(view.timeStarted);
         this.timeElapsed = new TextComponent(view.timeElapsed);
         this.taskData = new TextComponent(view.taskData);
-        this.logEntries = new ListGroup(view.logEntries);
+        this.logEntries = new ListGroup(view.logEntryListView);
         this.alert = new MessageAlert(view.alert);
         new Command(this.previousTask.bind(this)).add(view.previousTaskButton);
         new Command(this.nextTask.bind(this)).add(view.nextTaskButton);
