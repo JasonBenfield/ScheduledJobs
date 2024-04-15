@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace XTI_ScheduledJobSharedTests;
+﻿namespace XTI_ScheduledJobSharedTests;
 
 public sealed class DemoJobActionFactory : IJobActionFactory
 {
@@ -50,8 +48,7 @@ public sealed class DemoJobActionFactory : IJobActionFactory
     }
 
     public NextTaskModel[] FirstTasks(string taskData) =>
-        new[]
-        {
+        [
             new NextTaskModel(DemoJobs.DoSomething.Task01, taskData)
-        };
+        ];
 }

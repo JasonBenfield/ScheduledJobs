@@ -9,8 +9,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_Hub.Abstractions" Version="1.4.44-dev240315081737669" />
-		<PackageReference Include="XTI_Schedule" Version="1.10.21-dev240312074712013" />
+		<PackageReference Include="XTI_Hub.Abstractions" Version="1.4.47" />
+		<PackageReference Include="XTI_Schedule" Version="1.10.21" />
 	</ItemGroup>
 
 	<ItemGroup>

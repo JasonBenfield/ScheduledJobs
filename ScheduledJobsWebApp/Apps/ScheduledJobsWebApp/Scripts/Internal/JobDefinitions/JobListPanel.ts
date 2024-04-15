@@ -36,6 +36,7 @@ export class JobListPanel implements IPanel {
         this.titleTextComponet = new TextComponent(view.titleTextView);
         this.titleTextComponet.setText('Recent Jobs');
         this.countTextComponent = new TextComponent(view.countTextView);
+        this.countTextComponent.hide();
         this.alert = new CardAlert(view.alert).alert;
         this.triggeredJobs = new ListGroup(view.jobListView);
         new Command(this.back.bind(this)).add(view.backButton);
@@ -55,10 +56,6 @@ export class JobListPanel implements IPanel {
         );
         if (jobs.length === 0) {
             this.alert.danger('No Recent Jobs were found.');
-        }
-        else if (jobs.length > 1) {
-            this.countTextComponent.setText(jobs.length.toLocaleString());
-            this.countTextComponent.show();
         }
     }
 

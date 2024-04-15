@@ -7,6 +7,7 @@ import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient
 import { EventSummaryListItem } from "./EventSummaryListItem";
 import { EventSummaryListItemView } from "./EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 
 interface IResults {
     menuRequested?: boolean;
@@ -30,7 +31,7 @@ export class NotificationListPanel implements IPanel {
         private readonly schdJobsClient: ScheduledJobsAppClient,
         private readonly view: NotificationListPanelView
     ) {
-        this.alert = new MessageAlert(view.alert);
+        this.alert = new CardAlert(view.alert).alert;
         this.recentEventsList = new ListGroup(view.recentEventListView);
         new TextComponent(view.heading).setText('Events');
         new Command(this.requestMenu.bind(this)).add(view.menuButton);

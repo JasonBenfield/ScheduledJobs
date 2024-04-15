@@ -25,11 +25,7 @@ public sealed class SjcJobDb : IJobDb
     public Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources) =>
         schdJobClient.Events.AddNotifications
         (
-            new AddNotificationsRequest
-            {
-                EventKey = eventKey,
-                Sources = sources
-            }
+            new AddNotificationsRequest(eventKey, sources)
         );
 
     public Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents) =>
@@ -53,50 +49,31 @@ public sealed class SjcJobDb : IJobDb
     public Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey) =>
         schdJobClient.Jobs.DeleteJobsWithNoTasks
         (
-            new DeleteJobsWithNoTasksRequest
-            {
-                EventKey = eventKey,
-                JobKey = jobKey
-            }
+            new DeleteJobsWithNoTasksRequest(eventKey, jobKey)
         );
 
     public Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey) =>
         schdJobClient.Jobs.RetryJobs
         (
-            new RetryJobsRequest
-            {
-                EventKey = eventKey,
-                JobKey = jobKey
-            }
+            new RetryJobsRequest(eventKey, jobKey)
         );
 
     public Task<TriggeredJobWithTasksModel> StartJob(int jobID, NextTaskModel[] nextTasks) =>
         schdJobClient.Jobs.StartJob
         (
-            new StartJobRequest
-            {
-                JobID = jobID,
-                NextTasks = nextTasks
-            }
+            new StartJobRequest(jobID, nextTasks)
         );
 
     public Task StartTask(int taskID) =>
         schdJobClient.Jobs.StartTask
         (
-            new StartTaskRequest
-            {
-                TaskID = taskID
-            }
+            new StartTaskRequest(taskID)
         );
 
     public Task JobCancelled(int taskID, string reason) =>
         schdJobClient.Jobs.JobCancelled
         (
-            new JobCancelledRequest
-            {
-                TaskID = taskID,
-                Reason = reason
-            }
+            new JobCancelledRequest(taskID, reason)
         );
 
     public Task<TriggeredJobWithTasksModel> TaskCompleted
@@ -107,12 +84,7 @@ public sealed class SjcJobDb : IJobDb
     ) =>
         schdJobClient.Jobs.TaskCompleted
         (
-            new TaskCompletedRequest
-            {
-                CompletedTaskID = completedTaskID,
-                PreserveData = preserveData,
-                NextTasks = nextTasks
-            }
+            new TaskCompletedRequest(completedTaskID, preserveData, nextTasks)
         );
 
     public Task<TriggeredJobWithTasksModel> TaskFailed
@@ -153,12 +125,7 @@ public sealed class SjcJobDb : IJobDb
     public Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime) =>
         schdJobClient.Jobs.TriggerJobs
         (
-            new TriggerJobsRequest
-            {
-                EventKey = eventKey,
-                JobKey = jobKey,
-                EventRaisedStartTime = eventRaisedStartTime
-            }
+            new TriggerJobsRequest(eventKey, jobKey, eventRaisedStartTime)
         );
 
 }

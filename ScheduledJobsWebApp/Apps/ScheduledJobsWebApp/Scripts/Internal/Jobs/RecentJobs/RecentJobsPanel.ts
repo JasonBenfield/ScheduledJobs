@@ -33,6 +33,7 @@ export class RecentJobsPanel implements IPanel {
         this.recentJobsList = new ListGroup(view.jobListView);
         new TextComponent(view.titleTextView).setText('Recent Jobs');
         this.countTextComponent = new TextComponent(view.countTextView);
+        this.countTextComponent.hide();
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
@@ -49,10 +50,6 @@ export class RecentJobsPanel implements IPanel {
         );
         if (recentJobs.length === 0) {
             this.alert.danger('No jobs were found.');
-        }
-        else if (recentJobs.length > 1) {
-            this.countTextComponent.setText(recentJobs.length.toLocaleString());
-            this.countTextComponent.show();
         }
     }
 

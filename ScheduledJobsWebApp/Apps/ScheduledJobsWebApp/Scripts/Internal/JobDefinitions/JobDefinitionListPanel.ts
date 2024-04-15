@@ -6,6 +6,7 @@ import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { JobDefinitionListItem } from "./JobDefinitionListItem";
 import { JobDefinitionListItemView } from "./JobDefinitionListItemView";
 import { JobDefinitionListPanelView } from "./JobDefinitionListPanelView";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 
 interface IResults {
     menuRequested?: boolean;
@@ -35,7 +36,7 @@ export class JobDefinitionListPanel implements IPanel {
     private readonly refreshCommand: AsyncCommand;
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobDefinitionListPanelView) {
-        this.alert = new MessageAlert(view.alert);
+        this.alert = new CardAlert(view.alert).alert;
         this.jobDefinitions = new ListGroup(view.jobDefinitionListView);
         this.jobDefinitions.when.itemClicked.then(this.onJobClicked.bind(this));
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
