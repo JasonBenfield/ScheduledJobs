@@ -2,10 +2,12 @@
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
-import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { JobListPanelView } from "../Jobs/JobListPanelView";
 import { JobSummaryListItem } from "../Jobs/JobSummaryListItem";
 import { JobSummaryListItemView } from "../Jobs/JobSummaryListItemView";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
+import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
 
 interface IResults {
     back?: boolean;
@@ -21,16 +23,22 @@ export class JobListPanelResult {
 
 export class JobListPanel implements IPanel {
     private readonly awaitable = new Awaitable<JobListPanelResult>();
+    private readonly titleTextComponet: TextComponent;
+    private readonly countTextComponent: TextComponent;
     private readonly alert: MessageAlert;
     private readonly triggeredJobs: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
     private jobDefinitionID: number;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobListPanelView) {
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobListPanelView) {
         view.menuButton.hide();
         view.backButton.show();
-        this.alert = new MessageAlert(view.alert);
-        this.triggeredJobs = new ListGroup(view.jobs);
+        this.titleTextComponet = new TextComponent(view.titleTextView);
+        this.titleTextComponet.setText('Recent Jobs');
+        this.countTextComponent = new TextComponent(view.countTextView);
+        this.countTextComponent.hide();
+        this.alert = new CardAlert(view.alert).alert;
+        this.triggeredJobs = new ListGroup(view.jobListView);
         new Command(this.back.bind(this)).add(view.backButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
@@ -40,17 +48,21 @@ export class JobListPanel implements IPanel {
     private back() { this.awaitable.resolve(JobListPanelResult.back()); }
 
     private async doRefresh() {
+        this.countTextComponent.hide();
         const jobs = await this.getRecentTriggeredJobs();
         this.triggeredJobs.setItems(
             jobs,
-            (job, itemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
+            (job, itemView) => new JobSummaryListItem(this.schdJobsClient, job, itemView)
         );
+        if (jobs.length === 0) {
+            this.alert.danger('No Recent Jobs were found.');
+        }
     }
 
     private getRecentTriggeredJobs() {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.JobDefinitions.GetRecentTriggeredJobs({
+            () => this.schdJobsClient.JobDefinitions.GetRecentTriggeredJobs({
                 JobDefinitionID: this.jobDefinitionID
             })
         );

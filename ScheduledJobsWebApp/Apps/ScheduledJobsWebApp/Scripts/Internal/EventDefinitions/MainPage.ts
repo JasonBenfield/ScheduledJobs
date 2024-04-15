@@ -17,16 +17,16 @@ class MainPage extends ScheduledJobsPage {
     constructor() {
         super(new MainPageView());
         this.eventDefinitionsPanel = this.panels.add(
-            new EventDefinitionListPanel(this.defaultApi, this.view.eventDefinitionsPanel)
+            new EventDefinitionListPanel(this.schdJobsClient, this.view.eventDefinitionsPanel)
         );
         this.selectSourceKeyPanel = this.panels.add(
             new SelectSourceKeyPanel(this.view.selectSourceKeyPanel)
         );
         this.notificationsPanel = this.panels.add(
-            new NotificationListPanel(this.defaultApi, this.view.notificationsPanel)
+            new NotificationListPanel(this.schdJobsClient, this.view.notificationsPanel)
         );
         this.menuPanel = this.panels.add(
-            new MainMenuPanel(this.defaultApi, this.view.menuPanel)
+            new MainMenuPanel(this.schdJobsClient, this.view.menuPanel)
         );
         this.eventDefinitionsPanel.refresh();
         this.activateEventDefinitionsPanel();

@@ -1,4 +1,5 @@
 ﻿import { ColumnCss } from "@jasonbenfield/sharedwebapp/ColumnCss";
+import { CssLengthUnit } from "@jasonbenfield/sharedwebapp/CssLengthUnit";
 import { TextCss } from "@jasonbenfield/sharedwebapp/TextCss";
 import { BasicComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicComponentView";
 import { BasicTextComponentView } from "@jasonbenfield/sharedwebapp/Views/BasicTextComponentView";
@@ -24,6 +25,8 @@ export class LogEntryItemView extends ListGroupItemView {
         const linkCol = row2.addColumn();
         this.sourceLogEntryLink = linkCol.addView(TextLinkView);
         this.sourceLogEntryLink.setText('View Source Log Entry');
+        this.setMaxHeight(CssLengthUnit.px(300));
+        this.addCssName('overflow-auto');
     }
 
     readonly category: BasicTextComponentView;

@@ -1,12 +1,13 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
-import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
-import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
+import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
 import { EventSummaryListItem } from "./EventSummaryListItem";
 import { EventSummaryListItemView } from "./EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 
 interface IResults {
     menuRequested?: boolean;
@@ -27,11 +28,11 @@ export class NotificationListPanel implements IPanel {
     private readonly refreshCommand: AsyncCommand;
 
     constructor(
-        private readonly schdJobsApi: ScheduledJobsAppApi,
+        private readonly schdJobsClient: ScheduledJobsAppClient,
         private readonly view: NotificationListPanelView
     ) {
-        this.alert = new MessageAlert(view.alert);
-        this.recentEventsList = new ListGroup(view.recentEvents);
+        this.alert = new CardAlert(view.alert).alert;
+        this.recentEventsList = new ListGroup(view.recentEventListView);
         new TextComponent(view.heading).setText('Events');
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
@@ -47,7 +48,7 @@ export class NotificationListPanel implements IPanel {
         let recentEvents = await this.getRecentEvents();
         this.recentEventsList.setItems(
             recentEvents,
-            (evt, itemView) => new EventSummaryListItem(this.schdJobsApi, evt, itemView)
+            (evt, itemView) => new EventSummaryListItem(this.schdJobsClient, evt, itemView)
         );
         if (recentEvents.length === 0) {
             this.alert.danger('No events were found.');
@@ -57,7 +58,7 @@ export class NotificationListPanel implements IPanel {
     private getRecentEvents() {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.EventInquiry.GetRecentNotifications()
+            () => this.schdJobsClient.EventInquiry.GetRecentNotifications()
         );
     }
 

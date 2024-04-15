@@ -2,10 +2,11 @@
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
-import { ScheduledJobsAppApi } from "../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { EventDefinitionListItem } from "./EventDefinitionListItem";
 import { EventDefinitionListItemView } from "./EventDefinitionListItemView";
 import { EventDefinitionListPanelView } from "./EventDefinitionListPanelView";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 
 interface IResults {
     menuRequested?: boolean;
@@ -34,10 +35,10 @@ export class EventDefinitionListPanel implements IPanel {
     private readonly eventDefinitions: ListGroup<EventDefinitionListItem, EventDefinitionListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: EventDefinitionListPanelView) {
-        this.alert = new MessageAlert(view.alert);
-        this.eventDefinitions = new ListGroup(view.eventDefinitions);
-        this.eventDefinitions.registerItemClicked(this.onDefinitionClicked.bind(this));
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: EventDefinitionListPanelView) {
+        this.alert = new CardAlert(view.alert).alert;
+        this.eventDefinitions = new ListGroup(view.eventDefinitionListView);
+        this.eventDefinitions.when.itemClicked.then(this.onDefinitionClicked.bind(this));
         new Command(this.menu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
@@ -64,7 +65,7 @@ export class EventDefinitionListPanel implements IPanel {
     private getEventDefinitions() {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.EventDefinitions.GetEventDefinitions()
+            () => this.schdJobsClient.EventDefinitions.GetEventDefinitions()
         );
     }
 

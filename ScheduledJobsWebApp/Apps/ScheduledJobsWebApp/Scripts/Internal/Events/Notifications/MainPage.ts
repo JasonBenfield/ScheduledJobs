@@ -12,8 +12,8 @@ class MainPage extends ScheduledJobsPage {
 
     constructor() {
         super(new MainPageView());
-        this.notificationListPanel = this.panels.add(new NotificationListPanel(this.defaultApi, this.view.notificationListPanel));
-        this.menuPanel = this.panels.add(new MainMenuPanel(this.defaultApi, this.view.menuPanel));
+        this.notificationListPanel = this.panels.add(new NotificationListPanel(this.schdJobsClient, this.view.notificationListPanel));
+        this.menuPanel = this.panels.add(new MainMenuPanel(this.schdJobsClient, this.view.menuPanel));
         this.notificationListPanel.refresh();
         this.activateNotificationListPanel();
     }

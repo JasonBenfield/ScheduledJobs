@@ -1,4 +1,6 @@
-﻿namespace XTI_JobsDB.EF;
+﻿using XTI_Jobs.Abstractions;
+
+namespace XTI_JobsDB.EF;
 
 internal sealed class ExpandedTriggeredJobEntityConfiguration : IEntityTypeConfiguration<ExpandedTriggeredJobEntity>
 {

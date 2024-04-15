@@ -52,17 +52,18 @@ internal sealed class TestHost
         host.Services.AddScoped(sp => sp.GetRequiredService<ScheduledJobsAppApiFactory>().CreateForSuperUser());
         host.Services.AddSingleton<CancellationTokenSource>();
         host.Services.AddFileSecretCredentials(xtiEnv);
-        host.Services.AddScoped<InstallationUserCredentials>();
-        host.Services.AddScoped<IInstallationUserCredentials>(sp => sp.GetRequiredService<InstallationUserCredentials>());
-        host.Services.AddScoped<InstallationUserXtiToken>();
+        host.Services.AddInstallationUserXtiToken();
         host.Services.AddSingleton<AdminUserCredentials>();
         host.Services.AddScoped<AdminUserXtiToken>();
-        host.Services.AddXtiTokenAccessor((sp, accessor) =>
-        {
-            accessor.AddToken(() => sp.GetRequiredService<InstallationUserXtiToken>());
-            accessor.AddToken(() => sp.GetRequiredService<AdminUserXtiToken>());
-            accessor.UseToken<InstallationUserXtiToken>();
-        });
+        host.Services.AddXtiTokenAccessorFactory
+        (
+            (sp, accessor) =>
+            {
+                accessor.AddToken(() => sp.GetRequiredService<InstallationUserXtiToken>());
+                accessor.AddToken(() => sp.GetRequiredService<AdminUserXtiToken>());
+                accessor.UseDefaultToken<InstallationUserXtiToken>();
+            }
+        );
         return host.Build();
     }
 }

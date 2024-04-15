@@ -7,7 +7,7 @@ class MainPage extends ScheduledJobsPage {
 
     constructor() {
         super(new MainPageView());
-        new MainMenuPanel(this.defaultApi, this.view.menuPanel);
+        new MainMenuPanel(this.schdJobsClient, this.view.menuPanel);
     }
 }
 new MainPage();

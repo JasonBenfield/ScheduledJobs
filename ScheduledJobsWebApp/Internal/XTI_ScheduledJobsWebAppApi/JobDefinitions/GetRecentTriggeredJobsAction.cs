@@ -15,6 +15,7 @@ internal sealed class GetRecentTriggeredJobsAction : AppAction<GetRecentTriggere
         db.ExpandedTriggeredJobs.Retrieve()
             .Where(j => j.JobDefinitionID == model.JobDefinitionID)
             .OrderByDescending(j => j.TimeJobStarted)
+            .Take(50)
             .Select(j => new JobSummaryModel(j))
             .ToArrayAsync();
 }

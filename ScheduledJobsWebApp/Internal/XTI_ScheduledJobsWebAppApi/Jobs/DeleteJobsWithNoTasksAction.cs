@@ -1,11 +1,5 @@
 ﻿namespace XTI_ScheduledJobsWebAppApi.Jobs;
 
-public sealed class DeleteJobsWithNoTasksRequest
-{
-    public EventKey EventKey { get; set; } = new EventKey("");
-    public JobKey JobKey { get; set; } = new JobKey("");
-}
-
 internal sealed class DeleteJobsWithNoTasksAction : AppAction<DeleteJobsWithNoTasksRequest, EmptyActionResult>
 {
     private readonly IJobDb db;
@@ -15,9 +9,9 @@ internal sealed class DeleteJobsWithNoTasksAction : AppAction<DeleteJobsWithNoTa
         this.db = db;
     }
 
-    public async Task<EmptyActionResult> Execute(DeleteJobsWithNoTasksRequest model, CancellationToken stoppingToken)
+    public async Task<EmptyActionResult> Execute(DeleteJobsWithNoTasksRequest deleteRequest, CancellationToken stoppingToken)
     {
-        await db.DeleteJobsWithNoTasks(model.EventKey, model.JobKey);
+        await db.DeleteJobsWithNoTasks(new EventKey(deleteRequest.EventKey), new JobKey(deleteRequest.JobKey));
         return new EmptyActionResult();
     }
 }

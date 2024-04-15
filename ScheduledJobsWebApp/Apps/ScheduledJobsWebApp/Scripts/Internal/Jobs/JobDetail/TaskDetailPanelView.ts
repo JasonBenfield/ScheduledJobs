@@ -20,12 +20,13 @@ import { TextSpanView } from "@jasonbenfield/sharedwebapp/Views/TextSpanView";
 import { ToolbarView } from "@jasonbenfield/sharedwebapp/Views/ToolbarView";
 import { ScheduledJobsTheme } from "../../ScheduledJobsTheme";
 import { LogEntryItemView } from "./LogEntryItemView";
+import { ButtonContainerView } from "@jasonbenfield/sharedwebapp/Views/ButtonContainerView";
 
 export class TaskDetailPanelView extends GridView {
     constructor(container: BasicComponentView) {
         super(container);
         this.height100();
-        this.layout();
+        this.styleAsLayout();
         this.setTemplateRows(CssLengthUnit.flex(1), CssLengthUnit.auto());
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         const navBar = mainContent.addView(BlockView);
@@ -64,38 +65,38 @@ export class TaskDetailPanelView extends GridView {
         this.timeElapsed = topBlock.addView(TextSpanView);
         this.taskData = mainContent.addView(TextBlockView)
             .configure(b => b.setMargin(MarginCss.bottom(3)));
-        this.logEntries = mainContent.addListGroup(LogEntryItemView);
-        this.logEntries.setMargin(MarginCss.bottom(3));
-        const nav = mainContent.addView(NavView);
-        nav.pills();
-        nav.setFlexCss(new FlexCss().column());
-        nav.setMargin(MarginCss.bottom(3));
+        this.logEntryListView = mainContent.addListGroup(LogEntryItemView);
+        this.logEntryListView.setMargin(MarginCss.bottom(3));
+        const buttonContainer = mainContent.addView(ButtonContainerView);
+        //nav.setFlexCss(new FlexCss().column());
+        buttonContainer.setMargin(MarginCss.bottom(3));
 
-        this.timeoutTaskButton = nav.addButtonCommand();
+        this.timeoutTaskButton = buttonContainer.addButtonCommand();
         this.timeoutTaskButton.icon.makeFixedWidth();
         this.timeoutTaskButton.icon.regularStyle('clock');
         this.timeoutTaskButton.setText('Timeout Task');
         this.timeoutTaskButton.setTextCss(new TextCss().start());
 
-        this.editTaskDataButton = nav.addButtonCommand();
+        this.editTaskDataButton = buttonContainer.addButtonCommand();
         this.editTaskDataButton.icon.makeFixedWidth();
         this.editTaskDataButton.icon.solidStyle('pen-to-square');
         this.editTaskDataButton.setText('Edit Task Data');
         this.editTaskDataButton.setTextCss(new TextCss().start());
 
-        this.retryTaskButton = nav.addButtonCommand();
+        this.retryTaskButton = buttonContainer.addButtonCommand();
         this.retryTaskButton.icon.makeFixedWidth();
         this.retryTaskButton.icon.solidStyle('repeat');
         this.retryTaskButton.setText('Retry Task');
         this.retryTaskButton.setTextCss(new TextCss().start());
 
-        this.cancelTaskButton = nav.addButtonCommand();
+        this.cancelTaskButton = buttonContainer.addButtonCommand();
         this.cancelTaskButton.icon.makeFixedWidth();
         this.cancelTaskButton.icon.solidStyle('times');
         this.cancelTaskButton.setText('Cancel Task');
         this.cancelTaskButton.setTextCss(new TextCss().start());
+        this.cancelTaskButton.useOutlineStyle(ContextualClass.danger);
 
-        this.skipTaskButton = nav.addButtonCommand();
+        this.skipTaskButton = buttonContainer.addButtonCommand();
         this.skipTaskButton.icon.makeFixedWidth();
         this.skipTaskButton.icon.solidStyle('forward');
         this.skipTaskButton.setText('Skip Task');
@@ -119,7 +120,7 @@ export class TaskDetailPanelView extends GridView {
     readonly timeStarted: BasicTextComponentView;
     readonly timeElapsed: BasicTextComponentView;
     readonly taskData: TextBlockView;
-    readonly logEntries: ListGroupView<LogEntryItemView>;
+    readonly logEntryListView: ListGroupView<LogEntryItemView>;
     readonly timeoutTaskButton: ButtonCommandView;
     readonly editTaskDataButton: ButtonCommandView;
     readonly retryTaskButton: ButtonCommandView;

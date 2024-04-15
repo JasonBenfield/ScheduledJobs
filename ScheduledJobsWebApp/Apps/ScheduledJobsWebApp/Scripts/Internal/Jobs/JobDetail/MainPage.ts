@@ -1,6 +1,6 @@
 ﻿import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
 import { Url } from '@jasonbenfield/sharedwebapp/Url';
-import { Apis } from '../../Apis';
+import { AppClients } from '../../AppClients';
 import { MainMenuPanel } from '../../MainMenuPanel';
 import { ScheduledJobsPage } from '../../ScheduledJobsPage';
 import { EditTaskDataPanel } from './EditTaskDataPanel';
@@ -19,16 +19,16 @@ class MainPage extends ScheduledJobsPage {
     constructor() {
         super(new MainPageView());
         this.panels = new SingleActivePanel();
-        this.jobDetailPanel = this.panels.add(new JobDetailPanel(this.defaultApi, this.view.jobDetailPanel));
-        const hubApi = new Apis(this.view.modalError).Hub();
+        this.jobDetailPanel = this.panels.add(new JobDetailPanel(this.schdJobsClient, this.view.jobDetailPanel));
+        const hubApi = new AppClients(this.view.modalError).Hub();
         this.taskDetailPanel = this.panels.add(
-            new TaskDetailPanel(hubApi, this.defaultApi, this.view.taskDetailPanel)
+            new TaskDetailPanel(hubApi, this.schdJobsClient, this.view.taskDetailPanel)
         );
         this.editTaskDataPanel = this.panels.add(
-            new EditTaskDataPanel(this.defaultApi, this.view.editTaskDataPanel)
+            new EditTaskDataPanel(this.schdJobsClient, this.view.editTaskDataPanel)
         );
-        this.menuPanel = this.panels.add(new MainMenuPanel(this.defaultApi, this.view.menuPanel));
-        this.jobDetailPanel.setJobID(Number(Url.current().getQueryValue('JobID')));
+        this.menuPanel = this.panels.add(new MainMenuPanel(this.schdJobsClient, this.view.menuPanel));
+        this.jobDetailPanel.setJobID(Url.current().query.getNumberValue('JobID'));
         this.jobDetailPanel.refresh();
         this.activateJobDetailPanel();
     }

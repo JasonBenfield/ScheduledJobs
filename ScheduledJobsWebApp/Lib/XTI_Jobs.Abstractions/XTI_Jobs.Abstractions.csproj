@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Description>Abstractions for Scheduled Jobs $(XtiVersion)</Description>
@@ -9,7 +9,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_Schedule" Version="1.10.19" />
+		<PackageReference Include="XTI_Hub.Abstractions" Version="1.4.47" />
+		<PackageReference Include="XTI_Schedule" Version="1.10.21" />
 	</ItemGroup>
 
 	<ItemGroup>

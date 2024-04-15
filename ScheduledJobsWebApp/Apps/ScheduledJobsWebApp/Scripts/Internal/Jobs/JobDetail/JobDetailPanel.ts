@@ -4,7 +4,7 @@ import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
 import { TextLinkComponent } from "@jasonbenfield/sharedwebapp/Components/TextLinkComponent";
-import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
 import { JobDetailPanelView } from "./JobDetailPanelView";
 import { TaskListItem } from "./TaskListItem";
 import { TaskListItemView } from "./TaskListItemView";
@@ -42,13 +42,13 @@ export class JobDetailPanel implements IPanel {
     private jobID: number;
     private jobDetail: ITriggeredJobDetailModel;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobDetailPanelView) {
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobDetailPanelView) {
         this.view.hideJob();
         this.alert = new MessageAlert(this.view.alert);
         this.jobDisplayText = new TextComponent(this.view.jobDisplayText);
         this.triggeredByLink = new TextLinkComponent(this.view.triggeredByLink);
         this.taskList = new ListGroup(this.view.tasks);
-        this.taskList.registerItemClicked(this.onTaskClicked.bind(this));
+        this.taskList.when.itemClicked.then(this.onTaskClicked.bind(this));
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
@@ -62,7 +62,7 @@ export class JobDetailPanel implements IPanel {
         this.jobDisplayText.setText(this.jobDetail.Job.JobDefinition.JobKey.DisplayText);
         this.triggeredByLink.setText(this.jobDetail.TriggeredBy.Definition.EventKey.DisplayText);
         this.triggeredByLink.setHref(
-            this.schdJobsApi.EventInquiry.NotificationDetail.getUrl({
+            this.schdJobsClient.EventInquiry.NotificationDetail.getUrl({
                 NotificationID: this.jobDetail.TriggeredBy.ID
             }).value()
         );
@@ -70,13 +70,16 @@ export class JobDetailPanel implements IPanel {
             this.jobDetail.Tasks,
             (task, itemView) => new TaskListItem(task, itemView)
         );
+        if (this.jobDetail.Tasks.length === 0) {
+            this.alert.danger('No Tasks have been started for this  job.');
+        }
         this.view.showJob();
     }
 
     private getJobDetail(jobID) {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.JobInquiry.GetJobDetail({ JobID: jobID })
+            () => this.schdJobsClient.JobInquiry.GetJobDetail({ JobID: jobID })
         );
     }
 

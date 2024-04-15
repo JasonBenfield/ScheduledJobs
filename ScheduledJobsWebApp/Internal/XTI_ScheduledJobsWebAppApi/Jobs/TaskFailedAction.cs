@@ -9,16 +9,16 @@ internal sealed class TaskFailedAction : AppAction<TaskFailedRequest, TriggeredJ
         this.db = db;
     }
 
-    public Task<TriggeredJobWithTasksModel> Execute(TaskFailedRequest model, CancellationToken ct) =>
+    public Task<TriggeredJobWithTasksModel> Execute(TaskFailedRequest failedRequest, CancellationToken ct) =>
         db.TaskFailed
         (
-            model.FailedTaskID,
-            model.ErrorStatus,
-            model.RetryAfter,
-            model.NextTasks,
-            model.Category,
-            model.Message,
-            model.Detail,
-            model.SourceLogEntryKey
+            failedRequest.FailedTaskID,
+            JobTaskStatus.Values.Value(failedRequest.ErrorStatus),
+            failedRequest.RetryAfter,
+            failedRequest.NextTasks,
+            failedRequest.Category,
+            failedRequest.Message,
+            failedRequest.Detail,
+            failedRequest.SourceLogEntryKey
         );
 }

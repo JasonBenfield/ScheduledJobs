@@ -3,10 +3,11 @@ import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Co
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
-import { ScheduledJobsAppApi } from "../../../Lib/Api/ScheduledJobsAppApi";
+import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
 import { JobListPanelView } from "../JobListPanelView";
 import { JobSummaryListItem } from "../JobSummaryListItem";
 import { JobSummaryListItemView } from "../JobSummaryListItemView";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 
 interface IResults {
     menuRequested?: boolean;
@@ -25,11 +26,13 @@ export class FailedJobsPanel implements IPanel {
     private readonly alert: MessageAlert;
     private readonly failedJobsList: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
+    private readonly countTextComponent: TextComponent;
 
-    constructor(private readonly schdJobsApi: ScheduledJobsAppApi, private readonly view: JobListPanelView) {
-        this.alert = new MessageAlert(view.alert);
-        this.failedJobsList = new ListGroup(view.jobs);
-        new TextComponent(view.heading).setText('Failed Jobs');
+    constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobListPanelView) {
+        this.alert = new CardAlert(view.alert).alert;
+        this.failedJobsList = new ListGroup(view.jobListView);
+        new TextComponent(view.titleTextView).setText('Failed Jobs');
+        this.countTextComponent = new TextComponent(view.countTextView);
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
@@ -39,20 +42,25 @@ export class FailedJobsPanel implements IPanel {
     private requestMenu() { this.awaitable.resolve(FailedJobsPanelResult.menuRequested()); }
 
     private async doRefresh() {
+        this.countTextComponent.hide();
         const failedJobs = await this.getFailedJobs();
         this.failedJobsList.setItems(
             failedJobs,
-            (job, itemView) => new JobSummaryListItem(this.schdJobsApi, job, itemView)
+            (job, itemView) => new JobSummaryListItem(this.schdJobsClient, job, itemView)
         );
         if (failedJobs.length === 0) {
             this.alert.success('No failed jobs were found.');
+        }
+        else if (failedJobs.length > 1) {
+            this.countTextComponent.setText(failedJobs.length.toLocaleString());
+            this.countTextComponent.show();
         }
     }
 
     private getFailedJobs() {
         return this.alert.infoAction(
             'Loading...',
-            () => this.schdJobsApi.JobInquiry.GetFailedJobs()
+            () => this.schdJobsClient.JobInquiry.GetFailedJobs()
         );
     }
 
