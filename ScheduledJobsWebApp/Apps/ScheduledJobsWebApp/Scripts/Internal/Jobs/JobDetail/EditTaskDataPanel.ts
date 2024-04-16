@@ -30,7 +30,7 @@ export class EditTaskDataPanel implements IPanel {
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: EditTaskDataPanelView) {
         this.alert = new MessageAlert(view.alert);
-        this.taskData = new TextAreaControl(view.taskDataFormGroup.textArea);
+        this.taskData = new TextAreaControl(view.taskDataFormGroup.textAreaView);
         new Command(this.cancel.bind(this)).add(view.cancelButton);
         new AsyncCommand(this.save.bind(this)).add(view.saveButton);
     }

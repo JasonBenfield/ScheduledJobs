@@ -22,7 +22,7 @@ export class EditTaskDataPanelView extends GridView {
         const mainContent = ScheduledJobsTheme.instance.mainContent(this.addCell());
         const formGroupContainer = mainContent.addView(FormGroupContainerView);
         this.taskDataFormGroup = formGroupContainer.addFormGroupTextAreaView();
-        this.taskDataFormGroup.textArea.setRows(10);
+        this.taskDataFormGroup.textAreaView.setRows(10);
         this.alert = mainContent.addView(MessageAlertView);
         const toolbar = ScheduledJobsTheme.instance.commandToolbar.toolbar(this.addCell().addView(ToolbarView));
         this.cancelButton = ScheduledJobsTheme.instance.commandToolbar.cancelButton(
