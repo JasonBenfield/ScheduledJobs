@@ -29,14 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsApiGeneratorAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsSetupApp", "ScheduledJobsWebApp\Apps\ScheduledJobsSetupApp\ScheduledJobsSetupApp.csproj", "{07E29774-FF7F-44E5-BC31-5CC5CC0DD716}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InstallOptions", "InstallOptions", "{79E3FC0A-9492-4E55-999C-3FA390FF018A}"
-	ProjectSection(SolutionItems) = preProject
-		ScheduledJobsWebApp\install.Development.private.json = ScheduledJobsWebApp\install.Development.private.json
-		ScheduledJobsWebApp\install.Production.private.json = ScheduledJobsWebApp\install.Production.private.json
-		ScheduledJobsWebApp\install.Staging.private.json = ScheduledJobsWebApp\install.Staging.private.json
-		ScheduledJobsWebApp\install.Test.private.json = ScheduledJobsWebApp\install.Test.private.json
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Jobs", "ScheduledJobsWebApp\Lib\XTI_Jobs\XTI_Jobs.csproj", "{17B348C6-B7E1-490C-ACDB-C8F902DEF778}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0904BA61-8C46-44B5-893D-F6756E92B607}"
@@ -58,14 +50,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduledJobsServiceAppApi", "ScheduledJobsServiceApp\Internal\XTI_ScheduledJobsServiceAppApi\XTI_ScheduledJobsServiceAppApi.csproj", "{8A9C8378-8722-46CA-AB26-B9464E58386C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsSetupApp", "ScheduledJobsServiceApp\Apps\ScheduledJobsSetupApp\ScheduledJobsSetupApp.csproj", "{145F3B1C-493E-4E82-B896-E5E0374426F7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InstallOptions", "InstallOptions", "{79878EBC-50D8-47E4-BC9E-16013ACDFB9E}"
-	ProjectSection(SolutionItems) = preProject
-		ScheduledJobsServiceApp\install.Development.private.json = ScheduledJobsServiceApp\install.Development.private.json
-		ScheduledJobsServiceApp\install.Production.private.json = ScheduledJobsServiceApp\install.Production.private.json
-		ScheduledJobsServiceApp\install.Staging.private.json = ScheduledJobsServiceApp\install.Staging.private.json
-		ScheduledJobsServiceApp\install.Test.private.json = ScheduledJobsServiceApp\install.Test.private.json
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_JobsDB.EF", "ScheduledJobsWebApp\Lib\XTI_JobsDB.EF\XTI_JobsDB.EF.csproj", "{AE679FD7-C4A5-4CFF-A1FB-5F1638DD945B}"
 EndProject
@@ -169,7 +153,6 @@ Global
 		{86BC63B1-10B7-47D8-9AFB-CFFEC1A97753} = {48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994}
 		{B71A4745-225A-453B-B6A4-DF280865DF0A} = {514E2103-B915-4E18-A473-A402D3FB5F86}
 		{07E29774-FF7F-44E5-BC31-5CC5CC0DD716} = {514E2103-B915-4E18-A473-A402D3FB5F86}
-		{79E3FC0A-9492-4E55-999C-3FA390FF018A} = {D41BEADF-8201-48EB-B779-99745EF8C3C6}
 		{17B348C6-B7E1-490C-ACDB-C8F902DEF778} = {48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994}
 		{0904BA61-8C46-44B5-893D-F6756E92B607} = {D41BEADF-8201-48EB-B779-99745EF8C3C6}
 		{C2B62418-8EC6-47C0-9937-5C6C41203379} = {98784FFD-984A-469A-8D05-4C268E149058}
@@ -180,7 +163,6 @@ Global
 		{EF3EB845-2EE5-4863-BF76-3BBC1466989D} = {3FEDAB60-7DB0-44D7-9C7E-AB4437F3FABC}
 		{8A9C8378-8722-46CA-AB26-B9464E58386C} = {EF3EB845-2EE5-4863-BF76-3BBC1466989D}
 		{145F3B1C-493E-4E82-B896-E5E0374426F7} = {33F1D804-BC54-4F7C-ABA1-87D9E8F4B326}
-		{79878EBC-50D8-47E4-BC9E-16013ACDFB9E} = {3FEDAB60-7DB0-44D7-9C7E-AB4437F3FABC}
 		{AE679FD7-C4A5-4CFF-A1FB-5F1638DD945B} = {48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994}
 		{2C4C42E8-0BF5-440A-A4A2-B17DA5C1BCF0} = {48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994}
 		{7F8F426F-B566-4F50-9314-C555B8E41681} = {0904BA61-8C46-44B5-893D-F6756E92B607}

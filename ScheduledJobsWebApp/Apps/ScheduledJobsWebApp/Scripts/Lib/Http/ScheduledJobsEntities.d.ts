@@ -134,6 +134,7 @@ interface IAppLogEntryModel {
 	Message: string;
 	Detail: string;
 	Category: string;
+	ActualCount: number;
 }
 interface IAddOrUpdateJobSchedulesRequest {
 	JobKey: string;

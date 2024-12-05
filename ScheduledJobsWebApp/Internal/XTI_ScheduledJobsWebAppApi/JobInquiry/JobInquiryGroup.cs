@@ -5,30 +5,30 @@ public sealed class JobInquiryGroup : AppApiGroupWrapper
     public JobInquiryGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        FailedJobs = source.AddAction
-        (
-            nameof(FailedJobs), () => sp.GetRequiredService<FailedJobsView>()
-        );
-        GetFailedJobs = source.AddAction
-        (
-            nameof(GetFailedJobs), () => sp.GetRequiredService<GetFailedJobsAction>()
-        );
-        RecentJobs = source.AddAction
-        (
-            nameof(RecentJobs), () => sp.GetRequiredService<RecentJobsView>()
-        );
-        GetRecentJobs = source.AddAction
-        (
-            nameof(GetRecentJobs), () => sp.GetRequiredService<GetRecentJobsAction>()
-        );
-        JobDetail = source.AddAction
-        (
-            nameof(JobDetail), () => sp.GetRequiredService<JobDetailView>()
-        );
-        GetJobDetail = source.AddAction
-        (
-            nameof(GetJobDetail), () => sp.GetRequiredService<GetJobDetailAction>()
-        );
+        FailedJobs = source.AddAction<EmptyRequest, WebViewResult>()
+            .Named(nameof(FailedJobs))
+            .WithExecution<FailedJobsView>()
+            .Build();
+        GetFailedJobs = source.AddAction<EmptyRequest, JobSummaryModel[]>()
+            .Named(nameof(GetFailedJobs))
+            .WithExecution<GetFailedJobsAction>()
+            .Build();
+        RecentJobs = source.AddAction<EmptyRequest, WebViewResult>()
+            .Named(nameof(RecentJobs))
+            .WithExecution<RecentJobsView>()
+            .Build();
+        GetRecentJobs = source.AddAction<EmptyRequest, JobSummaryModel[]>()
+            .Named(nameof(GetRecentJobs))
+            .WithExecution<GetRecentJobsAction>()
+            .Build();
+        JobDetail = source.AddAction<GetJobDetailRequest, WebViewResult>()
+            .Named(nameof(JobDetail))
+            .WithExecution<JobDetailView>()
+            .Build();
+        GetJobDetail = source.AddAction<GetJobDetailRequest, TriggeredJobDetailModel>()
+            .Named(nameof(GetJobDetail))
+            .WithExecution<GetJobDetailAction>()
+            .Build();
     }
 
     public AppApiAction<EmptyRequest, WebViewResult> FailedJobs { get; }

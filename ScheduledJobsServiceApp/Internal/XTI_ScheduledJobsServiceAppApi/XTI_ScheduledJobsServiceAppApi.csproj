@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_App.Api" Version="1.8.42" />
+		<PackageReference Include="XTI_App.Api" Version="1.8.47" />
 	</ItemGroup>
 
 	<ItemGroup>

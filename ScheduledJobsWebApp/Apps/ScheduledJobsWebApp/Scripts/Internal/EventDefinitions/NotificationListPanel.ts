@@ -7,6 +7,7 @@ import { EventSummaryListItem } from "../Events/Notifications/EventSummaryListIt
 import { EventSummaryListItemView } from "../Events/Notifications/EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
 import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     back?: boolean;
@@ -22,14 +23,14 @@ export class NotificationListPanelResult {
 
 export class NotificationListPanel implements IPanel {
     private readonly awaitable = new Awaitable<NotificationListPanelResult>();
-    private readonly alert: MessageAlert;
+    private readonly alert: IMessageAlert;
     private readonly notifications: ListGroup<EventSummaryListItem, EventSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
     private eventDefinitionID: number;
     private sourceKey: string = '';
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: NotificationListPanelView) {
-        this.alert = new CardAlert(view.alert).alert;
+        this.alert = new CardAlert(view.alert);
         this.notifications = new ListGroup(view.notificationListView);
         new Command(this.back.bind(this)).add(view.backButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));

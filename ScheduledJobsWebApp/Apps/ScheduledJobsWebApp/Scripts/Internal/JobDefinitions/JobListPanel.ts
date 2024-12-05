@@ -8,6 +8,7 @@ import { JobSummaryListItem } from "../Jobs/JobSummaryListItem";
 import { JobSummaryListItemView } from "../Jobs/JobSummaryListItemView";
 import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     back?: boolean;
@@ -25,7 +26,7 @@ export class JobListPanel implements IPanel {
     private readonly awaitable = new Awaitable<JobListPanelResult>();
     private readonly titleTextComponet: TextComponent;
     private readonly countTextComponent: TextComponent;
-    private readonly alert: MessageAlert;
+    private readonly alert: IMessageAlert;
     private readonly triggeredJobs: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
     private jobDefinitionID: number;
@@ -37,7 +38,7 @@ export class JobListPanel implements IPanel {
         this.titleTextComponet.setText('Recent Jobs');
         this.countTextComponent = new TextComponent(view.countTextView);
         this.countTextComponent.hide();
-        this.alert = new CardAlert(view.alert).alert;
+        this.alert = new CardAlert(view.alert);
         this.triggeredJobs = new ListGroup(view.jobListView);
         new Command(this.back.bind(this)).add(view.backButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));

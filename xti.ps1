@@ -64,3 +64,7 @@ function Xti-UpdateJobDb {
         Throw "Update failed"
     }
 }
+
+function Xti-UpdateNpm {
+	Start-Process -FilePath "cmd.exe" -WorkingDirectory ScheduledJobsWebApp/Apps/ScheduledJobsWebApp -ArgumentList "/c", "npm install @jasonbenfield/sharedwebapp@latest @jasonbenfield/hubwebapp@latest"
+}

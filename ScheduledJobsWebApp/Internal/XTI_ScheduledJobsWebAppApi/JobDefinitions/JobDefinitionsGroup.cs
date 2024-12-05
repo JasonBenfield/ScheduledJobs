@@ -5,15 +5,18 @@ public sealed class JobDefinitionsGroup : AppApiGroupWrapper
     public JobDefinitionsGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        Index = source.AddAction(nameof(Index), () => sp.GetRequiredService<IndexView>());
-        GetJobDefinitions = source.AddAction
-        (
-            nameof(GetJobDefinitions), () => sp.GetRequiredService<GetJobDefinitionsAction>()
-        );
-        GetRecentTriggeredJobs = source.AddAction
-        (
-            nameof(GetRecentTriggeredJobs), () => sp.GetRequiredService<GetRecentTriggeredJobsAction>()
-        );
+        Index = source.AddAction<EmptyRequest, WebViewResult>()
+            .Named(nameof(Index))
+            .WithExecution<IndexView>()
+            .Build();
+        GetJobDefinitions = source.AddAction<EmptyRequest, JobDefinitionModel[]>()
+            .Named(nameof(GetJobDefinitions))
+            .WithExecution<GetJobDefinitionsAction>()
+            .Build();
+        GetRecentTriggeredJobs = source.AddAction<GetRecentTriggeredJobsByDefinitionRequest, JobSummaryModel[]>()
+            .Named(nameof(GetRecentTriggeredJobs))
+            .WithExecution<GetRecentTriggeredJobsAction>()
+            .Build();
     }
 
     public AppApiAction<EmptyRequest, WebViewResult> Index { get; }

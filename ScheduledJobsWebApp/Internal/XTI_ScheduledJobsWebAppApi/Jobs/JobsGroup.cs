@@ -5,61 +5,62 @@ public sealed class JobsGroup : AppApiGroupWrapper
     public JobsGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        AddOrUpdateJobSchedules = source.AddAction
-        (
-            nameof(AddOrUpdateJobSchedules), 
-            () => sp.GetRequiredService<AddOrUpdateJobSchedulesAction>()
-        );
-        AddOrUpdateRegisteredJobs = source.AddAction
-        (
-            nameof(AddOrUpdateRegisteredJobs), 
-            () => sp.GetRequiredService<AddOrUpdateRegisteredJobsAction>()
-        );
-        TriggerJobs = source.AddAction
-        (
-            nameof(TriggerJobs), 
-            () => sp.GetRequiredService<TriggerJobsAction>()
-        );
-        DeleteJobsWithNoTasks = source.AddAction
-        (
-            nameof(DeleteJobsWithNoTasks), 
-            () => sp.GetRequiredService<DeleteJobsWithNoTasksAction>()
-        );
-        RetryJobs = source.AddAction
-        (
-            nameof(RetryJobs), 
-            () => sp.GetRequiredService<RetryJobsAction>()
-        );
-        StartJob = source.AddAction
-        (
-            nameof(StartJob), 
-            () => sp.GetRequiredService<StartJobAction>()
-        );
-        StartTask = source.AddAction
-        (
-            nameof(StartTask), 
-            () => sp.GetRequiredService<StartTaskAction>()
-        );
-        JobCancelled = source.AddAction
-        (
-            nameof(JobCancelled), 
-            () => sp.GetRequiredService<JobCancelledAction>()
-        );
-        TaskCompleted = source.AddAction
-        (
-            nameof(TaskCompleted), 
-            () => sp.GetRequiredService<TaskCompletedAction>()
-        );
-        TaskFailed = source.AddAction
-        (
-            nameof(TaskFailed), 
-            () => sp.GetRequiredService<TaskFailedAction>()
-        );
-        LogMessage = source.AddAction
-        (
-            nameof(LogMessage), 
-            () => sp.GetRequiredService<LogMessageAction>()
-        );
+        AddOrUpdateJobSchedules = source.AddAction<AddOrUpdateJobSchedulesRequest, EmptyActionResult>()
+            .Named(nameof(AddOrUpdateJobSchedules))
+            .WithExecution<AddOrUpdateJobSchedulesAction>()
+            .ThrottleRequestLogging().ForOneHour()
+            .ThrottleExceptionLogging().For(5).Minutes()
+            .Build();
+        AddOrUpdateRegisteredJobs = source.AddAction<RegisteredJob[], EmptyActionResult>()
+            .Named(nameof(AddOrUpdateRegisteredJobs))
+            .WithExecution<AddOrUpdateRegisteredJobsAction>()
+            .Build();
+        TriggerJobs = source.AddAction<TriggerJobsRequest, PendingJobModel[]>()
+            .Named(nameof(TriggerJobs))
+            .WithExecution<TriggerJobsAction>()
+            .ThrottleRequestLogging().ForOneHour()
+            .ThrottleExceptionLogging().For(5).Minutes()
+            .Build();
+        DeleteJobsWithNoTasks = source.AddAction<DeleteJobsWithNoTasksRequest, EmptyActionResult>()
+            .Named(nameof(DeleteJobsWithNoTasks))
+            .WithExecution<DeleteJobsWithNoTasksAction>()
+            .ThrottleRequestLogging().ForOneHour()
+            .ThrottleExceptionLogging().For(5).Minutes()
+            .Build();
+        RetryJobs = source.AddAction<RetryJobsRequest, TriggeredJobWithTasksModel[]>()
+            .Named(nameof(RetryJobs))
+            .WithExecution<RetryJobsAction>()
+            .ThrottleRequestLogging().ForOneHour()
+            .ThrottleExceptionLogging().For(5).Minutes()
+            .Build();
+        StartJob = source.AddAction<StartJobRequest, TriggeredJobWithTasksModel>()
+            .Named(nameof(StartJob))
+            .WithExecution<StartJobAction>()
+            .ThrottleRequestLogging().ForOneHour()
+            .Build();
+        StartTask = source.AddAction<StartTaskRequest, EmptyActionResult>()
+            .Named(nameof(StartTask))
+            .WithExecution<StartTaskAction>()
+            .ThrottleRequestLogging().ForOneHour()
+            .Build();
+        JobCancelled = source.AddAction<JobCancelledRequest, EmptyActionResult>()
+            .Named(nameof(JobCancelled))
+            .WithExecution<JobCancelledAction>()
+            .Build();
+        TaskCompleted = source.AddAction<TaskCompletedRequest, TriggeredJobWithTasksModel>()
+            .Named(nameof(TaskCompleted))
+            .WithExecution<TaskCompletedAction>()
+            .ThrottleRequestLogging().ForOneHour()
+            .Build();
+        TaskFailed = source.AddAction<TaskFailedRequest, TriggeredJobWithTasksModel>()
+            .Named(nameof(TaskFailed))
+            .WithExecution<TaskFailedAction>()
+            .ThrottleRequestLogging().ForOneHour()
+            .Build();
+        LogMessage = source.AddAction<LogMessageRequest, EmptyActionResult>()
+            .Named(nameof(LogMessage))
+            .WithExecution<LogMessageAction>()
+            .Build();
     }
 
     public AppApiAction<AddOrUpdateJobSchedulesRequest, EmptyActionResult> AddOrUpdateJobSchedules { get; }

@@ -8,6 +8,7 @@ import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient
 import { JobListPanelView } from "../JobListPanelView";
 import { JobSummaryListItem } from "../JobSummaryListItem";
 import { JobSummaryListItemView } from "../JobSummaryListItemView";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     menuRequested?: boolean;
@@ -23,13 +24,13 @@ export class RecentJobsPanelResult {
 
 export class RecentJobsPanel implements IPanel {
     private readonly awaitable = new Awaitable<RecentJobsPanelResult>();
-    private readonly alert: MessageAlert;
+    private readonly alert: IMessageAlert;
     private readonly countTextComponent: TextComponent;
     private readonly recentJobsList: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobListPanelView) {
-        this.alert = new CardAlert(view.alert).alert;
+        this.alert = new CardAlert(view.alert);
         this.recentJobsList = new ListGroup(view.jobListView);
         new TextComponent(view.titleTextView).setText('Recent Jobs');
         this.countTextComponent = new TextComponent(view.countTextView);

@@ -13,11 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@jasonbenfield/hubwebapp": "^1.4.49",
-    "@jasonbenfield/sharedwebapp": "^1.9.30"
+    "@jasonbenfield/hubwebapp": "^1.4.50",
+    "@jasonbenfield/sharedwebapp": "^1.10.4"
   },
   "devDependencies": {
-    "@types/node": "^18.11.15",
+    "@types/node": "^22.9.0",
     "css-loader": "^6.10.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^7.2.13",
