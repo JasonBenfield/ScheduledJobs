@@ -23,30 +23,30 @@ internal sealed class PurgeJobsAndEventsAction : AppAction<EmptyRequest, EmptyAc
         var taskIDs = db.TriggeredJobTasks.Retrieve()
             .Where(task => jobIDs.Contains(task.TriggeredJobID))
             .Select(task => task.ID);
-        var taskEntities = await db.TriggeredJobTasks.Retrieve()
-            .Where(t => taskIDs.Contains(t.ID))
-            .ToArrayAsync();
-        var hierTaskEntitites = await db.HierarchicalTriggeredJobTasks.Retrieve()
-            .Where(ht => taskIDs.Contains(ht.ParentTaskID))
-            .ToArrayAsync();
         var logEntryEntities = await db.LogEntries.Retrieve()
             .Where(le => taskIDs.Contains(le.TaskID))
-            .ToArrayAsync();
-        var jobEntities = await db.TriggeredJobs.Retrieve()
-            .Where(j => jobIDs.Contains(j.ID))
             .ToArrayAsync();
         foreach (var logEntryEntity in logEntryEntities)
         {
             await db.LogEntries.Delete(logEntryEntity);
         }
-        foreach (var hierTaskEntity in hierTaskEntitites)
+        var hierTaskEntities = await db.HierarchicalTriggeredJobTasks.Retrieve()
+            .Where(ht => taskIDs.Contains(ht.ParentTaskID))
+            .ToArrayAsync();
+        foreach (var hierTaskEntity in hierTaskEntities)
         {
             await db.HierarchicalTriggeredJobTasks.Delete(hierTaskEntity);
         }
+        var taskEntities = await db.TriggeredJobTasks.Retrieve()
+            .Where(t => taskIDs.Contains(t.ID))
+            .ToArrayAsync();
         foreach (var taskEntity in taskEntities)
         {
             await db.TriggeredJobTasks.Delete(taskEntity);
         }
+        var jobEntities = await db.TriggeredJobs.Retrieve()
+            .Where(j => jobIDs.Contains(j.ID))
+            .ToArrayAsync();
         foreach (var jobEntity in jobEntities)
         {
             await db.TriggeredJobs.Delete(jobEntity);

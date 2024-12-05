@@ -1,4 +1,4 @@
-﻿namespace XTI_JobsDB.EF;
+﻿namespace XTI_JobsDB.EF.Configuration;
 
 internal sealed class TriggeredJobEntityConfiguration : IEntityTypeConfiguration<TriggeredJobEntity>
 {
