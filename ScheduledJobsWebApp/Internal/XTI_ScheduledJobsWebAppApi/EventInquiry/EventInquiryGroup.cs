@@ -5,22 +5,22 @@ public sealed class EventInquiryGroup : AppApiGroupWrapper
     public EventInquiryGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        Notifications = source.AddAction
-        (
-            nameof(Notifications), () => sp.GetRequiredService<NotificationsView>()
-        );
-        GetRecentNotifications = source.AddAction
-        (
-            nameof(GetRecentNotifications), () => sp.GetRequiredService<GetRecentNotificationsAction>()
-        );
-        NotificationDetail = source.AddAction
-        (
-            nameof(NotificationDetail), () => sp.GetRequiredService<NotificationDetailView>()
-        );
-        GetNotificationDetail = source.AddAction
-        (
-            nameof(GetNotificationDetail), () => sp.GetRequiredService<GetNotificationDetailAction>()
-        );
+        Notifications = source.AddAction<EmptyRequest, WebViewResult>()
+            .Named(nameof(Notifications))
+            .WithExecution<NotificationsView>()
+            .Build();
+        GetRecentNotifications = source.AddAction<EmptyRequest, EventSummaryModel[]>()
+            .Named(nameof(GetRecentNotifications))
+            .WithExecution<GetRecentNotificationsAction>()
+            .Build();
+        NotificationDetail = source.AddAction<GetNotificationDetailRequest, WebViewResult>()
+            .Named(nameof(NotificationDetail))
+            .WithExecution<NotificationDetailView>()
+            .Build();
+        GetNotificationDetail = source.AddAction<GetNotificationDetailRequest, EventNotificationDetailModel>()
+            .Named(nameof(GetNotificationDetail))
+            .WithExecution<GetNotificationDetailAction>()
+            .Build();
     }
 
     public AppApiAction<EmptyRequest, WebViewResult> Notifications { get; }

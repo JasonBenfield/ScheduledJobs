@@ -48,7 +48,8 @@ internal sealed class GetJobDetailAction : AppAction<GetJobDetailRequest, Trigge
                             Caption: "",
                             Message: "Placeholder",
                             Detail: "",
-                            Category: ""
+                            Category: "",
+                            ActualCount: 0
                         )
                     )
                 );

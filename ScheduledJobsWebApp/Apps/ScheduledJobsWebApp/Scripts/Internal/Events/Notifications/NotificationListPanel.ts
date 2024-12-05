@@ -8,6 +8,7 @@ import { EventSummaryListItem } from "./EventSummaryListItem";
 import { EventSummaryListItemView } from "./EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
 import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     menuRequested?: boolean;
@@ -23,7 +24,7 @@ export class NotificationListPanelResult {
 
 export class NotificationListPanel implements IPanel {
     private readonly awaitable = new Awaitable<NotificationListPanelResult>();
-    private readonly alert: MessageAlert;
+    private readonly alert: IMessageAlert;
     private readonly recentEventsList: ListGroup<EventSummaryListItem, EventSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
 
@@ -31,7 +32,7 @@ export class NotificationListPanel implements IPanel {
         private readonly schdJobsClient: ScheduledJobsAppClient,
         private readonly view: NotificationListPanelView
     ) {
-        this.alert = new CardAlert(view.alert).alert;
+        this.alert = new CardAlert(view.alert);
         this.recentEventsList = new ListGroup(view.recentEventListView);
         new TextComponent(view.heading).setText('Events');
         new Command(this.requestMenu.bind(this)).add(view.menuButton);

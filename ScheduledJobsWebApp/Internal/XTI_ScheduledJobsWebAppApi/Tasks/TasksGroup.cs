@@ -5,31 +5,26 @@ public sealed class TasksGroup : AppApiGroupWrapper
     public TasksGroup(AppApiGroup source, IServiceProvider sp)
         : base(source)
     {
-        CancelTask = source.AddAction
-        (
-            nameof(CancelTask), 
-            () => sp.GetRequiredService<CancelTaskAction>()
-        );
-        RetryTask = source.AddAction
-        (
-            nameof(RetryTask), 
-            () => sp.GetRequiredService<RetryTaskAction>()
-        );
-        SkipTask = source.AddAction
-        (
-            nameof(SkipTask),
-            () => sp.GetRequiredService<SkipTaskAction>()
-        );
-        TimeoutTask = source.AddAction
-        (
-            nameof(TimeoutTask),
-            () => sp.GetRequiredService<TimeoutTaskAction>()
-        );
-        EditTaskData = source.AddAction
-        (
-            nameof(EditTaskData),
-            () => sp.GetRequiredService<EditTaskDataAction>()
-        );
+        CancelTask = source.AddAction<GetTaskRequest, EmptyActionResult>()
+            .Named(nameof(CancelTask))
+            .WithExecution<CancelTaskAction>()
+            .Build();
+        RetryTask = source.AddAction<GetTaskRequest, EmptyActionResult>()
+            .Named(nameof(RetryTask))
+            .WithExecution<RetryTaskAction>()
+            .Build();
+        SkipTask = source.AddAction<GetTaskRequest, EmptyActionResult>()
+            .Named(nameof(SkipTask))
+            .WithExecution<SkipTaskAction>()
+            .Build();
+        TimeoutTask = source.AddAction<GetTaskRequest, EmptyActionResult>()
+            .Named(nameof(TimeoutTask))
+            .WithExecution<TimeoutTaskAction>()
+            .Build();
+        EditTaskData = source.AddAction<EditTaskDataRequest, EmptyActionResult>()
+            .Named(nameof(EditTaskData))
+            .WithExecution<EditTaskDataAction>()
+            .Build();
     }
 
     public AppApiAction<GetTaskRequest, EmptyActionResult> CancelTask { get; }

@@ -11,6 +11,7 @@ public sealed partial class ScheduledJobsAppApi : WebAppApiWrapper
         (
             new AppApi
             (
+                sp,
                 ScheduledJobsInfo.AppKey,
                 user,
                 ResourceAccess.AllowAuthenticated()

@@ -8,6 +8,7 @@ import { JobListPanelView } from "../JobListPanelView";
 import { JobSummaryListItem } from "../JobSummaryListItem";
 import { JobSummaryListItemView } from "../JobSummaryListItemView";
 import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     menuRequested?: boolean;
@@ -23,13 +24,13 @@ export class FailedJobsPanelResult {
 
 export class FailedJobsPanel implements IPanel {
     private readonly awaitable = new Awaitable<FailedJobsPanelResult>();
-    private readonly alert: MessageAlert;
+    private readonly alert: IMessageAlert;
     private readonly failedJobsList: ListGroup<JobSummaryListItem, JobSummaryListItemView>;
     private readonly refreshCommand: AsyncCommand;
     private readonly countTextComponent: TextComponent;
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobListPanelView) {
-        this.alert = new CardAlert(view.alert).alert;
+        this.alert = new CardAlert(view.alert);
         this.failedJobsList = new ListGroup(view.jobListView);
         new TextComponent(view.titleTextView).setText('Failed Jobs');
         this.countTextComponent = new TextComponent(view.countTextView);
