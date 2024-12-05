@@ -1,6 +1,7 @@
 ﻿using XTI_Core;
 using XTI_Core.EF;
 using XTI_Jobs.Abstractions;
+using XTI_JobsDB.EF.Configuration;
 
 namespace XTI_JobsDB.EF;
 
