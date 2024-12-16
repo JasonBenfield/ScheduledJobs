@@ -10,14 +10,14 @@ import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Http/AppResourceUrl"
 export class EventDefinitionsGroup extends AppClientGroup {
 	constructor(events: AppClientEvents, resourceUrl: AppResourceUrl) {
 		super(events, resourceUrl, 'EventDefinitions');
-		this.Index = this.createView<IEmptyRequest>('Index');
 		this.GetEventDefinitionsAction = this.createAction<IEmptyRequest,IEventDefinitionModel[]>('GetEventDefinitions', 'Get Event Definitions');
 		this.GetRecentNotificationsAction = this.createAction<IGetRecentEventNotificationsByEventDefinitionRequest,IEventSummaryModel[]>('GetRecentNotifications', 'Get Recent Notifications');
+		this.Index = this.createView<IEmptyRequest>('Index');
 	}
 	
-	readonly Index: AppClientView<IEmptyRequest>;
 	readonly GetEventDefinitionsAction: AppClientAction<IEmptyRequest,IEventDefinitionModel[]>;
 	readonly GetRecentNotificationsAction: AppClientAction<IGetRecentEventNotificationsByEventDefinitionRequest,IEventSummaryModel[]>;
+	readonly Index: AppClientView<IEmptyRequest>;
 	
 	GetEventDefinitions(errorOptions?: IActionErrorOptions) {
 		return this.GetEventDefinitionsAction.execute({}, errorOptions || {});

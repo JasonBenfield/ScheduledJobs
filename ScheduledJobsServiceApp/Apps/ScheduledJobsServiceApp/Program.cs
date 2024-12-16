@@ -5,7 +5,7 @@ using XTI_HubAppClient.ServiceApp.Extensions;
 using XTI_ScheduledJobsAppClient;
 using XTI_ScheduledJobsServiceAppApi;
 
-await XtiServiceAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
+await XtiServiceAppHost.CreateDefault(ScheduledJobsAppKey.Value, args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddScheduledJobsAppApiServices();

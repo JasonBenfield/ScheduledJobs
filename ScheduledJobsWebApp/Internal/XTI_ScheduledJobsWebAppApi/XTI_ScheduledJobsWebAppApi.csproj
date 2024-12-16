@@ -7,28 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_HubAppClient" Version="1.4.51" />
-		<PackageReference Include="XTI_WebApp.Api" Version="1.8.47" />
+	  <PackageReference Include="XTI_ApiGeneratorTask" Version="1.3.37-dev241214221858836" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Lib\XTI_JobsDB.EF\XTI_JobsDB.EF.csproj" />
-	  <ProjectReference Include="..\..\Lib\XTI_Jobs\XTI_Jobs.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="Tasks\TaskErrors.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>TaskErrors.resx</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Update="Tasks\TaskErrors.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>TaskErrors.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
+	  <ProjectReference Include="..\XTI_ScheduledJobsWebAppApiActions\XTI_ScheduledJobsWebAppApiActions.csproj" />
 	</ItemGroup>
 
 </Project>

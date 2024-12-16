@@ -16,7 +16,7 @@ internal sealed class ScheduledJobsAppSetup : IAppSetup
 
     public async Task Run(AppVersionKey versionKey)
     {
-        var systemUserName = new SystemUserName(ScheduledJobsInfo.AppKey, Environment.MachineName);
+        var systemUserName = new SystemUserName(ScheduledJobsAppKey.Value, Environment.MachineName);
         await hubClient.Install.SetUserAccess
         (
             new SetUserAccessRequest

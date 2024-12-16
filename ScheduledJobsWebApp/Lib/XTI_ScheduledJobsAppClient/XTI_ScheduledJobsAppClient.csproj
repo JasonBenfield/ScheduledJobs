@@ -10,8 +10,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
-		<PackageReference Include="XTI_Hub.Abstractions" Version="1.4.51" />
-		<PackageReference Include="XTI_WebAppClient" Version="1.8.47" />
+		<PackageReference Include="XTI_Hub.Abstractions" Version="1.4.52-dev241214223244803" />
+		<PackageReference Include="XTI_WebAppClient" Version="1.8.48-dev241214214735558" />
 		<PackageReference Include="XTI_TempLog.Abstractions" Version="1.2.37" />
 	</ItemGroup>
 

@@ -10,7 +10,7 @@ using XTI_JobsDB.EF;
 using XTI_WebApp.Api;
 using ScheduledJobsWebApp;
 
-var builder = XtiWebAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args);
+var builder = XtiWebAppHost.CreateDefault(ScheduledJobsAppKey.Value, args);
 var xtiEnv = XtiEnvironment.Parse(builder.Environment.EnvironmentName);
 builder.Services.ConfigureXtiCookieAndTokenAuthentication(xtiEnv, builder.Configuration);
 builder.Services.AddJobDbContextForSqlServer();

@@ -10,68 +10,68 @@ public sealed partial class JobsController : Controller
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> AddOrUpdateJobSchedules([FromBody] AddOrUpdateJobSchedulesRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> AddOrUpdateJobSchedules([FromBody] AddOrUpdateJobSchedulesRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<AddOrUpdateJobSchedulesRequest, EmptyActionResult>("AddOrUpdateJobSchedules").Execute(model, ct);
+        return api.Jobs.AddOrUpdateJobSchedules.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> AddOrUpdateRegisteredJobs([FromBody] RegisteredJob[] model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> AddOrUpdateRegisteredJobs([FromBody] RegisteredJob[] requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<RegisteredJob[], EmptyActionResult>("AddOrUpdateRegisteredJobs").Execute(model, ct);
+        return api.Jobs.AddOrUpdateRegisteredJobs.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<PendingJobModel[]>> TriggerJobs([FromBody] TriggerJobsRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> DeleteJobsWithNoTasks([FromBody] DeleteJobsWithNoTasksRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<TriggerJobsRequest, PendingJobModel[]>("TriggerJobs").Execute(model, ct);
+        return api.Jobs.DeleteJobsWithNoTasks.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> DeleteJobsWithNoTasks([FromBody] DeleteJobsWithNoTasksRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> JobCancelled([FromBody] JobCancelledRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<DeleteJobsWithNoTasksRequest, EmptyActionResult>("DeleteJobsWithNoTasks").Execute(model, ct);
+        return api.Jobs.JobCancelled.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobWithTasksModel[]>> RetryJobs([FromBody] RetryJobsRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> LogMessage([FromBody] LogMessageRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<RetryJobsRequest, TriggeredJobWithTasksModel[]>("RetryJobs").Execute(model, ct);
+        return api.Jobs.LogMessage.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobWithTasksModel>> StartJob([FromBody] StartJobRequest model, CancellationToken ct)
+    public Task<ResultContainer<TriggeredJobWithTasksModel[]>> RetryJobs([FromBody] RetryJobsRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<StartJobRequest, TriggeredJobWithTasksModel>("StartJob").Execute(model, ct);
+        return api.Jobs.RetryJobs.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> StartTask([FromBody] StartTaskRequest model, CancellationToken ct)
+    public Task<ResultContainer<TriggeredJobWithTasksModel>> StartJob([FromBody] StartJobRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<StartTaskRequest, EmptyActionResult>("StartTask").Execute(model, ct);
+        return api.Jobs.StartJob.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> JobCancelled([FromBody] JobCancelledRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> StartTask([FromBody] StartTaskRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<JobCancelledRequest, EmptyActionResult>("JobCancelled").Execute(model, ct);
+        return api.Jobs.StartTask.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobWithTasksModel>> TaskCompleted([FromBody] TaskCompletedRequest model, CancellationToken ct)
+    public Task<ResultContainer<TriggeredJobWithTasksModel>> TaskCompleted([FromBody] TaskCompletedRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<TaskCompletedRequest, TriggeredJobWithTasksModel>("TaskCompleted").Execute(model, ct);
+        return api.Jobs.TaskCompleted.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<TriggeredJobWithTasksModel>> TaskFailed([FromBody] TaskFailedRequest model, CancellationToken ct)
+    public Task<ResultContainer<TriggeredJobWithTasksModel>> TaskFailed([FromBody] TaskFailedRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<TaskFailedRequest, TriggeredJobWithTasksModel>("TaskFailed").Execute(model, ct);
+        return api.Jobs.TaskFailed.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> LogMessage([FromBody] LogMessageRequest model, CancellationToken ct)
+    public Task<ResultContainer<PendingJobModel[]>> TriggerJobs([FromBody] TriggerJobsRequest requestData, CancellationToken ct)
     {
-        return api.Group("Jobs").Action<LogMessageRequest, EmptyActionResult>("LogMessage").Execute(model, ct);
+        return api.Jobs.TriggerJobs.Execute(requestData, ct);
     }
 }

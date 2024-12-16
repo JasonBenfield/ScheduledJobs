@@ -1,11 +1,5 @@
 // Generated code
 
-interface ILinkModel {
-	LinkName: string;
-	DisplayText: string;
-	Url: string;
-	IsAuthenticationRequired: boolean;
-}
 interface IEventDefinitionModel {
 	ID: number;
 	EventKey: IEventKey;
@@ -50,14 +44,6 @@ interface IJobKey {
 	Value: string;
 	DisplayText: string;
 }
-interface IRegisteredEvent {
-	EventKey: IEventKey;
-	CompareSourceKeyAndDataForDuplication: boolean;
-	DuplicateHandling: IDuplicateHandling;
-	TimeToStartNotifications: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
-	ActiveFor: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
-	DeleteAfter: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
-}
 interface IAddNotificationsRequest {
 	EventKey: string;
 	Sources: IXtiEventSource[];
@@ -65,6 +51,14 @@ interface IAddNotificationsRequest {
 interface IXtiEventSource {
 	SourceKey: string;
 	SourceData: string;
+}
+interface IRegisteredEvent {
+	EventKey: IEventKey;
+	CompareSourceKeyAndDataForDuplication: boolean;
+	DuplicateHandling: IDuplicateHandling;
+	TimeToStartNotifications: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
+	ActiveFor: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
+	DeleteAfter: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 }
 interface ITriggeredJobsRequest {
 	EventNotificationID: number;
@@ -151,19 +145,19 @@ interface IRegisteredJobTask {
 	TaskKey: IJobTaskKey;
 	Timeout: import('@jasonbenfield/sharedwebapp/Common').TimeSpan;
 }
-interface ITriggerJobsRequest {
-	EventKey: string;
-	JobKey: string;
-	EventRaisedStartTime: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
-}
-interface IPendingJobModel {
-	Job: ITriggeredJobModel;
-	SourceKey: string;
-	SourceData: string;
-}
 interface IDeleteJobsWithNoTasksRequest {
 	EventKey: string;
 	JobKey: string;
+}
+interface IJobCancelledRequest {
+	TaskID: number;
+	Reason: string;
+}
+interface ILogMessageRequest {
+	TaskID: number;
+	Category: string;
+	Message: string;
+	Details: string;
 }
 interface IRetryJobsRequest {
 	EventKey: string;
@@ -180,10 +174,6 @@ interface INextTaskModel {
 interface IStartTaskRequest {
 	TaskID: number;
 }
-interface IJobCancelledRequest {
-	TaskID: number;
-	Reason: string;
-}
 interface ITaskCompletedRequest {
 	CompletedTaskID: number;
 	PreserveData: boolean;
@@ -199,11 +189,15 @@ interface ITaskFailedRequest {
 	Detail: string;
 	SourceLogEntryKey: string;
 }
-interface ILogMessageRequest {
-	TaskID: number;
-	Category: string;
-	Message: string;
-	Details: string;
+interface ITriggerJobsRequest {
+	EventKey: string;
+	JobKey: string;
+	EventRaisedStartTime: import('@jasonbenfield/sharedwebapp/Common').DateTimeOffset;
+}
+interface IPendingJobModel {
+	Job: ITriggeredJobModel;
+	SourceKey: string;
+	SourceData: string;
 }
 interface IGetTaskRequest {
 	TaskID: number;
@@ -211,6 +205,12 @@ interface IGetTaskRequest {
 interface IEditTaskDataRequest {
 	TaskID: number;
 	TaskData: string;
+}
+interface ILinkModel {
+	LinkName: string;
+	DisplayText: string;
+	Url: string;
+	IsAuthenticationRequired: boolean;
 }
 interface IJobTaskStatus {
 	Value: number;

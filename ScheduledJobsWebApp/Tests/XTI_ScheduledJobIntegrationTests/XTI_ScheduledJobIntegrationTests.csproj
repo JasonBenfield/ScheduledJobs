@@ -10,12 +10,12 @@
 	<ItemGroup>
 		<PackageReference Include="XTI_Core.Fakes" Version="1.10.25" />
 		<PackageReference Include="XTI_Core.Extensions" Version="1.10.25" />
-		<PackageReference Include="XTI_HubAppClient.Extensions" Version="1.4.51" />
+		<PackageReference Include="XTI_HubAppClient.Extensions" Version="1.4.52-dev241214223244803" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-		<PackageReference Include="NUnit" Version="4.2.2" />
+		<PackageReference Include="NUnit" Version="4.3.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
 		<PackageReference Include="NUnit.Analyzers" Version="4.4.0">
 			<PrivateAssets>all</PrivateAssets>

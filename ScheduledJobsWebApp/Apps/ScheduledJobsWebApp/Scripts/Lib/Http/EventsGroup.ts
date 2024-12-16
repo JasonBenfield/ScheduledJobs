@@ -10,20 +10,20 @@ import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Http/AppResourceUrl"
 export class EventsGroup extends AppClientGroup {
 	constructor(events: AppClientEvents, resourceUrl: AppResourceUrl) {
 		super(events, resourceUrl, 'Events');
-		this.AddOrUpdateRegisteredEventsAction = this.createAction<IRegisteredEvent[],IEmptyActionResult>('AddOrUpdateRegisteredEvents', 'Add Or Update Registered Events');
 		this.AddNotificationsAction = this.createAction<IAddNotificationsRequest,IEventNotificationModel[]>('AddNotifications', 'Add Notifications');
+		this.AddOrUpdateRegisteredEventsAction = this.createAction<IRegisteredEvent[],IEmptyActionResult>('AddOrUpdateRegisteredEvents', 'Add Or Update Registered Events');
 		this.TriggeredJobsAction = this.createAction<ITriggeredJobsRequest,ITriggeredJobWithTasksModel[]>('TriggeredJobs', 'Triggered Jobs');
 	}
 	
-	readonly AddOrUpdateRegisteredEventsAction: AppClientAction<IRegisteredEvent[],IEmptyActionResult>;
 	readonly AddNotificationsAction: AppClientAction<IAddNotificationsRequest,IEventNotificationModel[]>;
+	readonly AddOrUpdateRegisteredEventsAction: AppClientAction<IRegisteredEvent[],IEmptyActionResult>;
 	readonly TriggeredJobsAction: AppClientAction<ITriggeredJobsRequest,ITriggeredJobWithTasksModel[]>;
 	
-	AddOrUpdateRegisteredEvents(model: IRegisteredEvent[], errorOptions?: IActionErrorOptions) {
-		return this.AddOrUpdateRegisteredEventsAction.execute(model, errorOptions || {});
-	}
 	AddNotifications(model: IAddNotificationsRequest, errorOptions?: IActionErrorOptions) {
 		return this.AddNotificationsAction.execute(model, errorOptions || {});
+	}
+	AddOrUpdateRegisteredEvents(model: IRegisteredEvent[], errorOptions?: IActionErrorOptions) {
+		return this.AddOrUpdateRegisteredEventsAction.execute(model, errorOptions || {});
 	}
 	TriggeredJobs(model: ITriggeredJobsRequest, errorOptions?: IActionErrorOptions) {
 		return this.TriggeredJobsAction.execute(model, errorOptions || {});

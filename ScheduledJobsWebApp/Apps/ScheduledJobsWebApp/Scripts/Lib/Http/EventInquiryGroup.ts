@@ -10,21 +10,21 @@ import { AppResourceUrl } from "@jasonbenfield/sharedwebapp/Http/AppResourceUrl"
 export class EventInquiryGroup extends AppClientGroup {
 	constructor(events: AppClientEvents, resourceUrl: AppResourceUrl) {
 		super(events, resourceUrl, 'EventInquiry');
-		this.Notifications = this.createView<IEmptyRequest>('Notifications');
+		this.GetNotificationDetailAction = this.createAction<IGetNotificationDetailRequest,IEventNotificationDetailModel>('GetNotificationDetail', 'Get Notification Detail');
 		this.GetRecentNotificationsAction = this.createAction<IEmptyRequest,IEventSummaryModel[]>('GetRecentNotifications', 'Get Recent Notifications');
 		this.NotificationDetail = this.createView<IGetNotificationDetailRequest>('NotificationDetail');
-		this.GetNotificationDetailAction = this.createAction<IGetNotificationDetailRequest,IEventNotificationDetailModel>('GetNotificationDetail', 'Get Notification Detail');
+		this.Notifications = this.createView<IEmptyRequest>('Notifications');
 	}
 	
-	readonly Notifications: AppClientView<IEmptyRequest>;
+	readonly GetNotificationDetailAction: AppClientAction<IGetNotificationDetailRequest,IEventNotificationDetailModel>;
 	readonly GetRecentNotificationsAction: AppClientAction<IEmptyRequest,IEventSummaryModel[]>;
 	readonly NotificationDetail: AppClientView<IGetNotificationDetailRequest>;
-	readonly GetNotificationDetailAction: AppClientAction<IGetNotificationDetailRequest,IEventNotificationDetailModel>;
+	readonly Notifications: AppClientView<IEmptyRequest>;
 	
-	GetRecentNotifications(errorOptions?: IActionErrorOptions) {
-		return this.GetRecentNotificationsAction.execute({}, errorOptions || {});
-	}
 	GetNotificationDetail(model: IGetNotificationDetailRequest, errorOptions?: IActionErrorOptions) {
 		return this.GetNotificationDetailAction.execute(model, errorOptions || {});
+	}
+	GetRecentNotifications(errorOptions?: IActionErrorOptions) {
+		return this.GetRecentNotificationsAction.execute({}, errorOptions || {});
 	}
 }

@@ -1,5 +1,5 @@
 ﻿using XTI_ScheduledJobsWebAppApi;
-using XTI_ScheduledJobsWebAppApi.Tasks;
+using XTI_ScheduledJobsWebAppApiActions.Tasks;
 
 namespace XTI_ScheduledJobTests;
 
@@ -35,7 +35,7 @@ internal sealed class CancelTaskTest
         triggeredJobs = await eventNotifications[0].TriggeredJobs();
         Assert.That
         (
-            triggeredJobs[0].Status(), 
+            triggeredJobs[0].Status(),
             Is.EqualTo(JobTaskStatus.Values.Canceled),
             "Should cancel job"
         );
@@ -69,11 +69,11 @@ internal sealed class CancelTaskTest
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Completed));
         var ex = Assert.ThrowsAsync<AppException>
         (
-            ()=> api.Tasks.CancelTask.Invoke(new GetTaskRequest(completedTask.Model.ID))
+            () => api.Tasks.CancelTask.Invoke(new GetTaskRequest(completedTask.Model.ID))
         );
         Assert.That
         (
-            ex.Message, 
+            ex.Message,
             Is.EqualTo
             (
                 string.Format(TaskErrors.TaskWithStatusCannotBeCanceled, JobTaskStatus.Values.Completed.DisplayText)
