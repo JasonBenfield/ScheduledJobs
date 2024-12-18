@@ -23,19 +23,19 @@ export class TasksGroup extends AppClientGroup {
 	readonly SkipTaskAction: AppClientAction<IGetTaskRequest,IEmptyActionResult>;
 	readonly TimeoutTaskAction: AppClientAction<IGetTaskRequest,IEmptyActionResult>;
 	
-	CancelTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
-		return this.CancelTaskAction.execute(model, errorOptions || {});
+	CancelTask(requestData: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
+		return this.CancelTaskAction.execute(requestData, errorOptions || {});
 	}
-	EditTaskData(model: IEditTaskDataRequest, errorOptions?: IActionErrorOptions) {
-		return this.EditTaskDataAction.execute(model, errorOptions || {});
+	EditTaskData(requestData: IEditTaskDataRequest, errorOptions?: IActionErrorOptions) {
+		return this.EditTaskDataAction.execute(requestData, errorOptions || {});
 	}
-	RetryTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
-		return this.RetryTaskAction.execute(model, errorOptions || {});
+	RetryTask(requestData: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
+		return this.RetryTaskAction.execute(requestData, errorOptions || {});
 	}
-	SkipTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
-		return this.SkipTaskAction.execute(model, errorOptions || {});
+	SkipTask(requestData: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
+		return this.SkipTaskAction.execute(requestData, errorOptions || {});
 	}
-	TimeoutTask(model: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
-		return this.TimeoutTaskAction.execute(model, errorOptions || {});
+	TimeoutTask(requestData: IGetTaskRequest, errorOptions?: IActionErrorOptions) {
+		return this.TimeoutTaskAction.execute(requestData, errorOptions || {});
 	}
 }

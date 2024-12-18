@@ -35,37 +35,37 @@ export class JobsGroup extends AppClientGroup {
 	readonly TaskFailedAction: AppClientAction<ITaskFailedRequest,ITriggeredJobWithTasksModel>;
 	readonly TriggerJobsAction: AppClientAction<ITriggerJobsRequest,IPendingJobModel[]>;
 	
-	AddOrUpdateJobSchedules(model: IAddOrUpdateJobSchedulesRequest, errorOptions?: IActionErrorOptions) {
-		return this.AddOrUpdateJobSchedulesAction.execute(model, errorOptions || {});
+	AddOrUpdateJobSchedules(requestData: IAddOrUpdateJobSchedulesRequest, errorOptions?: IActionErrorOptions) {
+		return this.AddOrUpdateJobSchedulesAction.execute(requestData, errorOptions || {});
 	}
-	AddOrUpdateRegisteredJobs(model: IRegisteredJob[], errorOptions?: IActionErrorOptions) {
-		return this.AddOrUpdateRegisteredJobsAction.execute(model, errorOptions || {});
+	AddOrUpdateRegisteredJobs(requestData: IRegisteredJob[], errorOptions?: IActionErrorOptions) {
+		return this.AddOrUpdateRegisteredJobsAction.execute(requestData, errorOptions || {});
 	}
-	DeleteJobsWithNoTasks(model: IDeleteJobsWithNoTasksRequest, errorOptions?: IActionErrorOptions) {
-		return this.DeleteJobsWithNoTasksAction.execute(model, errorOptions || {});
+	DeleteJobsWithNoTasks(requestData: IDeleteJobsWithNoTasksRequest, errorOptions?: IActionErrorOptions) {
+		return this.DeleteJobsWithNoTasksAction.execute(requestData, errorOptions || {});
 	}
-	JobCancelled(model: IJobCancelledRequest, errorOptions?: IActionErrorOptions) {
-		return this.JobCancelledAction.execute(model, errorOptions || {});
+	JobCancelled(requestData: IJobCancelledRequest, errorOptions?: IActionErrorOptions) {
+		return this.JobCancelledAction.execute(requestData, errorOptions || {});
 	}
-	LogMessage(model: ILogMessageRequest, errorOptions?: IActionErrorOptions) {
-		return this.LogMessageAction.execute(model, errorOptions || {});
+	LogMessage(requestData: ILogMessageRequest, errorOptions?: IActionErrorOptions) {
+		return this.LogMessageAction.execute(requestData, errorOptions || {});
 	}
-	RetryJobs(model: IRetryJobsRequest, errorOptions?: IActionErrorOptions) {
-		return this.RetryJobsAction.execute(model, errorOptions || {});
+	RetryJobs(requestData: IRetryJobsRequest, errorOptions?: IActionErrorOptions) {
+		return this.RetryJobsAction.execute(requestData, errorOptions || {});
 	}
-	StartJob(model: IStartJobRequest, errorOptions?: IActionErrorOptions) {
-		return this.StartJobAction.execute(model, errorOptions || {});
+	StartJob(requestData: IStartJobRequest, errorOptions?: IActionErrorOptions) {
+		return this.StartJobAction.execute(requestData, errorOptions || {});
 	}
-	StartTask(model: IStartTaskRequest, errorOptions?: IActionErrorOptions) {
-		return this.StartTaskAction.execute(model, errorOptions || {});
+	StartTask(requestData: IStartTaskRequest, errorOptions?: IActionErrorOptions) {
+		return this.StartTaskAction.execute(requestData, errorOptions || {});
 	}
-	TaskCompleted(model: ITaskCompletedRequest, errorOptions?: IActionErrorOptions) {
-		return this.TaskCompletedAction.execute(model, errorOptions || {});
+	TaskCompleted(requestData: ITaskCompletedRequest, errorOptions?: IActionErrorOptions) {
+		return this.TaskCompletedAction.execute(requestData, errorOptions || {});
 	}
-	TaskFailed(model: ITaskFailedRequest, errorOptions?: IActionErrorOptions) {
-		return this.TaskFailedAction.execute(model, errorOptions || {});
+	TaskFailed(requestData: ITaskFailedRequest, errorOptions?: IActionErrorOptions) {
+		return this.TaskFailedAction.execute(requestData, errorOptions || {});
 	}
-	TriggerJobs(model: ITriggerJobsRequest, errorOptions?: IActionErrorOptions) {
-		return this.TriggerJobsAction.execute(model, errorOptions || {});
+	TriggerJobs(requestData: ITriggerJobsRequest, errorOptions?: IActionErrorOptions) {
+		return this.TriggerJobsAction.execute(requestData, errorOptions || {});
 	}
 }

@@ -22,7 +22,7 @@ export class EventDefinitionsGroup extends AppClientGroup {
 	GetEventDefinitions(errorOptions?: IActionErrorOptions) {
 		return this.GetEventDefinitionsAction.execute({}, errorOptions || {});
 	}
-	GetRecentNotifications(model: IGetRecentEventNotificationsByEventDefinitionRequest, errorOptions?: IActionErrorOptions) {
-		return this.GetRecentNotificationsAction.execute(model, errorOptions || {});
+	GetRecentNotifications(requestData: IGetRecentEventNotificationsByEventDefinitionRequest, errorOptions?: IActionErrorOptions) {
+		return this.GetRecentNotificationsAction.execute(requestData, errorOptions || {});
 	}
 }

@@ -9,7 +9,7 @@ public sealed partial class EventInquiryGroup : AppClientGroup
 
     public EventInquiryGroupActions Actions { get; }
 
-    public Task<EventNotificationDetailModel> GetNotificationDetail(GetNotificationDetailRequest model, CancellationToken ct = default) => Actions.GetNotificationDetail.Post("", model, ct);
+    public Task<EventNotificationDetailModel> GetNotificationDetail(GetNotificationDetailRequest requestData, CancellationToken ct = default) => Actions.GetNotificationDetail.Post("", requestData, ct);
     public Task<EventSummaryModel[]> GetRecentNotifications(CancellationToken ct = default) => Actions.GetRecentNotifications.Post("", new EmptyRequest(), ct);
     public sealed record EventInquiryGroupActions(AppClientPostAction<GetNotificationDetailRequest, EventNotificationDetailModel> GetNotificationDetail, AppClientPostAction<EmptyRequest, EventSummaryModel[]> GetRecentNotifications, AppClientGetAction<GetNotificationDetailRequest> NotificationDetail, AppClientGetAction<EmptyRequest> Notifications);
 }

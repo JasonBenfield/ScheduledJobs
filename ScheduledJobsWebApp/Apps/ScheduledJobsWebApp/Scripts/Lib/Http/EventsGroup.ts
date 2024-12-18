@@ -19,13 +19,13 @@ export class EventsGroup extends AppClientGroup {
 	readonly AddOrUpdateRegisteredEventsAction: AppClientAction<IRegisteredEvent[],IEmptyActionResult>;
 	readonly TriggeredJobsAction: AppClientAction<ITriggeredJobsRequest,ITriggeredJobWithTasksModel[]>;
 	
-	AddNotifications(model: IAddNotificationsRequest, errorOptions?: IActionErrorOptions) {
-		return this.AddNotificationsAction.execute(model, errorOptions || {});
+	AddNotifications(requestData: IAddNotificationsRequest, errorOptions?: IActionErrorOptions) {
+		return this.AddNotificationsAction.execute(requestData, errorOptions || {});
 	}
-	AddOrUpdateRegisteredEvents(model: IRegisteredEvent[], errorOptions?: IActionErrorOptions) {
-		return this.AddOrUpdateRegisteredEventsAction.execute(model, errorOptions || {});
+	AddOrUpdateRegisteredEvents(requestData: IRegisteredEvent[], errorOptions?: IActionErrorOptions) {
+		return this.AddOrUpdateRegisteredEventsAction.execute(requestData, errorOptions || {});
 	}
-	TriggeredJobs(model: ITriggeredJobsRequest, errorOptions?: IActionErrorOptions) {
-		return this.TriggeredJobsAction.execute(model, errorOptions || {});
+	TriggeredJobs(requestData: ITriggeredJobsRequest, errorOptions?: IActionErrorOptions) {
+		return this.TriggeredJobsAction.execute(requestData, errorOptions || {});
 	}
 }

@@ -9,8 +9,8 @@ public sealed partial class EventsGroup : AppClientGroup
 
     public EventsGroupActions Actions { get; }
 
-    public Task<EventNotificationModel[]> AddNotifications(AddNotificationsRequest model, CancellationToken ct = default) => Actions.AddNotifications.Post("", model, ct);
-    public Task<EmptyActionResult> AddOrUpdateRegisteredEvents(RegisteredEvent[] model, CancellationToken ct = default) => Actions.AddOrUpdateRegisteredEvents.Post("", model, ct);
-    public Task<TriggeredJobWithTasksModel[]> TriggeredJobs(TriggeredJobsRequest model, CancellationToken ct = default) => Actions.TriggeredJobs.Post("", model, ct);
+    public Task<EventNotificationModel[]> AddNotifications(AddNotificationsRequest requestData, CancellationToken ct = default) => Actions.AddNotifications.Post("", requestData, ct);
+    public Task<EmptyActionResult> AddOrUpdateRegisteredEvents(RegisteredEvent[] requestData, CancellationToken ct = default) => Actions.AddOrUpdateRegisteredEvents.Post("", requestData, ct);
+    public Task<TriggeredJobWithTasksModel[]> TriggeredJobs(TriggeredJobsRequest requestData, CancellationToken ct = default) => Actions.TriggeredJobs.Post("", requestData, ct);
     public sealed record EventsGroupActions(AppClientPostAction<AddNotificationsRequest, EventNotificationModel[]> AddNotifications, AppClientPostAction<RegisteredEvent[], EmptyActionResult> AddOrUpdateRegisteredEvents, AppClientPostAction<TriggeredJobsRequest, TriggeredJobWithTasksModel[]> TriggeredJobs);
 }

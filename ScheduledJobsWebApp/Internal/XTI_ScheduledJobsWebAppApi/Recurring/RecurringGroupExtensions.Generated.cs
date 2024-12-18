@@ -2,7 +2,7 @@ using XTI_ScheduledJobsWebAppApiActions.Recurring;
 
 // Generated Code
 namespace XTI_ScheduledJobsWebAppApi;
-internal static partial class RecurringApiGroupExtensions
+internal static partial class RecurringGroupExtensions
 {
     internal static void AddRecurringServices(this IServiceCollection services)
     {

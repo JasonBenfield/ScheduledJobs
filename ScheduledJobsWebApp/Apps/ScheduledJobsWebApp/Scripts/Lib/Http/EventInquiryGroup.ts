@@ -21,8 +21,8 @@ export class EventInquiryGroup extends AppClientGroup {
 	readonly NotificationDetail: AppClientView<IGetNotificationDetailRequest>;
 	readonly Notifications: AppClientView<IEmptyRequest>;
 	
-	GetNotificationDetail(model: IGetNotificationDetailRequest, errorOptions?: IActionErrorOptions) {
-		return this.GetNotificationDetailAction.execute(model, errorOptions || {});
+	GetNotificationDetail(requestData: IGetNotificationDetailRequest, errorOptions?: IActionErrorOptions) {
+		return this.GetNotificationDetailAction.execute(requestData, errorOptions || {});
 	}
 	GetRecentNotifications(errorOptions?: IActionErrorOptions) {
 		return this.GetRecentNotificationsAction.execute({}, errorOptions || {});

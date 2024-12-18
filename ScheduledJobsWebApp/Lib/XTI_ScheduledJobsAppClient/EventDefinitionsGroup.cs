@@ -10,6 +10,6 @@ public sealed partial class EventDefinitionsGroup : AppClientGroup
     public EventDefinitionsGroupActions Actions { get; }
 
     public Task<EventDefinitionModel[]> GetEventDefinitions(CancellationToken ct = default) => Actions.GetEventDefinitions.Post("", new EmptyRequest(), ct);
-    public Task<EventSummaryModel[]> GetRecentNotifications(GetRecentEventNotificationsByEventDefinitionRequest model, CancellationToken ct = default) => Actions.GetRecentNotifications.Post("", model, ct);
+    public Task<EventSummaryModel[]> GetRecentNotifications(GetRecentEventNotificationsByEventDefinitionRequest requestData, CancellationToken ct = default) => Actions.GetRecentNotifications.Post("", requestData, ct);
     public sealed record EventDefinitionsGroupActions(AppClientPostAction<EmptyRequest, EventDefinitionModel[]> GetEventDefinitions, AppClientPostAction<GetRecentEventNotificationsByEventDefinitionRequest, EventSummaryModel[]> GetRecentNotifications, AppClientGetAction<EmptyRequest> Index);
 }

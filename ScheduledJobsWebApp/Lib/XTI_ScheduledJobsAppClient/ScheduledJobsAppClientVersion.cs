@@ -12,7 +12,7 @@ public sealed partial class ScheduledJobsAppClientVersion
         string value;
         if (hostEnv.IsProduction())
         {
-            value = "Current";
+            value = "V28";
         }
         else
         {

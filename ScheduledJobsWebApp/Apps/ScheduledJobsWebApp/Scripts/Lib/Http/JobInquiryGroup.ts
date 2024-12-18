@@ -28,8 +28,8 @@ export class JobInquiryGroup extends AppClientGroup {
 	GetFailedJobs(errorOptions?: IActionErrorOptions) {
 		return this.GetFailedJobsAction.execute({}, errorOptions || {});
 	}
-	GetJobDetail(model: IGetJobDetailRequest, errorOptions?: IActionErrorOptions) {
-		return this.GetJobDetailAction.execute(model, errorOptions || {});
+	GetJobDetail(requestData: IGetJobDetailRequest, errorOptions?: IActionErrorOptions) {
+		return this.GetJobDetailAction.execute(requestData, errorOptions || {});
 	}
 	GetRecentJobs(errorOptions?: IActionErrorOptions) {
 		return this.GetRecentJobsAction.execute({}, errorOptions || {});

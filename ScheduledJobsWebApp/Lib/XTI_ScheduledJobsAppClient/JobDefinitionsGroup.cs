@@ -10,6 +10,6 @@ public sealed partial class JobDefinitionsGroup : AppClientGroup
     public JobDefinitionsGroupActions Actions { get; }
 
     public Task<JobDefinitionModel[]> GetJobDefinitions(CancellationToken ct = default) => Actions.GetJobDefinitions.Post("", new EmptyRequest(), ct);
-    public Task<JobSummaryModel[]> GetRecentTriggeredJobs(GetRecentTriggeredJobsByDefinitionRequest model, CancellationToken ct = default) => Actions.GetRecentTriggeredJobs.Post("", model, ct);
+    public Task<JobSummaryModel[]> GetRecentTriggeredJobs(GetRecentTriggeredJobsByDefinitionRequest requestData, CancellationToken ct = default) => Actions.GetRecentTriggeredJobs.Post("", requestData, ct);
     public sealed record JobDefinitionsGroupActions(AppClientPostAction<EmptyRequest, JobDefinitionModel[]> GetJobDefinitions, AppClientPostAction<GetRecentTriggeredJobsByDefinitionRequest, JobSummaryModel[]> GetRecentTriggeredJobs, AppClientGetAction<EmptyRequest> Index);
 }

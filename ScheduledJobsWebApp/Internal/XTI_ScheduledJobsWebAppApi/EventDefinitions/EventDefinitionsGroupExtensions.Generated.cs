@@ -2,7 +2,7 @@ using XTI_ScheduledJobsWebAppApiActions.EventDefinitions;
 
 // Generated Code
 namespace XTI_ScheduledJobsWebAppApi;
-internal static partial class EventDefinitionsApiGroupExtensions
+internal static partial class EventDefinitionsGroupExtensions
 {
     internal static void AddEventDefinitionsServices(this IServiceCollection services)
     {

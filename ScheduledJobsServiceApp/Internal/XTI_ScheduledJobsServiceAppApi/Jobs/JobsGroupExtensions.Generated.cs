@@ -2,7 +2,7 @@ using XTI_ScheduledJobsServiceAppApiActions.Jobs;
 
 // Generated Code
 namespace XTI_ScheduledJobsServiceAppApi;
-internal static partial class JobsApiGroupExtensions
+internal static partial class JobsGroupExtensions
 {
     internal static void AddJobsServices(this IServiceCollection services)
     {

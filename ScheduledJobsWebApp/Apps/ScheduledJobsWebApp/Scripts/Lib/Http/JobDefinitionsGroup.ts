@@ -22,7 +22,7 @@ export class JobDefinitionsGroup extends AppClientGroup {
 	GetJobDefinitions(errorOptions?: IActionErrorOptions) {
 		return this.GetJobDefinitionsAction.execute({}, errorOptions || {});
 	}
-	GetRecentTriggeredJobs(model: IGetRecentTriggeredJobsByDefinitionRequest, errorOptions?: IActionErrorOptions) {
-		return this.GetRecentTriggeredJobsAction.execute(model, errorOptions || {});
+	GetRecentTriggeredJobs(requestData: IGetRecentTriggeredJobsByDefinitionRequest, errorOptions?: IActionErrorOptions) {
+		return this.GetRecentTriggeredJobsAction.execute(requestData, errorOptions || {});
 	}
 }
