@@ -10,7 +10,7 @@ using XTI_JobsDB.EF;
 using XTI_JobsDB.SqlServer;
 using XTI_ScheduledJobsWebAppApi;
 
-await XtiSetupAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
+await XtiSetupAppHost.CreateDefault(ScheduledJobsAppKey.Value, args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddSingleton(_ => XtiEnvironment.Parse(hostContext.HostingEnvironment.EnvironmentName));

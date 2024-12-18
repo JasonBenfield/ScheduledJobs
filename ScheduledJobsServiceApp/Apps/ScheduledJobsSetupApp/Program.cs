@@ -6,7 +6,7 @@ using XTI_App.Api;
 using XTI_AppSetupApp.Extensions;
 using XTI_ScheduledJobsServiceAppApi;
 
-await XtiSetupAppHost.CreateDefault(ScheduledJobsInfo.AppKey, args)
+await XtiSetupAppHost.CreateDefault(ScheduledJobsAppKey.Value, args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddSingleton(_ => AppVersionKey.Current);

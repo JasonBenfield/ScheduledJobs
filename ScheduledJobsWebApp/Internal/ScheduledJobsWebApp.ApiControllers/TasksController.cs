@@ -10,32 +10,32 @@ public sealed partial class TasksController : Controller
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> CancelTask([FromBody] GetTaskRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> CancelTask([FromBody] GetTaskRequest requestData, CancellationToken ct)
     {
-        return api.Group("Tasks").Action<GetTaskRequest, EmptyActionResult>("CancelTask").Execute(model, ct);
+        return api.Tasks.CancelTask.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> RetryTask([FromBody] GetTaskRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> EditTaskData([FromBody] EditTaskDataRequest requestData, CancellationToken ct)
     {
-        return api.Group("Tasks").Action<GetTaskRequest, EmptyActionResult>("RetryTask").Execute(model, ct);
+        return api.Tasks.EditTaskData.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> SkipTask([FromBody] GetTaskRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> RetryTask([FromBody] GetTaskRequest requestData, CancellationToken ct)
     {
-        return api.Group("Tasks").Action<GetTaskRequest, EmptyActionResult>("SkipTask").Execute(model, ct);
+        return api.Tasks.RetryTask.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> TimeoutTask([FromBody] GetTaskRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> SkipTask([FromBody] GetTaskRequest requestData, CancellationToken ct)
     {
-        return api.Group("Tasks").Action<GetTaskRequest, EmptyActionResult>("TimeoutTask").Execute(model, ct);
+        return api.Tasks.SkipTask.Execute(requestData, ct);
     }
 
     [HttpPost]
-    public Task<ResultContainer<EmptyActionResult>> EditTaskData([FromBody] EditTaskDataRequest model, CancellationToken ct)
+    public Task<ResultContainer<EmptyActionResult>> TimeoutTask([FromBody] GetTaskRequest requestData, CancellationToken ct)
     {
-        return api.Group("Tasks").Action<EditTaskDataRequest, EmptyActionResult>("EditTaskData").Execute(model, ct);
+        return api.Tasks.TimeoutTask.Execute(requestData, ct);
     }
 }

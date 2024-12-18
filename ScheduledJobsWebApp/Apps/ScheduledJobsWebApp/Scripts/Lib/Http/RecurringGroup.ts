@@ -11,21 +11,21 @@ export class RecurringGroup extends AppClientGroup {
 	constructor(events: AppClientEvents, resourceUrl: AppResourceUrl) {
 		super(events, resourceUrl, 'Recurring');
 		this.AddJobScheduleNotificationsAction = this.createAction<IEmptyRequest,IEmptyActionResult>('AddJobScheduleNotifications', 'Add Job Schedule Notifications');
-		this.TimeoutTasksAction = this.createAction<IEmptyRequest,IEmptyActionResult>('TimeoutTasks', 'Timeout Tasks');
 		this.PurgeJobsAndEventsAction = this.createAction<IEmptyRequest,IEmptyActionResult>('PurgeJobsAndEvents', 'Purge Jobs And Events');
+		this.TimeoutTasksAction = this.createAction<IEmptyRequest,IEmptyActionResult>('TimeoutTasks', 'Timeout Tasks');
 	}
 	
 	readonly AddJobScheduleNotificationsAction: AppClientAction<IEmptyRequest,IEmptyActionResult>;
-	readonly TimeoutTasksAction: AppClientAction<IEmptyRequest,IEmptyActionResult>;
 	readonly PurgeJobsAndEventsAction: AppClientAction<IEmptyRequest,IEmptyActionResult>;
+	readonly TimeoutTasksAction: AppClientAction<IEmptyRequest,IEmptyActionResult>;
 	
 	AddJobScheduleNotifications(errorOptions?: IActionErrorOptions) {
 		return this.AddJobScheduleNotificationsAction.execute({}, errorOptions || {});
 	}
-	TimeoutTasks(errorOptions?: IActionErrorOptions) {
-		return this.TimeoutTasksAction.execute({}, errorOptions || {});
-	}
 	PurgeJobsAndEvents(errorOptions?: IActionErrorOptions) {
 		return this.PurgeJobsAndEventsAction.execute({}, errorOptions || {});
+	}
+	TimeoutTasks(errorOptions?: IActionErrorOptions) {
+		return this.TimeoutTasksAction.execute({}, errorOptions || {});
 	}
 }

@@ -40,7 +40,7 @@ internal static class XtiTestHostExtensions
                 new AppUserName(adminUserCreds.Value.UserName),
                 new SetUserAccessRoleRequest
                 (
-                    ScheduledJobsInfo.AppKey,
+                    ScheduledJobsAppKey.Value,
                     new AppRoleName(hubClient.RoleNames.Admin)
                 )
             )

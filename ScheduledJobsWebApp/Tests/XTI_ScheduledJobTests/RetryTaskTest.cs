@@ -1,6 +1,5 @@
-﻿using XTI_App.Api;
-using XTI_ScheduledJobsWebAppApi;
-using XTI_ScheduledJobsWebAppApi.Tasks;
+﻿using XTI_ScheduledJobsWebAppApi;
+using XTI_ScheduledJobsWebAppApiActions.Tasks;
 
 namespace XTI_ScheduledJobTests;
 

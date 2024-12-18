@@ -1,7 +1,6 @@
-﻿using XTI_App.Api;
-using XTI_Core;
+﻿using XTI_Core;
 using XTI_ScheduledJobsWebAppApi;
-using XTI_ScheduledJobsWebAppApi.Tasks;
+using XTI_ScheduledJobsWebAppApiActions.Tasks;
 
 namespace XTI_ScheduledJobTests;
 
@@ -159,7 +158,7 @@ internal sealed class EditTaskDataTest
         var completedTask = triggeredJobs[0].Tasks()
             .First
             (
-                t => t.Model.Status.Equals(JobTaskStatus.Values.Completed) && 
+                t => t.Model.Status.Equals(JobTaskStatus.Values.Completed) &&
                     t.Model.TaskDefinition.TaskKey.Equals(DemoJobs.DoSomething.TaskItem01)
             );
         var beforeTaskData = XtiSerializer.Deserialize<DoSomethingItemData>(completedTask.Model.TaskData);
