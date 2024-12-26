@@ -10,7 +10,7 @@
 	<ItemGroup>
 		<PackageReference Include="XTI_Core.Fakes" Version="1.10.25" />
 		<PackageReference Include="XTI_Core.Extensions" Version="1.10.25" />
-		<PackageReference Include="XTI_HubAppClient.Extensions" Version="1.5.0" />
+		<PackageReference Include="XTI_HubAppClient.Extensions" Version="1.5.2" />
 	</ItemGroup>
 
 	<ItemGroup>

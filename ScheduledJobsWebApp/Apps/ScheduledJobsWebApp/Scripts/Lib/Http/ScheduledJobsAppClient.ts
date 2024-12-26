@@ -19,7 +19,7 @@ export class ScheduledJobsAppClient extends AppClient {
 		super(
 			events, 
 			'ScheduledJobs', 
-			pageContext.EnvironmentName === 'Production' || pageContext.EnvironmentName === 'Staging' ? 'V28' : 'Current'
+			pageContext.EnvironmentName === 'Production' || pageContext.EnvironmentName === 'Staging' ? 'V29' : 'Current'
 		);
 		this.EventDefinitions = this.addGroup((evts, resourceUrl) => new EventDefinitionsGroup(evts, resourceUrl));
 		this.EventInquiry = this.addGroup((evts, resourceUrl) => new EventInquiryGroup(evts, resourceUrl));
