@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@jasonbenfield/hubwebapp": "^1.4.51",
+    "@jasonbenfield/hubwebapp": "^1.5.2",
     "@jasonbenfield/sharedwebapp": "^1.10.4"
   },
   "devDependencies": {
