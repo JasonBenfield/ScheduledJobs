@@ -5,8 +5,10 @@ public sealed partial class JobInquiryGroup : AppClientGroup
     public JobInquiryGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "JobInquiry")
     {
         Actions = new JobInquiryGroupActions(FailedJobs: CreateGetAction<EmptyRequest>("FailedJobs"), GetFailedJobs: CreatePostAction<EmptyRequest, JobSummaryModel[]>("GetFailedJobs"), GetJobDetail: CreatePostAction<GetJobDetailRequest, TriggeredJobDetailModel>("GetJobDetail"), GetRecentJobs: CreatePostAction<EmptyRequest, JobSummaryModel[]>("GetRecentJobs"), JobDetail: CreateGetAction<GetJobDetailRequest>("JobDetail"), RecentJobs: CreateGetAction<EmptyRequest>("RecentJobs"));
+        Configure();
     }
 
+    partial void Configure();
     public JobInquiryGroupActions Actions { get; }
 
     public Task<JobSummaryModel[]> GetFailedJobs(CancellationToken ct = default) => Actions.GetFailedJobs.Post("", new EmptyRequest(), ct);

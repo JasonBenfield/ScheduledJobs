@@ -5,8 +5,10 @@ public sealed partial class EventDefinitionsGroup : AppClientGroup
     public EventDefinitionsGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "EventDefinitions")
     {
         Actions = new EventDefinitionsGroupActions(GetEventDefinitions: CreatePostAction<EmptyRequest, EventDefinitionModel[]>("GetEventDefinitions"), GetRecentNotifications: CreatePostAction<GetRecentEventNotificationsByEventDefinitionRequest, EventSummaryModel[]>("GetRecentNotifications"), Index: CreateGetAction<EmptyRequest>("Index"));
+        Configure();
     }
 
+    partial void Configure();
     public EventDefinitionsGroupActions Actions { get; }
 
     public Task<EventDefinitionModel[]> GetEventDefinitions(CancellationToken ct = default) => Actions.GetEventDefinitions.Post("", new EmptyRequest(), ct);

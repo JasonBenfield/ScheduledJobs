@@ -5,8 +5,10 @@ public sealed partial class RecurringGroup : AppClientGroup
     public RecurringGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "Recurring")
     {
         Actions = new RecurringGroupActions(AddJobScheduleNotifications: CreatePostAction<EmptyRequest, EmptyActionResult>("AddJobScheduleNotifications"), PurgeJobsAndEvents: CreatePostAction<EmptyRequest, EmptyActionResult>("PurgeJobsAndEvents"), TimeoutTasks: CreatePostAction<EmptyRequest, EmptyActionResult>("TimeoutTasks"));
+        Configure();
     }
 
+    partial void Configure();
     public RecurringGroupActions Actions { get; }
 
     public Task<EmptyActionResult> AddJobScheduleNotifications(CancellationToken ct = default) => Actions.AddJobScheduleNotifications.Post("", new EmptyRequest(), ct);
