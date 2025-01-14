@@ -5,8 +5,10 @@ public sealed partial class TasksGroup : AppClientGroup
     public TasksGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "Tasks")
     {
         Actions = new TasksGroupActions(CancelTask: CreatePostAction<GetTaskRequest, EmptyActionResult>("CancelTask"), EditTaskData: CreatePostAction<EditTaskDataRequest, EmptyActionResult>("EditTaskData"), RetryTask: CreatePostAction<GetTaskRequest, EmptyActionResult>("RetryTask"), SkipTask: CreatePostAction<GetTaskRequest, EmptyActionResult>("SkipTask"), TimeoutTask: CreatePostAction<GetTaskRequest, EmptyActionResult>("TimeoutTask"));
+        Configure();
     }
 
+    partial void Configure();
     public TasksGroupActions Actions { get; }
 
     public Task<EmptyActionResult> CancelTask(GetTaskRequest requestData, CancellationToken ct = default) => Actions.CancelTask.Post("", requestData, ct);

@@ -5,8 +5,10 @@ public sealed partial class JobsGroup : AppClientGroup
     public JobsGroup(IHttpClientFactory httpClientFactory, XtiTokenAccessor xtiTokenAccessor, AppClientUrl clientUrl, AppClientOptions options) : base(httpClientFactory, xtiTokenAccessor, clientUrl, options, "Jobs")
     {
         Actions = new JobsGroupActions(AddOrUpdateJobSchedules: CreatePostAction<AddOrUpdateJobSchedulesRequest, EmptyActionResult>("AddOrUpdateJobSchedules"), AddOrUpdateRegisteredJobs: CreatePostAction<RegisteredJob[], EmptyActionResult>("AddOrUpdateRegisteredJobs"), DeleteJobsWithNoTasks: CreatePostAction<DeleteJobsWithNoTasksRequest, EmptyActionResult>("DeleteJobsWithNoTasks"), JobCancelled: CreatePostAction<JobCancelledRequest, EmptyActionResult>("JobCancelled"), LogMessage: CreatePostAction<LogMessageRequest, EmptyActionResult>("LogMessage"), RetryJobs: CreatePostAction<RetryJobsRequest, TriggeredJobWithTasksModel[]>("RetryJobs"), StartJob: CreatePostAction<StartJobRequest, TriggeredJobWithTasksModel>("StartJob"), StartTask: CreatePostAction<StartTaskRequest, EmptyActionResult>("StartTask"), TaskCompleted: CreatePostAction<TaskCompletedRequest, TriggeredJobWithTasksModel>("TaskCompleted"), TaskFailed: CreatePostAction<TaskFailedRequest, TriggeredJobWithTasksModel>("TaskFailed"), TriggerJobs: CreatePostAction<TriggerJobsRequest, PendingJobModel[]>("TriggerJobs"));
+        Configure();
     }
 
+    partial void Configure();
     public JobsGroupActions Actions { get; }
 
     public Task<EmptyActionResult> AddOrUpdateJobSchedules(AddOrUpdateJobSchedulesRequest requestData, CancellationToken ct = default) => Actions.AddOrUpdateJobSchedules.Post("", requestData, ct);

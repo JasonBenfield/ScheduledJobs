@@ -2,7 +2,7 @@
 namespace XTI_ScheduledJobsAppClient;
 public sealed partial class ScheduledJobsAppClient : AppClient
 {
-    public ScheduledJobsAppClient(IHttpClientFactory httpClientFactory, XtiTokenAccessorFactory xtiTokenAccessorFactory, AppClientUrl clientUrl, AppClientOptions options, ScheduledJobsAppClientVersion version) : base(httpClientFactory, xtiTokenAccessorFactory, clientUrl, options, "ScheduledJobs", version.Value)
+    public ScheduledJobsAppClient(IHttpClientFactory httpClientFactory, XtiTokenAccessorFactory xtiTokenAccessorFactory, AppClientUrl clientUrl, IAppClientSessionKey sessionKey, IAppClientRequestKey requestKey, ScheduledJobsAppClientVersion version) : base(httpClientFactory, xtiTokenAccessorFactory, clientUrl, sessionKey, requestKey, "ScheduledJobs", version.Value)
     {
         EventDefinitions = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new EventDefinitionsGroup(_clientFactory, _tokenAccessor, _url, _options));
         EventInquiry = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new EventInquiryGroup(_clientFactory, _tokenAccessor, _url, _options));
@@ -13,8 +13,10 @@ public sealed partial class ScheduledJobsAppClient : AppClient
         Jobs = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new JobsGroup(_clientFactory, _tokenAccessor, _url, _options));
         Recurring = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new RecurringGroup(_clientFactory, _tokenAccessor, _url, _options));
         Tasks = CreateGroup((_clientFactory, _tokenAccessor, _url, _options) => new TasksGroup(_clientFactory, _tokenAccessor, _url, _options));
+        Configure();
     }
 
+    partial void Configure();
     public ScheduledJobsRoleNames RoleNames { get; } = ScheduledJobsRoleNames.Instance;
     public string AppName { get; } = "ScheduledJobs";
     public EventDefinitionsGroup EventDefinitions { get; }
