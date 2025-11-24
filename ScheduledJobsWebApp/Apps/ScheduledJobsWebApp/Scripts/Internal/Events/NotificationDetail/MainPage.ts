@@ -1,9 +1,9 @@
-﻿import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
-import { Url } from '@jasonbenfield/sharedwebapp/Url';
-import { MainMenuPanel } from '../../MainMenuPanel';
-import { ScheduledJobsPage } from '../../ScheduledJobsPage';
-import { MainPageView } from './MainPageView';
-import { NotificationDetailPanel } from './NotificationDetailPanel';
+﻿import { SingleActivePanel } from "@jasonbenfield/sharedwebapp/Panel/SingleActivePanel";
+import { Url } from "@jasonbenfield/sharedwebapp/Url";
+import { MainMenuPanel } from "../../MainMenuPanel";
+import { ScheduledJobsPage } from "../../ScheduledJobsPage";
+import { MainPageView } from "./MainPageView";
+import { NotificationDetailPanel } from "./NotificationDetailPanel";
 
 class MainPage extends ScheduledJobsPage {
     protected readonly view: MainPageView;
@@ -18,7 +18,7 @@ class MainPage extends ScheduledJobsPage {
         );
         this.menuPanel = this.panels.add(new MainMenuPanel(this.schdJobsClient, this.view.menuPanel));
         this.notificationDetailPanel.setNotificationID(
-            Url.current().query.getNumberValue('NotificationID')
+            Url.current().query.getNumberValue("NotificationID")
         );
         this.notificationDetailPanel.refresh();
         this.activateNotificationDetailPanel();

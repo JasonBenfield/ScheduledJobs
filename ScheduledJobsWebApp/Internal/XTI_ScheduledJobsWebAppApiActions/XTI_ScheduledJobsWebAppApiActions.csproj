@@ -7,7 +7,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_HubAppClient" Version="1.5.3" />
+		<PackageReference Include="XTI_HubAppClient" Version="1.5.4-dev251123205456826" />
 		<PackageReference Include="XTI_WebApp.Api" Version="1.8.54-dev251122161951096" />
 		<PackageReference Include="XTI_ApiGeneratorTask" Version="1.4.2-dev251122171943068" />
 	</ItemGroup>

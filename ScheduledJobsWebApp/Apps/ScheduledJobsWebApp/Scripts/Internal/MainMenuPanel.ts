@@ -20,7 +20,7 @@ export class MainMenuPanel implements IPanel {
     private readonly awaitable = new Awaitable<MainMenuPanelResult>();
 
     constructor(schdJobsClient: ScheduledJobsAppClient, private readonly view: MainMenuPanelView) {
-        const menu = new MenuComponent(schdJobsClient, 'main', view.menu);
+        const menu = new MenuComponent(schdJobsClient, "main", view.menu);
         menu.refresh();
         new Command(this.done.bind(this)).add(this.view.doneButton);
     }

@@ -1,8 +1,8 @@
-﻿import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
-import { MainMenuPanel } from '../../MainMenuPanel';
-import { ScheduledJobsPage } from '../../ScheduledJobsPage';
-import { MainPageView } from './MainPageView';
-import { NotificationListPanel } from './NotificationListPanel';
+﻿import { SingleActivePanel } from "@jasonbenfield/sharedwebapp/Panel/SingleActivePanel";
+import { MainMenuPanel } from "../../MainMenuPanel";
+import { ScheduledJobsPage } from "../../ScheduledJobsPage";
+import { MainPageView } from "./MainPageView";
+import { NotificationListPanel } from "./NotificationListPanel";
 
 class MainPage extends ScheduledJobsPage {
     protected readonly view: MainPageView;

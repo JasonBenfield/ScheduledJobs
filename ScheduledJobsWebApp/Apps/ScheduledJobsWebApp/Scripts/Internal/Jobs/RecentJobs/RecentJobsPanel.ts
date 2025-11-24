@@ -2,13 +2,13 @@
 import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
+import { JobSummary } from "../../../Lib/JobSummary";
 import { JobListPanelView } from "../JobListPanelView";
 import { JobSummaryListItem } from "../JobSummaryListItem";
 import { JobSummaryListItemView } from "../JobSummaryListItemView";
-import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     menuRequested?: boolean;
@@ -32,31 +32,32 @@ export class RecentJobsPanel implements IPanel {
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobListPanelView) {
         this.alert = new CardAlert(view.alert);
         this.recentJobsList = new ListGroup(view.jobListView);
-        new TextComponent(view.titleTextView).setText('Recent Jobs');
+        new TextComponent(view.titleTextView).setText("Recent Jobs");
         this.countTextComponent = new TextComponent(view.countTextView);
         this.countTextComponent.hide();
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
-        this.refreshCommand.animateIconWhenInProgress('spin');
+        this.refreshCommand.animateIconWhenInProgress("spin");
     }
 
     private requestMenu() { this.awaitable.resolve(RecentJobsPanelResult.menuRequested()); }
 
     private async doRefresh() {
-        const recentJobs = await this.getRecentJobs();
+        const sourceRecentJobs = await this.getRecentJobs();
+        const recentJobs = sourceRecentJobs.map(j => new JobSummary(j));
         this.recentJobsList.setItems(
             recentJobs,
             (job, itemView) => new JobSummaryListItem(this.schdJobsClient, job, itemView)
         );
         if (recentJobs.length === 0) {
-            this.alert.danger('No jobs were found.');
+            this.alert.danger("No jobs were found.");
         }
     }
 
     private getRecentJobs() {
         return this.alert.infoAction(
-            'Loading...',
+            "Loading...",
             () => this.schdJobsClient.JobInquiry.GetRecentJobs()
         );
     }

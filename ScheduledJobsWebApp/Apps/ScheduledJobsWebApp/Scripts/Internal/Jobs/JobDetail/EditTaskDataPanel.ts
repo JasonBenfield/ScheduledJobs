@@ -4,6 +4,7 @@ import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAler
 import { TextAreaControl } from "@jasonbenfield/sharedwebapp/Components/TextAreaControl";
 import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
 import { EditTaskDataPanelView } from "./EditTaskDataPanelView";
+import { TriggeredJobTask } from "../../../Lib/TriggeredJobTask";
 
 interface IResult {
     cancelled?: {};
@@ -39,7 +40,7 @@ export class EditTaskDataPanel implements IPanel {
 
     private async save() {
         await this.alert.infoAction(
-            'Saving...',
+            "Saving...",
             () => this.schdJobsClient.Tasks.EditTaskData({
                 TaskID: this.taskID,
                 TaskData: this.taskData.getValue()
@@ -48,9 +49,9 @@ export class EditTaskDataPanel implements IPanel {
         this.awaitable.resolve(Result.saved());
     }
 
-    setTask(task: ITriggeredJobTaskModel) {
-        this.taskID = task.ID;
-        this.taskData.setValue(task.TaskData);
+    setTask(task: TriggeredJobTask) {
+        this.taskID = task.id;
+        this.taskData.setValue(task.taskData);
     }
 
     start() { return this.awaitable.start(); }

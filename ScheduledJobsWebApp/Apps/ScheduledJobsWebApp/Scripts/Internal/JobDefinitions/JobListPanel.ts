@@ -1,14 +1,14 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
+import { JobSummary } from "../../Lib/JobSummary";
 import { JobListPanelView } from "../Jobs/JobListPanelView";
 import { JobSummaryListItem } from "../Jobs/JobSummaryListItem";
 import { JobSummaryListItemView } from "../Jobs/JobSummaryListItemView";
-import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
-import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
-import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     back?: boolean;
@@ -35,7 +35,7 @@ export class JobListPanel implements IPanel {
         view.menuButton.hide();
         view.backButton.show();
         this.titleTextComponet = new TextComponent(view.titleTextView);
-        this.titleTextComponet.setText('Recent Jobs');
+        this.titleTextComponet.setText("Recent Jobs");
         this.countTextComponent = new TextComponent(view.countTextView);
         this.countTextComponent.hide();
         this.alert = new CardAlert(view.alert);
@@ -43,26 +43,27 @@ export class JobListPanel implements IPanel {
         new Command(this.back.bind(this)).add(view.backButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
-        this.refreshCommand.animateIconWhenInProgress('spin');
+        this.refreshCommand.animateIconWhenInProgress("spin");
     }
 
     private back() { this.awaitable.resolve(JobListPanelResult.back()); }
 
     private async doRefresh() {
         this.countTextComponent.hide();
-        const jobs = await this.getRecentTriggeredJobs();
+        const sourceJobs = await this.getRecentTriggeredJobs();
+        const jobs = sourceJobs.map(j => new JobSummary(j));
         this.triggeredJobs.setItems(
             jobs,
             (job, itemView) => new JobSummaryListItem(this.schdJobsClient, job, itemView)
         );
         if (jobs.length === 0) {
-            this.alert.danger('No Recent Jobs were found.');
+            this.alert.danger("No Recent Jobs were found.");
         }
     }
 
     private getRecentTriggeredJobs() {
         return this.alert.infoAction(
-            'Loading...',
+            "Loading...",
             () => this.schdJobsClient.JobDefinitions.GetRecentTriggeredJobs({
                 JobDefinitionID: this.jobDefinitionID
             })

@@ -1,12 +1,12 @@
-﻿import { SingleActivePanel } from '@jasonbenfield/sharedwebapp/Panel/SingleActivePanel';
-import { Url } from '@jasonbenfield/sharedwebapp/Url';
-import { AppClients } from '../../AppClients';
-import { MainMenuPanel } from '../../MainMenuPanel';
-import { ScheduledJobsPage } from '../../ScheduledJobsPage';
-import { EditTaskDataPanel } from './EditTaskDataPanel';
-import { JobDetailPanel } from './JobDetailPanel';
-import { MainPageView } from './MainPageView';
-import { TaskDetailPanel } from './TaskDetailPanel';
+﻿import { SingleActivePanel } from "@jasonbenfield/sharedwebapp/Panel/SingleActivePanel";
+import { Url } from "@jasonbenfield/sharedwebapp/Url";
+import { AppClients } from "../../AppClients";
+import { MainMenuPanel } from "../../MainMenuPanel";
+import { ScheduledJobsPage } from "../../ScheduledJobsPage";
+import { EditTaskDataPanel } from "./EditTaskDataPanel";
+import { JobDetailPanel } from "./JobDetailPanel";
+import { MainPageView } from "./MainPageView";
+import { TaskDetailPanel } from "./TaskDetailPanel";
 
 class MainPage extends ScheduledJobsPage {
     protected readonly view: MainPageView;
@@ -28,7 +28,7 @@ class MainPage extends ScheduledJobsPage {
             new EditTaskDataPanel(this.schdJobsClient, this.view.editTaskDataPanel)
         );
         this.menuPanel = this.panels.add(new MainMenuPanel(this.schdJobsClient, this.view.menuPanel));
-        this.jobDetailPanel.setJobID(Url.current().query.getNumberValue('JobID'));
+        this.jobDetailPanel.setJobID(Url.current().query.getNumberValue("JobID"));
         this.jobDetailPanel.refresh();
         this.activateJobDetailPanel();
     }

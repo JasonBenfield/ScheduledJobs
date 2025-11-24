@@ -1,14 +1,14 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
+import { EventSummary } from "../../../Lib/EventSummary";
 import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
 import { EventSummaryListItem } from "./EventSummaryListItem";
 import { EventSummaryListItemView } from "./EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
-import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
-import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     menuRequested?: boolean;
@@ -34,11 +34,11 @@ export class NotificationListPanel implements IPanel {
     ) {
         this.alert = new CardAlert(view.alert);
         this.recentEventsList = new ListGroup(view.recentEventListView);
-        new TextComponent(view.heading).setText('Events');
+        new TextComponent(view.heading).setText("Events");
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
-        this.refreshCommand.animateIconWhenInProgress('spin');
+        this.refreshCommand.animateIconWhenInProgress("spin");
     }
 
     private requestMenu() {
@@ -46,19 +46,20 @@ export class NotificationListPanel implements IPanel {
     }
 
     private async doRefresh() {
-        let recentEvents = await this.getRecentEvents();
+        const sourceRecentEvents = await this.getRecentEvents();
+        const recentEvents = sourceRecentEvents.map(e => new EventSummary(e));
         this.recentEventsList.setItems(
             recentEvents,
             (evt, itemView) => new EventSummaryListItem(this.schdJobsClient, evt, itemView)
         );
         if (recentEvents.length === 0) {
-            this.alert.danger('No events were found.');
+            this.alert.danger("No events were found.");
         }
     }
 
     private getRecentEvents() {
         return this.alert.infoAction(
-            'Loading...',
+            "Loading...",
             () => this.schdJobsClient.EventInquiry.GetRecentNotifications()
         );
     }

@@ -1,13 +1,14 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
+import { EventSummary } from "../../Lib/EventSummary";
 import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { EventSummaryListItem } from "../Events/Notifications/EventSummaryListItem";
 import { EventSummaryListItemView } from "../Events/Notifications/EventSummaryListItemView";
 import { NotificationListPanelView } from "./NotificationListPanelView";
-import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
-import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
+
 
 interface IResults {
     back?: boolean;
@@ -41,7 +42,8 @@ export class NotificationListPanel implements IPanel {
     private back() { this.awaitable.resolve(NotificationListPanelResult.back()); }
 
     private async doRefresh() {
-        const notifications = await this.getNotifications();
+        const sourceNotifications = await this.getNotifications();
+        const notifications = sourceNotifications.map(n => new EventSummary(n));
         this.notifications.setItems(
             notifications,
             (notification, itemView) =>

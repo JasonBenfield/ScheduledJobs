@@ -27,8 +27,8 @@ export class SelectSourceKeyPanel implements IPanel {
     private readonly sourceKey: TextInputFormGroup;
 
     constructor(private readonly view: SelectSourceKeyPanelView) {
-        this.sourceKey = new TextInputFormGroup('', '', view.sourceKey);
-        this.sourceKey.setCaption('Source Key (opt.)');
+        this.sourceKey = new TextInputFormGroup("", "", view.sourceKey);
+        this.sourceKey.setCaption("Source Key (opt.)");
         new Command(this.back.bind(this)).add(view.backButton);
         new Command(this.next.bind(this)).add(view.nextButton);
         view.handleFormSubmitted(this.onFormSubmitted.bind(this));

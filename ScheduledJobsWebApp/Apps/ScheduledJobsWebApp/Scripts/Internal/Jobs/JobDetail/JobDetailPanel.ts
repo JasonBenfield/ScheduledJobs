@@ -5,23 +5,25 @@ import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAler
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
 import { TextLinkComponent } from "@jasonbenfield/sharedwebapp/Components/TextLinkComponent";
 import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
+import { SourceLogEntry } from "../../../Lib/SourceLogEntry";
+import { TriggeredJobTask } from "../../../Lib/TriggeredJobTask";
+import { TriggeredJobDetail } from "../../../Lib/TriggeredJobDetail";
 import { JobDetailPanelView } from "./JobDetailPanelView";
 import { TaskListItem } from "./TaskListItem";
 import { TaskListItemView } from "./TaskListItemView";
-
 interface IResult {
     menuRequested?: boolean;
     taskSelected?: {
-        tasks: ITriggeredJobTaskModel[],
-        sourceLogEntries: ISourceLogEntryModel[],
-        selectedTask: ITriggeredJobTaskModel
+        tasks: TriggeredJobTask[],
+        sourceLogEntries: SourceLogEntry[],
+        selectedTask: TriggeredJobTask
     };
 }
 
 class Result {
     static menuRequested() { return new Result({ menuRequested: true }); }
 
-    static taskSelected(tasks: ITriggeredJobTaskModel[], sourceLogEntries: ISourceLogEntryModel[], selectedTask: ITriggeredJobTaskModel) {
+    static taskSelected(tasks: TriggeredJobTask[], sourceLogEntries: SourceLogEntry[], selectedTask: TriggeredJobTask) {
         return new Result({ taskSelected: { tasks: tasks, sourceLogEntries: sourceLogEntries, selectedTask: selectedTask } });
     }
 
@@ -40,7 +42,7 @@ export class JobDetailPanel implements IPanel {
     private readonly taskList: ListGroup<TaskListItem, TaskListItemView>;
     private readonly refreshCommand: AsyncCommand;
     private jobID: number;
-    private jobDetail: ITriggeredJobDetailModel;
+    private jobDetail: TriggeredJobDetail;
 
     constructor(private readonly schdJobsClient: ScheduledJobsAppClient, private readonly view: JobDetailPanelView) {
         this.view.hideJob();
@@ -52,40 +54,41 @@ export class JobDetailPanel implements IPanel {
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
-        this.refreshCommand.animateIconWhenInProgress('spin');
+        this.refreshCommand.animateIconWhenInProgress("spin");
     }
 
     private requestMenu() { this.awaitable.resolve(Result.menuRequested()); }
 
     private async doRefresh() {
-        this.jobDetail = await this.getJobDetail(this.jobID);
-        this.jobDisplayText.setText(this.jobDetail.Job.JobDefinition.JobKey.DisplayText);
-        this.triggeredByLink.setText(this.jobDetail.TriggeredBy.Definition.EventKey.DisplayText);
+        const sourceJobDetail = await this.getJobDetail(this.jobID);
+        this.jobDetail = new TriggeredJobDetail(sourceJobDetail);
+        this.jobDisplayText.setText(this.jobDetail.job.jobDefinition.jobKey.displayText);
+        this.triggeredByLink.setText(this.jobDetail.triggeredBy.definition.eventKey.displayText);
         this.triggeredByLink.setHref(
             this.schdJobsClient.EventInquiry.NotificationDetail.getUrl({
-                NotificationID: this.jobDetail.TriggeredBy.ID
+                NotificationID: this.jobDetail.triggeredBy.id
             }).value()
         );
         this.taskList.setItems(
-            this.jobDetail.Tasks,
+            this.jobDetail.tasks,
             (task, itemView) => new TaskListItem(task, itemView)
         );
-        if (this.jobDetail.Tasks.length === 0) {
-            this.alert.danger('No Tasks have been started for this  job.');
+        if (this.jobDetail.tasks.length === 0) {
+            this.alert.danger("No Tasks have been started for this  job.");
         }
         this.view.showJob();
     }
 
     private getJobDetail(jobID) {
         return this.alert.infoAction(
-            'Loading...',
+            "Loading...",
             () => this.schdJobsClient.JobInquiry.GetJobDetail({ JobID: jobID })
         );
     }
 
     private onTaskClicked(taskItem: TaskListItem) {
         this.awaitable.resolve(
-            Result.taskSelected(this.jobDetail.Tasks, this.jobDetail.SourceLogEntries, taskItem.task)
+            Result.taskSelected(this.jobDetail.tasks, this.jobDetail.sourceLogEntries, taskItem.task)
         );
     }
 

@@ -1,13 +1,13 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
+import { JobDefinition } from "../../Lib/JobDefinition";
 import { JobDefinitionListItem } from "./JobDefinitionListItem";
 import { JobDefinitionListItemView } from "./JobDefinitionListItemView";
 import { JobDefinitionListPanelView } from "./JobDefinitionListPanelView";
-import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
-import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     menuRequested?: boolean;
@@ -43,31 +43,34 @@ export class JobDefinitionListPanel implements IPanel {
         new Command(this.requestMenu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
-        this.refreshCommand.animateIconWhenInProgress('spin');
+        this.refreshCommand.animateIconWhenInProgress("spin");
     }
 
     private requestMenu() { this.awaitable.resolve(JobDefinitionListPanelResult.menuRequested()); }
 
     private async doRefresh() {
-        const jobDefs = await this.getJobDefinitions();
+        const sourceJobDefs = await this.getJobDefinitions();
+        const jobDefs = sourceJobDefs.map(d => new JobDefinition(d));
         this.jobDefinitions.setItems(
             jobDefs,
             (jobDef, itemView) => new JobDefinitionListItem(jobDef, itemView)
         );
         if (jobDefs.length === 0) {
-            this.alert.danger('No job definitions were found');
+            this.alert.danger("No job definitions were found");
         }
     }
 
     private getJobDefinitions() {
         return this.alert.infoAction(
-            'Loading...',
+            "Loading...",
             () => this.schdJobsClient.JobDefinitions.GetJobDefinitions()
         );
     }
 
     private onJobClicked(jobDefItem: JobDefinitionListItem) {
-        this.awaitable.resolve(JobDefinitionListPanelResult.jobDefinitionSelected(jobDefItem.jobDefinition.ID));
+        this.awaitable.resolve(
+            JobDefinitionListPanelResult.jobDefinitionSelected(jobDefItem.jobDefinition.id)
+        );
     }
 
     refresh() { return this.refreshCommand.execute(); }

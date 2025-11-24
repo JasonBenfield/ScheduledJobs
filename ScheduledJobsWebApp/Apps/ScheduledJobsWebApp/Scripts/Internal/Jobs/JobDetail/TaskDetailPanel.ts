@@ -5,15 +5,16 @@ import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
 import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
 import { ModalConfirm } from "@jasonbenfield/sharedwebapp/Components/ModalConfirm";
 import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextComponent";
-import { JobTaskStatus } from "../../../Lib/Http/JobTaskStatus";
 import { ScheduledJobsAppClient } from "../../../Lib/Http/ScheduledJobsAppClient";
+import { SourceLogEntry } from "../../../Lib/SourceLogEntry";
+import { TriggeredJobTask } from "../../../Lib/TriggeredJobTask";
 import { LogEntryItem } from "./LogEntryItem";
 import { LogEntryItemView } from "./LogEntryItemView";
 import { TaskDetailPanelView } from "./TaskDetailPanelView";
 
 interface IResult {
     backRequested?: { refreshRequired: boolean; };
-    editTaskRequested?: { task: ITriggeredJobTaskModel; };
+    editTaskRequested?: { task: TriggeredJobTask; };
 }
 
 class Result {
@@ -21,7 +22,7 @@ class Result {
         return new Result({ backRequested: { refreshRequired: refreshRequired } });
     }
 
-    static editTaskRequested(task: ITriggeredJobTaskModel) {
+    static editTaskRequested(task: TriggeredJobTask) {
         return new Result({ editTaskRequested: { task: task } });
     }
 
@@ -41,9 +42,9 @@ export class TaskDetailPanel implements IPanel {
     private readonly taskData: TextComponent;
     private readonly logEntries: ListGroup<LogEntryItem, LogEntryItemView>;
     private readonly alert: MessageAlert;
-    private tasks: ITriggeredJobTaskModel[];
-    private sourceLogEntries: ISourceLogEntryModel[];
-    private currentTask: ITriggeredJobTaskModel;
+    private tasks: TriggeredJobTask[];
+    private sourceLogEntries: SourceLogEntry[];
+    private currentTask: TriggeredJobTask;
     private readonly timeoutTaskCommand: AsyncCommand;
     private readonly editTaskDataCommand: Command;
     private readonly cancelTaskCommand: AsyncCommand;
@@ -81,33 +82,33 @@ export class TaskDetailPanel implements IPanel {
     }
 
     private async timeoutTask() {
-        const confirmed = await this.modalConfirm.confirm('Cause this task to timeout?', 'Confirm timeout');
+        const confirmed = await this.modalConfirm.confirm("Cause this task to timeout?", "Confirm timeout");
         if (confirmed) {
             await this.alert.infoAction(
-                'Timing out task...',
-                () => this.schdJobsClient.Tasks.TimeoutTask({ TaskID: this.currentTask.ID })
+                "Timing out task...",
+                () => this.schdJobsClient.Tasks.TimeoutTask({ TaskID: this.currentTask.id })
             );
             this.awaitable.resolve(Result.backRequested(true));
         }
     }
 
     private async cancelTask() {
-        const confirmed = await this.modalConfirm.confirm('Cancel this task?', 'Confirm cancel');
+        const confirmed = await this.modalConfirm.confirm("Cancel this task?", "Confirm cancel");
         if (confirmed) {
             await this.alert.infoAction(
-                'Canceling task...',
-                () => this.schdJobsClient.Tasks.CancelTask({ TaskID: this.currentTask.ID })
+                "Canceling task...",
+                () => this.schdJobsClient.Tasks.CancelTask({ TaskID: this.currentTask.id })
             );
             this.awaitable.resolve(Result.backRequested(true));
         }
     }
 
     private async retryTask() {
-        const confirmed = await this.modalConfirm.confirm('Retry this task?', 'Confirm retry');
+        const confirmed = await this.modalConfirm.confirm("Retry this task?", "Confirm retry");
         if (confirmed) {
             await this.alert.infoAction(
-                'Retrying task...',
-                () => this.schdJobsClient.Tasks.RetryTask({ TaskID: this.currentTask.ID })
+                "Retrying task...",
+                () => this.schdJobsClient.Tasks.RetryTask({ TaskID: this.currentTask.id })
             );
             this.awaitable.resolve(
                 Result.backRequested(true)
@@ -116,11 +117,11 @@ export class TaskDetailPanel implements IPanel {
     }
 
     private async skipTask() {
-        const confirmed = await this.modalConfirm.confirm('Skip this task?', 'Confirm skip');
+        const confirmed = await this.modalConfirm.confirm("Skip this task?", "Confirm skip");
         if (confirmed) {
             await this.alert.infoAction(
-                'Skipping task...',
-                () => this.schdJobsClient.Tasks.SkipTask({ TaskID: this.currentTask.ID })
+                "Skipping task...",
+                () => this.schdJobsClient.Tasks.SkipTask({ TaskID: this.currentTask.id })
             );
             this.awaitable.resolve(
                 Result.backRequested(true)
@@ -160,41 +161,40 @@ export class TaskDetailPanel implements IPanel {
         }
     }
 
-    setTasks(tasks: ITriggeredJobTaskModel[], sourceLogEntries: ISourceLogEntryModel[]) {
+    setTasks(tasks: TriggeredJobTask[], sourceLogEntries: SourceLogEntry[]) {
         this.tasks = tasks;
         this.sourceLogEntries = sourceLogEntries;
     }
 
-    setCurrentTask(currentTask: ITriggeredJobTaskModel) {
+    setCurrentTask(currentTask: TriggeredJobTask) {
         this.currentTask = currentTask;
-        this.displayText.setText(currentTask.TaskDefinition.TaskKey.DisplayText);
-        this.status.setText(currentTask.Status.DisplayText);
+        this.displayText.setText(currentTask.taskDefinition.taskKey.displayText);
+        this.status.setText(currentTask.status.DisplayText);
         this.timeStarted.setText(
-            currentTask.TimeStarted.isMaxYear ?
-                '' :
-                currentTask.TimeStarted.format()
+            currentTask.timeStarted.isMaxYear ?
+                "" :
+                currentTask.timeStarted.format()
         );
         this.timeElapsed.setText(
-            currentTask.TimeStarted.isMaxYear || currentTask.TimeEnded.isMaxYear ?
-                '' :
-                currentTask.TimeEnded.minus(currentTask.TimeStarted).format()
+            currentTask.timeStarted.isMaxYear || currentTask.timeEnded.isMaxYear ?
+                "" :
+                currentTask.timeEnded.minus(currentTask.timeStarted).format()
         );
-        this.taskData.setText(currentTask.TaskData);
-        if (currentTask.TaskData) {
+        this.taskData.setText(currentTask.taskData);
+        if (currentTask.taskData) {
             this.view.taskData.show();
         }
         else {
             this.view.taskData.hide();
         }
         this.logEntries.setItems(
-            currentTask.LogEntries,
+            currentTask.logEntries,
             (entry, itemView) => {
-                const sourceLogEntry = this.sourceLogEntries.find(le => le.LogEntryID === entry.ID);
+                const sourceLogEntry = this.sourceLogEntries.find(le => le.logEntryID === entry.id);
                 return new LogEntryItem(this.hubClient, entry, sourceLogEntry, itemView);
             }
         );
-        const status = JobTaskStatus.values.value(currentTask.Status.Value);
-        if (status.equals(JobTaskStatus.values.Failed)) {
+        if (currentTask.isFailed) {
             this.cancelTaskCommand.show();
             this.retryTaskCommand.show();
             this.skipTaskCommand.show();
@@ -206,7 +206,7 @@ export class TaskDetailPanel implements IPanel {
             this.skipTaskCommand.hide();
             this.editTaskDataCommand.hide();
         }
-        if (status.equals(JobTaskStatus.values.Running)) {
+        if (currentTask.isRunning) {
             this.timeoutTaskCommand.show();
         }
         else {

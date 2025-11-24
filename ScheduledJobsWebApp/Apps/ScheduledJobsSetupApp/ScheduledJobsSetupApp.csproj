@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XTI_AppSetupApp.Extensions" Version="1.5.3" />
+		<PackageReference Include="XTI_AppSetupApp.Extensions" Version="1.5.4-dev251123205456826" />
 	</ItemGroup>
 
 	<ItemGroup>

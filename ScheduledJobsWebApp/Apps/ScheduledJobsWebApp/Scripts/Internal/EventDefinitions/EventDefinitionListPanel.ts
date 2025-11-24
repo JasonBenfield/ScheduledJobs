@@ -1,13 +1,13 @@
 ﻿import { Awaitable } from "@jasonbenfield/sharedwebapp/Awaitable";
+import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
 import { AsyncCommand, Command } from "@jasonbenfield/sharedwebapp/Components/Command";
 import { ListGroup } from "@jasonbenfield/sharedwebapp/Components/ListGroup";
-import { MessageAlert } from "@jasonbenfield/sharedwebapp/Components/MessageAlert";
+import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
+import { EventDefinition } from "../../Lib/EventDefinition";
 import { ScheduledJobsAppClient } from "../../Lib/Http/ScheduledJobsAppClient";
 import { EventDefinitionListItem } from "./EventDefinitionListItem";
 import { EventDefinitionListItemView } from "./EventDefinitionListItemView";
 import { EventDefinitionListPanelView } from "./EventDefinitionListPanelView";
-import { CardAlert } from "@jasonbenfield/sharedwebapp/Components/CardAlert";
-import { IMessageAlert } from "@jasonbenfield/sharedwebapp/Components/Types";
 
 interface IResults {
     menuRequested?: boolean;
@@ -43,29 +43,30 @@ export class EventDefinitionListPanel implements IPanel {
         new Command(this.menu.bind(this)).add(view.menuButton);
         this.refreshCommand = new AsyncCommand(this.doRefresh.bind(this));
         this.refreshCommand.add(view.refreshButton);
-        this.refreshCommand.animateIconWhenInProgress('spin');
+        this.refreshCommand.animateIconWhenInProgress("spin");
     }
 
     private onDefinitionClicked(defItem: EventDefinitionListItem) {
-        this.awaitable.resolve(EventDefinitionListPanelResult.eventDefinitionSelected(defItem.evtDef.ID));
+        this.awaitable.resolve(EventDefinitionListPanelResult.eventDefinitionSelected(defItem.evtDef.id));
     }
 
     private menu() { this.awaitable.resolve(EventDefinitionListPanelResult.menuRequested()); }
 
     private async doRefresh() {
-        const evtDefs = await this.getEventDefinitions();
+        const sourceEvtDefs = await this.getEventDefinitions();
+        const evtDefs = sourceEvtDefs.map(d => new EventDefinition(d));
         this.eventDefinitions.setItems(
             evtDefs,
             (evtDef, itemView) => new EventDefinitionListItem(evtDef, itemView)
         );
         if (evtDefs.length === 0) {
-            this.alert.danger('No event definitions were found');
+            this.alert.danger("No event definitions were found");
         }
     }
 
     private getEventDefinitions() {
         return this.alert.infoAction(
-            'Loading...',
+            "Loading...",
             () => this.schdJobsClient.EventDefinitions.GetEventDefinitions()
         );
     }

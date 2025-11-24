@@ -4,33 +4,35 @@ import { TextComponent } from "@jasonbenfield/sharedwebapp/Components/TextCompon
 import { TextLinkComponent } from "@jasonbenfield/sharedwebapp/Components/TextLinkComponent";
 import { ContextualClass } from "@jasonbenfield/sharedwebapp/ContextualClass";
 import { AppEventSeverity } from '../../../Lib/Http/AppEventSeverity';
+import { JobLogEntry } from "../../../Lib/JobLogEntry";
+import { SourceLogEntry } from "../../../Lib/SourceLogEntry";
 import { LogEntryItemView } from "./LogEntryItemView";
 
 export class LogEntryItem extends BasicComponent {
-    constructor(hubClient: HubAppClient, logEntry: IJobLogEntryModel, sourceLogEntry: ISourceLogEntryModel, view: LogEntryItemView) {
+    constructor(hubClient: HubAppClient, logEntry: JobLogEntry, sourceLogEntry: SourceLogEntry, view: LogEntryItemView) {
         super(view);
-        const categoryComponent = new TextComponent(view.category);
-        categoryComponent.setText(logEntry.Category);
+        const categoryComponent = this.addComponent(new TextComponent(view.category));
+        categoryComponent.setText(logEntry.category);
         categoryComponent.syncTitleWithText();
         if (sourceLogEntry) {
-            const sourceMessageComponent = new TextComponent(view.sourceMessage);
-            sourceMessageComponent.setText(`[Source] ${sourceLogEntry.SourceLogEntry.Message}`);
+            const sourceMessageComponent = this.addComponent(new TextComponent(view.sourceMessage));
+            sourceMessageComponent.setText(`[Source] ${sourceLogEntry.sourceLogEntry.message}`);
             sourceMessageComponent.syncTitleWithText();
         }
         else {
             view.sourceMessage.hide();
         }
-        const messageComponent = new TextComponent(view.message);
-        messageComponent.setText(logEntry.Message);
+        const messageComponent = this.addComponent(new TextComponent(view.message));
+        messageComponent.setText(logEntry.message);
         messageComponent.syncTitleWithText();
-        const detailsComponent = new TextComponent(view.details);
-        detailsComponent.setText(logEntry.Details);
+        const detailsComponent = this.addComponent(new TextComponent(view.details));
+        detailsComponent.setText(logEntry.details);
         detailsComponent.syncTitleWithText();
-        if (sourceLogEntry && sourceLogEntry.SourceLogEntry.RequestID) {
-            const sourceLogEntryLink = new TextLinkComponent(view.sourceLogEntryLink);
+        if (sourceLogEntry && sourceLogEntry.sourceLogEntry.requestID) {
+            const sourceLogEntryLink = this.addComponent(new TextLinkComponent(view.sourceLogEntryLink));
             sourceLogEntryLink.setHref(
                 hubClient.Logs.LogEntries.getUrl({
-                    RequestID: sourceLogEntry.SourceLogEntry.RequestID,
+                    RequestID: sourceLogEntry.sourceLogEntry.requestID,
                     InstallationID: null
                 })
             );
@@ -38,7 +40,7 @@ export class LogEntryItem extends BasicComponent {
         else {
             view.sourceLogEntryLink.hide();
         }
-        if (logEntry.Severity.Value > AppEventSeverity.values.Information.Value) {
+        if (logEntry.severity.Value > AppEventSeverity.values.Information.Value) {
             view.setContext(ContextualClass.danger);
         }
 
