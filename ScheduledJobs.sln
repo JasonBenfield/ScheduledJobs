@@ -24,6 +24,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{48D8DBF6-90CA-4D4B-BEE2-E0B57DA1F994}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_ScheduledJobsAppClient", "ScheduledJobsWebApp\Lib\XTI_ScheduledJobsAppClient\XTI_ScheduledJobsAppClient.csproj", "{86BC63B1-10B7-47D8-9AFB-CFFEC1A97753}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC4C52D5-43CF-430C-866D-735FF896A176} = {AC4C52D5-43CF-430C-866D-735FF896A176}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduledJobsSetupApp", "ScheduledJobsWebApp\Apps\ScheduledJobsSetupApp\ScheduledJobsSetupApp.csproj", "{07E29774-FF7F-44E5-BC31-5CC5CC0DD716}"
 EndProject
