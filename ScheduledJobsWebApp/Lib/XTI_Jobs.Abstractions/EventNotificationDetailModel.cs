@@ -4,4 +4,10 @@ public sealed record EventNotificationDetailModel
 (
     EventNotificationModel Event,
     JobSummaryModel[] TriggeredJobs
-);
+)
+{
+    public EventNotificationDetailModel()
+        : this(new(), [])
+    {
+    }
+}

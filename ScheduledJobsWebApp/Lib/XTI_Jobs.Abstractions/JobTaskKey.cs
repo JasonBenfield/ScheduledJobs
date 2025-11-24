@@ -6,6 +6,11 @@ public sealed class JobTaskKey : TextKeyValue, IEquatable<JobTaskKey>
 {
     public static readonly JobTaskKey None = new JobTaskKey("");
 
+    public JobTaskKey()
+        : this("")
+    {
+    }
+
     public JobTaskKey(string value) : base(value)
     {
     }

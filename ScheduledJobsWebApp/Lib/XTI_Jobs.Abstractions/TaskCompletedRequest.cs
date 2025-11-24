@@ -3,7 +3,7 @@
 public sealed class TaskCompletedRequest
 {
     public TaskCompletedRequest()
-        : this(0, false, new NextTaskModel[0])
+        : this(0, false, [])
     {
     }
 

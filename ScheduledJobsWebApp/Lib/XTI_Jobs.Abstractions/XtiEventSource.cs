@@ -1,3 +1,9 @@
 ﻿namespace XTI_Jobs.Abstractions;
 
-public sealed record XtiEventSource(string SourceKey, string SourceData);
+public sealed record XtiEventSource(string SourceKey, string SourceData)
+{
+    public XtiEventSource()
+        : this("", "")
+    {
+    }
+}

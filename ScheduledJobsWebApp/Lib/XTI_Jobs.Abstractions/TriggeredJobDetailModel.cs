@@ -6,4 +6,10 @@ public sealed record TriggeredJobDetailModel
     EventNotificationModel TriggeredBy,
     TriggeredJobTaskModel[] Tasks,
     SourceLogEntryModel[] SourceLogEntries
-);
+)
+{
+    public TriggeredJobDetailModel()
+        : this(new(), new(), [], [])
+    {
+    }
+}

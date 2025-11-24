@@ -3,7 +3,7 @@
 public sealed class TaskFailedRequest
 {
     public TaskFailedRequest()
-        : this(0, JobTaskStatus.Values.NotSet, new TimeSpan(), "", "", "", "", new NextTaskModel[0])
+        : this(0, JobTaskStatus.Values.NotSet, new TimeSpan(), "", "", "", "", [])
     {
     }
 
@@ -32,9 +32,9 @@ public sealed class TaskFailedRequest
     public int FailedTaskID { get; set; }
     public int ErrorStatus { get; set; }
     public TimeSpan RetryAfter { get; set; }
-    public NextTaskModel[] NextTasks { get; set; } = new NextTaskModel[0];
-    public string Category { get; set; } = "";
-    public string Message { get; set; } = "";
-    public string Detail { get; set; } = "";
-    public string SourceLogEntryKey { get; set; } = "";
+    public NextTaskModel[] NextTasks { get; set; }
+    public string Category { get; set; }
+    public string Message { get; set; }
+    public string Detail { get; set; }
+    public string SourceLogEntryKey { get; set; }
 }

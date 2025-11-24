@@ -3,7 +3,7 @@
 public sealed class StartJobRequest
 {
     public StartJobRequest()
-        : this(0, new NextTaskModel[0])
+        : this(0, [])
     {
     }
 
@@ -14,5 +14,5 @@ public sealed class StartJobRequest
     }
 
     public int JobID { get; set; }
-    public NextTaskModel[] NextTasks { get; set; } = new NextTaskModel[0];
+    public NextTaskModel[] NextTasks { get; set; }
 }

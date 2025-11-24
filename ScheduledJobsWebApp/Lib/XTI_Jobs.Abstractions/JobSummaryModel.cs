@@ -22,4 +22,17 @@ public sealed record JobSummaryModel
         )
     {
     }
+
+    public JobSummaryModel()
+        : this
+        (
+            0,
+            new JobKey(),
+            JobTaskStatus.Values.NotSet,
+            DateTimeOffset.MaxValue,
+            DateTimeOffset.MaxValue,
+            0
+        )
+    {
+    }
 }
