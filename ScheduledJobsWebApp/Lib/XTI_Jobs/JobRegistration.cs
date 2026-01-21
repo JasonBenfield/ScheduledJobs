@@ -11,9 +11,9 @@ public sealed class JobRegistration
         this.jobs = jobs;
     }
 
-    public Task Register()
+    public Task Register(CancellationToken ct)
     {
         var registeredJobs = jobs.Select(j => j.BuildJob()).ToArray();
-        return db.AddOrUpdateRegisteredJobs(registeredJobs);
+        return db.AddOrUpdateRegisteredJobs(registeredJobs, ct);
     }
 }

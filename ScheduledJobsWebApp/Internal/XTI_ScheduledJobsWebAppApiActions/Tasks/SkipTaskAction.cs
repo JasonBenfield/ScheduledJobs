@@ -21,13 +21,13 @@ public sealed class SkipTaskAction : AppAction<GetTaskRequest, EmptyActionResult
             async () =>
             {
                 var currentTaskEntity = await db.TriggeredJobTasks.Retrieve()
-                    .FirstAsync(t => t.ID == model.TaskID);
+                    .FirstAsync(t => t.ID == model.TaskID, stoppingToken);
                 var status = JobTaskStatus.Values.Value(currentTaskEntity.Status);
                 if (!status.Equals(JobTaskStatus.Values.Failed))
                 {
                     throw new AppException(string.Format(TaskErrors.TaskWithStatusCannotBeSkipped, status.DisplayText));
                 }
-                await new EfTriggeredJobTask(db, currentTaskEntity, clock).Skip();
+                await new EfTriggeredJobTask(db, currentTaskEntity, clock).Skip(stoppingToken);
             }
         );
         return new EmptyActionResult();

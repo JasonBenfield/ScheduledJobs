@@ -11,20 +11,20 @@ public sealed class EfEventNotificationInquiry
         this.db = db;
     }
 
-    public async Task<EventNotificationModel> Notification(int id)
+    public async Task<EventNotificationModel> Notification(int id, CancellationToken ct)
     {
         var evtWithDefEntity = await Query()
             .Where(evt => evt.Event.ID == id)
-            .FirstAsync();
+            .FirstAsync(ct);
         return CreateEventNotificationModel(evtWithDefEntity);
     }
 
-    public async Task<EventNotificationModel[]> Recent()
+    public async Task<EventNotificationModel[]> Recent(CancellationToken ct)
     {
         var evtWithDefs = await Query()
             .OrderByDescending(evtWithDef => evtWithDef.Event.TimeAdded)
             .Take(50)
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         var evtNotModels = new List<EventNotificationModel>();
         foreach (var evtWithDef in evtWithDefs)
         {
@@ -34,7 +34,7 @@ public sealed class EfEventNotificationInquiry
         return evtNotModels.ToArray();
     }
 
-    public async Task<EventNotificationModel[]> Recent(int evtDefID, string sourceKey)
+    public async Task<EventNotificationModel[]> Recent(int evtDefID, string sourceKey, CancellationToken ct)
     {
         IQueryable<EventWithDefinitionEntity> query;
         if (string.IsNullOrWhiteSpace(sourceKey))
@@ -55,7 +55,7 @@ public sealed class EfEventNotificationInquiry
         var evtWithDefs = await query
             .OrderByDescending(evtWithDef => evtWithDef.Event.TimeAdded)
             .Take(50)
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         var evtNotModels = new List<EventNotificationModel>();
         foreach (var evtWithDef in evtWithDefs)
         {
@@ -91,10 +91,10 @@ public sealed class EfEventNotificationInquiry
                 (n, d) => new EventWithDefinitionEntity { Event = n, Definition = d }
             );
 
-    public Task<int> JobCount(int eventID) =>
+    public Task<int> JobCount(int eventID, CancellationToken ct) =>
         db.TriggeredJobs.Retrieve()
             .Where(j => j.EventNotificationID == eventID)
-            .CountAsync();
+            .CountAsync(ct);
 
     private sealed class EventWithDefinitionEntity
     {

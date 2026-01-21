@@ -27,13 +27,13 @@ internal sealed class SkipTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var failedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
         await api.Tasks.SkipTask.Invoke(new GetTaskRequest(failedTask.Model.ID));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs[0].Status(),
@@ -64,12 +64,12 @@ internal sealed class SkipTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var failedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
         await api.Tasks.SkipTask.Invoke(new GetTaskRequest(failedTask.Model.ID));
-        triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var messages = triggeredJobs[0].Messages();
         Assert.That(messages.Length, Is.EqualTo(1), "Should log message after skipped");
         Assert.That(messages[0].Category, Is.EqualTo(JobErrors.TaskSkippedCategory), "Should log message after skipped");
@@ -98,12 +98,12 @@ internal sealed class SkipTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var failedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
         await api.Tasks.SkipTask.Invoke(new GetTaskRequest(failedTask.Model.ID));
-        triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var task = triggeredJobs[0].Tasks(DemoJobs.DoSomething.TaskItem01)[1];
         Assert.That(task.Data<DoSomethingItemData>().ItemID, Is.EqualTo(2), "Should preserve data");
     }
@@ -130,7 +130,7 @@ internal sealed class SkipTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var completedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Completed));

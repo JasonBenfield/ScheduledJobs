@@ -16,18 +16,18 @@ public sealed class EfTriggeredJobTask
         this.clock = clock;
     }
 
-    public async Task EditTaskData(string taskData)
+    public async Task EditTaskData(string taskData, CancellationToken ct)
     {
-        if(entity.TaskData != taskData)
+        if (entity.TaskData != taskData)
         {
-            await LogMessage("OriginalTaskData", entity.TaskData, "");
-            await db.TriggeredJobTasks.Update(entity, t => t.TaskData = taskData);
+            await LogMessage("OriginalTaskData", entity.TaskData, "", ct);
+            await db.TriggeredJobTasks.Update(entity, t => t.TaskData = taskData, ct);
         }
     }
 
-    public async Task Timeout()
+    public async Task Timeout(CancellationToken ct)
     {
-        await Fail();
+        await Fail(ct);
         await db.LogEntries.Create
         (
             new LogEntryEntity
@@ -38,35 +38,36 @@ public sealed class EfTriggeredJobTask
                 Message = JobErrors.TaskTimeoutMessage,
                 Details = "",
                 TimeOccurred = clock.Now()
-            }
+            },
+            ct
         );
     }
 
-    public async Task Cancel()
+    public async Task Cancel(CancellationToken ct)
     {
         var pendingTaskEntities = await db.TriggeredJobTasks.Retrieve()
             .Where(t => t.TriggeredJobID == entity.TriggeredJobID && t.Status == JobTaskStatus.Values.Pending)
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         foreach (var pendingTaskEntity in pendingTaskEntities)
         {
-            await new EfTriggeredJobTask(db, pendingTaskEntity, clock).End(JobTaskStatus.Values.Canceled, true);
+            await new EfTriggeredJobTask(db, pendingTaskEntity, clock).End(JobTaskStatus.Values.Canceled, true, ct);
         }
-        await End(JobTaskStatus.Values.Canceled, true);
+        await End(JobTaskStatus.Values.Canceled, true, ct);
     }
 
-    public Task Fail() => End(JobTaskStatus.Values.Failed, true);
+    public Task Fail(CancellationToken ct) => End(JobTaskStatus.Values.Failed, true, ct);
 
-    public Task Complete(bool preserveData) => End(JobTaskStatus.Values.Completed, preserveData);
+    public Task Complete(bool preserveData, CancellationToken ct) => End(JobTaskStatus.Values.Completed, preserveData, ct);
 
-    public async Task Skip()
+    public async Task Skip(CancellationToken ct)
     {
-        await End(JobTaskStatus.Values.Skip, true);
-        await LogMessage(JobErrors.TaskSkippedCategory, JobErrors.TaskSkippedMessage, "");
+        await End(JobTaskStatus.Values.Skip, true, ct);
+        await LogMessage(JobErrors.TaskSkippedCategory, JobErrors.TaskSkippedMessage, "", ct);
     }
 
-    public async Task Retry(DateTimeOffset timeToRetry)
+    public async Task Retry(DateTimeOffset timeToRetry, CancellationToken ct)
     {
-        await ResequenceTasks(1);
+        await ResequenceTasks(1, ct);
         await db.TriggeredJobTasks.Update
         (
             entity,
@@ -74,9 +75,10 @@ public sealed class EfTriggeredJobTask
             {
                 t.Status = JobTaskStatus.Values.Completed.Value;
                 t.TimeEnded = clock.Now();
-            }
+            },
+            ct
         );
-        await LogMessage(JobErrors.TaskRetriedCategory, JobErrors.TaskRetriedMessage, "");
+        await LogMessage(JobErrors.TaskRetriedCategory, JobErrors.TaskRetriedMessage, "", ct);
         var retryTask = new TriggeredJobTaskEntity
         {
             Status = JobTaskStatus.Values.Retry.Value,
@@ -88,11 +90,11 @@ public sealed class EfTriggeredJobTask
             TaskDefinitionID = entity.TaskDefinitionID,
             TriggeredJobID = entity.TriggeredJobID
         };
-        await db.TriggeredJobTasks.Create(retryTask);
+        await db.TriggeredJobTasks.Create(retryTask, ct);
         var parentTaskID = await db.HierarchicalTriggeredJobTasks.Retrieve()
             .Where(ht => ht.ChildTaskID == entity.ID)
             .Select(ht => (int?)ht.ParentTaskID)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
         if (parentTaskID.HasValue)
         {
             await db.HierarchicalTriggeredJobTasks.Create
@@ -101,12 +103,13 @@ public sealed class EfTriggeredJobTask
                 {
                     ParentTaskID = parentTaskID.Value,
                     ChildTaskID = retryTask.ID
-                }
+                },
+                ct
             );
         }
     }
 
-    public Task End(JobTaskStatus status, bool preserveData) =>
+    public Task End(JobTaskStatus status, bool preserveData, CancellationToken ct) =>
         db.TriggeredJobTasks.Update
         (
             entity,
@@ -122,10 +125,11 @@ public sealed class EfTriggeredJobTask
                     t.TimeStarted = clock.Now();
                 }
                 t.TimeEnded = clock.Now();
-            }
+            },
+            ct
         );
 
-    public Task LogMessage(string category, string message, string details) =>
+    public Task LogMessage(string category, string message, string details, CancellationToken ct) =>
         db.LogEntries.Create
         (
             new LogEntryEntity
@@ -136,15 +140,16 @@ public sealed class EfTriggeredJobTask
                 Message = message,
                 Details = details,
                 TimeOccurred = clock.Now()
-            }
+            },
+            ct
         );
 
-    public async Task ResequenceTasks(int howMany)
+    public async Task ResequenceTasks(int howMany, CancellationToken ct)
     {
         var tasksToResequence = await db.TriggeredJobTasks.Retrieve()
             .Where(t => t.TriggeredJobID == entity.TriggeredJobID && t.Sequence > entity.Sequence)
             .OrderBy(t => t.Sequence)
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         foreach (var task in tasksToResequence)
         {
             await db.TriggeredJobTasks.Update
@@ -153,7 +158,8 @@ public sealed class EfTriggeredJobTask
                 t =>
                 {
                     t.Sequence += howMany;
-                }
+                },
+                ct
             );
         }
     }

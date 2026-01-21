@@ -15,15 +15,15 @@ public sealed class EfJobDb : IJobDb
         this.clock = clock;
     }
 
-    public async Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents)
+    public async Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents, CancellationToken ct)
     {
         foreach (var registeredEvent in registeredEvents)
         {
-            await AddOrUpdateRegisteredEvent(registeredEvent);
+            await AddOrUpdateRegisteredEvent(registeredEvent, ct);
         }
     }
 
-    private async Task<EventDefinitionEntity> AddOrUpdateRegisteredEvent(RegisteredEvent registeredEvent)
+    private async Task<EventDefinitionEntity> AddOrUpdateRegisteredEvent(RegisteredEvent registeredEvent, CancellationToken ct)
     {
         var evtDefEntity = await db.EventDefinitions.Retrieve()
             .FirstOrDefaultAsync(ed => ed.EventKey == registeredEvent.EventKey.Value);
@@ -39,17 +39,17 @@ public sealed class EfJobDb : IJobDb
                 ActiveFor = registeredEvent.ActiveFor,
                 DeleteAfter = registeredEvent.DeleteAfter
             };
-            await db.EventDefinitions.Create(evtDefEntity);
+            await db.EventDefinitions.Create(evtDefEntity, ct);
         }
         return evtDefEntity;
     }
 
-    public Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule aggregateSchedule, TimeSpan deleteAfter) =>
-        db.Transaction(() => _AddOrUpdateJobSchedules(jobKey, aggregateSchedule, deleteAfter));
+    public Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule aggregateSchedule, TimeSpan deleteAfter, CancellationToken ct) =>
+        db.Transaction(() => _AddOrUpdateJobSchedules(jobKey, aggregateSchedule, deleteAfter, ct));
 
-    private async Task _AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule aggregateSchedule, TimeSpan deleteAfter)
+    private async Task _AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule aggregateSchedule, TimeSpan deleteAfter, CancellationToken ct)
     {
-        var jobDefEntity = await GetJobDefinition(jobKey);
+        var jobDefEntity = await GetJobDefinition(jobKey, ct);
         if (jobDefEntity == null)
         {
             throw new Exception($"Job '{jobKey.DisplayText} not found");
@@ -64,28 +64,29 @@ public sealed class EfJobDb : IJobDb
                 DateTimeOffset.MinValue,
                 TimeSpan.Zero,
                 deleteAfter
-            )
+            ),
+            ct
         );
-        await AddOrUpdateJobSchedule(jobDefEntity, aggregateSchedule);
+        await AddOrUpdateJobSchedule(jobDefEntity, aggregateSchedule, ct);
         var minTime = clock.Now().Add(TimeSpan.FromMinutes(5));
         var dateTimeRanges = aggregateSchedule.DateTimeRanges(DateRange.From(clock.Now().Date).ForOneDay())
             .Where(dtr => dtr.Start >= minTime)
             .ToArray();
         var futureEventNotifications = await db.EventNotifications.Retrieve()
             .Where(en => en.EventDefinitionID == evtDefEntity.ID && en.TimeActive >= minTime)
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         var eventNotificationsToDelete = futureEventNotifications
             .Where(en => !dateTimeRanges.Any(dtr => en.TimeActive == dtr.Start && en.TimeInactive == dtr.End))
             .ToArray();
         await db.EventNotifications.DeleteRange(eventNotificationsToDelete);
-        await new EfEventNotificationCreator(db, clock).AddJobScheduleNotifications(evtDefEntity, dateTimeRanges);
+        await new EfEventNotificationCreator(db, clock).AddJobScheduleNotifications(evtDefEntity, dateTimeRanges, ct);
     }
 
-    private async Task AddOrUpdateJobSchedule(JobDefinitionEntity jobDefEntity, AggregateSchedule aggregateSchedule)
+    private async Task AddOrUpdateJobSchedule(JobDefinitionEntity jobDefEntity, AggregateSchedule aggregateSchedule, CancellationToken ct)
     {
         var serialized = aggregateSchedule.Serialize();
         var schdEntity = await db.JobSchedules.Retrieve()
-            .FirstOrDefaultAsync(s => s.JobDefinitionID == jobDefEntity.ID);
+            .FirstOrDefaultAsync(s => s.JobDefinitionID == jobDefEntity.ID, ct);
         if (schdEntity == null)
         {
             await db.JobSchedules.Create
@@ -94,7 +95,8 @@ public sealed class EfJobDb : IJobDb
                 {
                     JobDefinitionID = jobDefEntity.ID,
                     Serialized = serialized
-                }
+                },
+                ct
             );
         }
         else
@@ -102,26 +104,27 @@ public sealed class EfJobDb : IJobDb
             await db.JobSchedules.Update
             (
                 schdEntity,
-                s => s.Serialized = serialized
+                s => s.Serialized = serialized,
+                ct
             );
         }
     }
 
-    public async Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs)
+    public async Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs, CancellationToken ct)
     {
         foreach (var registeredJob in registeredJobs)
         {
-            var jobDefEntity = await AddOrUpdateJobDefinition(registeredJob);
+            var jobDefEntity = await AddOrUpdateJobDefinition(registeredJob, ct);
             foreach (var task in registeredJob.Tasks)
             {
-                await AddOrUpdateTaskDefinition(jobDefEntity, task);
+                await AddOrUpdateTaskDefinition(jobDefEntity, task, ct);
             }
         }
     }
 
-    private async Task<JobDefinitionEntity> AddOrUpdateJobDefinition(RegisteredJob registeredJob)
+    private async Task<JobDefinitionEntity> AddOrUpdateJobDefinition(RegisteredJob registeredJob, CancellationToken ct)
     {
-        var jobDefEntity = await GetJobDefinition(registeredJob.JobKey);
+        var jobDefEntity = await GetJobDefinition(registeredJob.JobKey, ct);
         if (jobDefEntity == null)
         {
             jobDefEntity = new JobDefinitionEntity
@@ -131,27 +134,28 @@ public sealed class EfJobDb : IJobDb
                 Timeout = registeredJob.Timeout,
                 DeleteAfter = registeredJob.DeleteAfter
             };
-            await db.JobDefinitions.Create(jobDefEntity);
+            await db.JobDefinitions.Create(jobDefEntity, ct);
         }
         else
         {
             await db.JobDefinitions.Update
             (
                 jobDefEntity,
-                jd => jd.Timeout = registeredJob.Timeout
+                jd => jd.Timeout = registeredJob.Timeout,
+                ct
             );
         }
         return jobDefEntity;
     }
 
-    private Task<JobDefinitionEntity?> GetJobDefinition(JobKey jobKey) =>
+    private Task<JobDefinitionEntity?> GetJobDefinition(JobKey jobKey, CancellationToken ct) =>
         db.JobDefinitions.Retrieve()
-            .FirstOrDefaultAsync(jd => jd.JobKey == jobKey.Value);
+            .FirstOrDefaultAsync(jd => jd.JobKey == jobKey.Value, ct);
 
-    private async Task AddOrUpdateTaskDefinition(JobDefinitionEntity jobDefinitionEntity, RegisteredJobTask task)
+    private async Task AddOrUpdateTaskDefinition(JobDefinitionEntity jobDefinitionEntity, RegisteredJobTask task, CancellationToken ct)
     {
         var taskDefEntity = await db.JobTaskDefinitions.Retrieve()
-            .FirstOrDefaultAsync(td => td.JobDefinitionID == jobDefinitionEntity.ID && td.TaskKey == task.TaskKey.Value);
+            .FirstOrDefaultAsync(td => td.JobDefinitionID == jobDefinitionEntity.ID && td.TaskKey == task.TaskKey.Value, ct);
         if (taskDefEntity == null)
         {
             taskDefEntity = new JobTaskDefinitionEntity
@@ -161,22 +165,23 @@ public sealed class EfJobDb : IJobDb
                 DisplayText = task.TaskKey.DisplayText,
                 Timeout = task.Timeout
             };
-            await db.JobTaskDefinitions.Create(taskDefEntity);
+            await db.JobTaskDefinitions.Create(taskDefEntity, ct);
         }
         else
         {
             await db.JobTaskDefinitions.Update
             (
                 taskDefEntity,
-                td => td.Timeout = task.Timeout
+                td => td.Timeout = task.Timeout,
+                ct
             );
         }
     }
 
-    public async Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources)
+    public async Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources, CancellationToken ct)
     {
         var evtDefEntity = await db.EventDefinitions.Retrieve()
-            .FirstOrDefaultAsync(ed => ed.EventKey == eventKey.Value);
+            .FirstOrDefaultAsync(ed => ed.EventKey == eventKey.Value, ct);
         if (evtDefEntity == null)
         {
             throw new ArgumentException($"Event '{eventKey.DisplayText}' not found");
@@ -184,11 +189,11 @@ public sealed class EfJobDb : IJobDb
         var timeActive = clock.Now();
         var activeFor = evtDefEntity.ActiveFor;
         var creator = new EfEventNotificationCreator(db, clock);
-        var eventNotifications = await creator.AddEventNotifications(sources, evtDefEntity, timeActive, activeFor);
+        var eventNotifications = await creator.AddEventNotifications(sources, evtDefEntity, timeActive, activeFor, ct);
         return eventNotifications;
     }
 
-    public async Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey)
+    public async Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey, CancellationToken ct)
     {
         var now = clock.Now();
         var eventDefinitionID = db.EventDefinitions.Retrieve()
@@ -210,14 +215,14 @@ public sealed class EfJobDb : IJobDb
                     jobDefinitionID.Contains(tj.JobDefinitionID) &&
                     !jobIDsForTasks.Contains(tj.ID)
             )
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         foreach (var job in jobs)
         {
-            await db.TriggeredJobs.Delete(job);
+            await db.TriggeredJobs.Delete(job, ct);
         }
     }
 
-    public async Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey)
+    public async Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey, CancellationToken ct)
     {
         var eventDefinitionID = db.EventDefinitions.Retrieve()
             .Where(ed => ed.EventKey == eventKey.Value)
@@ -245,13 +250,14 @@ public sealed class EfJobDb : IJobDb
                     t.Status == JobTaskStatus.Values.Retry.Value &&
                     now >= t.TimeActive
             )
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         foreach (var retryTask in retryTasks)
         {
             await db.TriggeredJobTasks.Update
             (
                 retryTask,
-                t => t.Status = JobTaskStatus.Values.Pending.Value
+                t => t.Status = JobTaskStatus.Values.Pending.Value,
+                ct
             );
         }
         var skipTasks = await db.TriggeredJobTasks.Retrieve()
@@ -262,13 +268,14 @@ public sealed class EfJobDb : IJobDb
                     t.Status == JobTaskStatus.Values.Skip.Value &&
                     now >= t.TimeActive
             )
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         foreach (var skipTask in skipTasks)
         {
             await db.TriggeredJobTasks.Update
             (
                 skipTask,
-                t => t.Status = JobTaskStatus.Values.Completed.Value
+                t => t.Status = JobTaskStatus.Values.Completed.Value,
+                ct
             );
         }
         var retryJobIDs = retryTasks.Select(rt => rt.TriggeredJobID).Distinct().ToList();
@@ -289,20 +296,20 @@ public sealed class EfJobDb : IJobDb
                     jd => jd.ID,
                     (tj, jd) => new TriggeredJobWithDefinitionEntity(tj, jd)
                 )
-                .ToArrayAsync();
+                .ToArrayAsync(ct);
         var triggeredJobModels = new List<TriggeredJobWithTasksModel>();
         foreach (var triggeredJob in triggeredJobs)
         {
-            var jobModel = await GetTriggeredJob(triggeredJob);
+            var jobModel = await GetTriggeredJob(triggeredJob, ct);
             triggeredJobModels.Add(jobModel);
         }
         return triggeredJobModels.ToArray();
     }
 
-    public async Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime)
+    public async Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime, CancellationToken ct)
     {
         var jobDefEntity = await db.JobDefinitions.Retrieve()
-            .FirstOrDefaultAsync(jd => jd.JobKey == jobKey.Value);
+            .FirstOrDefaultAsync(jd => jd.JobKey == jobKey.Value, ct);
         if (jobDefEntity == null)
         {
             throw new ArgumentException($"Job '{jobKey.DisplayText}' was not found");
@@ -324,7 +331,7 @@ public sealed class EfJobDb : IJobDb
                     && now < en.TimeInactive
                     && en.TimeAdded >= eventRaisedStartTime
             )
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         var pendingJobs = new List<PendingJobModel>();
         foreach (var notificationEntity in notificationEntities)
         {
@@ -333,7 +340,7 @@ public sealed class EfJobDb : IJobDb
                 EventNotificationID = notificationEntity.ID,
                 JobDefinitionID = jobDefEntity.ID
             };
-            await db.TriggeredJobs.Create(jobEntity);
+            await db.TriggeredJobs.Create(jobEntity, ct);
             var job = new TriggeredJobModel
             (
                 jobEntity.ID,
@@ -350,7 +357,7 @@ public sealed class EfJobDb : IJobDb
         return pendingJobs.ToArray();
     }
 
-    public async Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID)
+    public async Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID, CancellationToken ct)
     {
         var triggeredJobs = await
             db.TriggeredJobs.Retrieve()
@@ -362,23 +369,23 @@ public sealed class EfJobDb : IJobDb
                     jd => jd.ID,
                     (tj, jd) => new TriggeredJobWithDefinitionEntity(tj, jd)
                 )
-                .ToArrayAsync();
+                .ToArrayAsync(ct);
         var triggeredJobModels = new List<TriggeredJobWithTasksModel>();
         foreach (var triggeredJob in triggeredJobs)
         {
-            var jobModel = await GetTriggeredJob(triggeredJob);
+            var jobModel = await GetTriggeredJob(triggeredJob, ct);
             triggeredJobModels.Add(jobModel);
         }
         return triggeredJobModels.ToArray();
     }
 
-    private Task<TriggeredJobWithTasksModel> GetTriggeredJob(int jobID) =>
-        new EfTriggeredJobDetail(db, jobID).Value();
+    private Task<TriggeredJobWithTasksModel> GetTriggeredJob(int jobID, CancellationToken ct) =>
+        new EfTriggeredJobDetail(db, jobID).Value(ct);
 
-    private Task<TriggeredJobWithTasksModel> GetTriggeredJob(TriggeredJobWithDefinitionEntity jobWithDef) =>
-        new EfTriggeredJobDetail(db, jobWithDef).Value();
+    private Task<TriggeredJobWithTasksModel> GetTriggeredJob(TriggeredJobWithDefinitionEntity jobWithDef, CancellationToken ct) =>
+        new EfTriggeredJobDetail(db, jobWithDef).Value(ct);
 
-    public async Task<TriggeredJobWithTasksModel> StartJob(int jobID, NextTaskModel[] nextTasks)
+    public async Task<TriggeredJobWithTasksModel> StartJob(int jobID, NextTaskModel[] nextTasks, CancellationToken ct)
     {
         await db.Transaction
         (
@@ -393,7 +400,7 @@ public sealed class EfJobDb : IJobDb
                         jd => jd.ID,
                         (j, jd) => new TriggeredJobWithDefinitionEntity(j, jd)
                     )
-                    .FirstAsync();
+                    .FirstAsync(ct);
                 var now = clock.Now();
                 await db.TriggeredJobs.Update
                 (
@@ -402,20 +409,21 @@ public sealed class EfJobDb : IJobDb
                     {
                         j.TimeInactive = now.Add(jobWithDefEntity.Definition.Timeout);
                         j.TimeToDelete = now.Add(jobWithDefEntity.Definition.DeleteAfter);
-                    }
+                    },
+                    ct
                 );
-                await AddNextTasks(jobWithDefEntity.Job, null, nextTasks, now);
+                await AddNextTasks(jobWithDefEntity.Job, null, nextTasks, now, ct);
             }
         );
-        var updatedJob = await GetTriggeredJob(jobID);
+        var updatedJob = await GetTriggeredJob(jobID, ct);
         return updatedJob;
     }
 
-    public async Task StartTask(int taskID)
+    public async Task StartTask(int taskID, CancellationToken ct)
     {
-        var taskEntity = await GetTask(taskID);
+        var taskEntity = await GetTask(taskID, ct);
         var taskDefEntity = await db.JobTaskDefinitions.Retrieve()
-            .FirstAsync(td => td.ID == taskEntity.TaskDefinitionID);
+            .FirstAsync(td => td.ID == taskEntity.TaskDefinitionID, ct);
         var now = clock.Now();
         await db.TriggeredJobTasks.Update
         (
@@ -425,35 +433,36 @@ public sealed class EfJobDb : IJobDb
                 jt.Status = JobTaskStatus.Values.Running.Value;
                 jt.TimeStarted = now;
                 jt.TimeInactive = now.Add(taskDefEntity.Timeout);
-            }
+            },
+            ct
         );
     }
 
-    public async Task<TriggeredJobWithTasksModel> TaskCompleted(int completedTaskID, bool preserveData, NextTaskModel[] nextTasks)
+    public async Task<TriggeredJobWithTasksModel> TaskCompleted(int completedTaskID, bool preserveData, NextTaskModel[] nextTasks, CancellationToken ct)
     {
-        var currentTaskEntity = await GetTask(completedTaskID);
+        var currentTaskEntity = await GetTask(completedTaskID, ct);
         var now = clock.Now();
-        var jobEntity = await JobByID(currentTaskEntity.TriggeredJobID);
+        var jobEntity = await JobByID(currentTaskEntity.TriggeredJobID, ct);
         await db.Transaction
         (
             async () =>
             {
-                await CreateEfTriggeredJobTask(currentTaskEntity).Complete(preserveData);
-                await AddNextTasks(jobEntity, currentTaskEntity, nextTasks, now);
+                await CreateEfTriggeredJobTask(currentTaskEntity).Complete(preserveData, ct);
+                await AddNextTasks(jobEntity, currentTaskEntity, nextTasks, now, ct);
             }
         );
-        var updatedJob = await GetTriggeredJob(currentTaskEntity.TriggeredJobID);
+        var updatedJob = await GetTriggeredJob(currentTaskEntity.TriggeredJobID, ct);
         return updatedJob;
     }
 
-    private Task<TriggeredJobEntity> JobByID(int jobID) =>
-        db.TriggeredJobs.Retrieve().FirstAsync(tj => tj.ID == jobID);
+    private Task<TriggeredJobEntity> JobByID(int jobID, CancellationToken ct) =>
+        db.TriggeredJobs.Retrieve().FirstAsync(tj => tj.ID == jobID, ct);
 
-    private async Task AddNextTasks(TriggeredJobEntity jobEntity, TriggeredJobTaskEntity? currentTaskEntity, NextTaskModel[] nextTasks, DateTimeOffset now)
+    private async Task AddNextTasks(TriggeredJobEntity jobEntity, TriggeredJobTaskEntity? currentTaskEntity, NextTaskModel[] nextTasks, DateTimeOffset now, CancellationToken ct)
     {
         if (currentTaskEntity != null)
         {
-            await CreateEfTriggeredJobTask(currentTaskEntity).ResequenceTasks(howMany: nextTasks.Length);
+            await CreateEfTriggeredJobTask(currentTaskEntity).ResequenceTasks(howMany: nextTasks.Length, ct);
         }
         var generation = (currentTaskEntity?.Generation ?? 0) + 1;
         var currentTaskSequence = currentTaskEntity?.Sequence ?? 0;
@@ -461,7 +470,7 @@ public sealed class EfJobDb : IJobDb
         foreach (var nextTask in nextTasks)
         {
             var taskDefEntity = await db.JobTaskDefinitions.Retrieve()
-                .FirstOrDefaultAsync(td => td.JobDefinitionID == jobEntity.JobDefinitionID && td.TaskKey == nextTask.TaskKey.Value);
+                .FirstOrDefaultAsync(td => td.JobDefinitionID == jobEntity.JobDefinitionID && td.TaskKey == nextTask.TaskKey.Value, ct);
             if (taskDefEntity == null)
             {
                 throw new ArgumentException($"Task '{nextTask.TaskKey.DisplayText}' was not found");
@@ -478,7 +487,7 @@ public sealed class EfJobDb : IJobDb
                 TaskData = nextTask.TaskData,
                 Status = JobTaskStatus.Values.Pending.Value
             };
-            await db.TriggeredJobTasks.Create(taskEntity);
+            await db.TriggeredJobTasks.Create(taskEntity, ct);
             if (currentTaskEntity != null)
             {
                 await db.HierarchicalTriggeredJobTasks.Create
@@ -487,35 +496,37 @@ public sealed class EfJobDb : IJobDb
                     {
                         ParentTaskID = currentTaskEntity.ID,
                         ChildTaskID = taskEntity.ID
-                    }
+                    },
+                    ct
                 );
             }
             sequence++;
         }
     }
 
-    public Task JobCancelled(int taskID, string reason) =>
+    public Task JobCancelled(int taskID, string reason, CancellationToken ct) =>
         db.Transaction
         (
             async () =>
             {
-                var taskEntity = await GetTask(taskID);
+                var taskEntity = await GetTask(taskID, ct);
                 var efTask = CreateEfTriggeredJobTask(taskEntity);
-                await efTask.Cancel();
-                await efTask.LogMessage("Cancelled", reason, "");
+                await efTask.Cancel(ct);
+                await efTask.LogMessage("Cancelled", reason, "", ct);
             }
         );
 
     public async Task<TriggeredJobWithTasksModel> TaskFailed
     (
-        int failedTaskID, 
-        JobTaskStatus errorStatus, 
-        TimeSpan retryAfter, 
-        NextTaskModel[] nextTasks, 
-        string category, 
-        string message, 
+        int failedTaskID,
+        JobTaskStatus errorStatus,
+        TimeSpan retryAfter,
+        NextTaskModel[] nextTasks,
+        string category,
+        string message,
         string details,
-        string sourceLogEntryKey
+        string sourceLogEntryKey,
+        CancellationToken ct
     )
     {
         var taskEntity = await db.Transaction
@@ -529,23 +540,25 @@ public sealed class EfJobDb : IJobDb
                 category,
                 message,
                 details,
-                sourceLogEntryKey
+                sourceLogEntryKey,
+                ct
             )
         );
-        var jobDetail = await GetTriggeredJob(taskEntity?.TriggeredJobID ?? 0);
+        var jobDetail = await GetTriggeredJob(taskEntity?.TriggeredJobID ?? 0, ct);
         return jobDetail;
     }
 
     private async Task<TriggeredJobTaskEntity> _TaskFailed
     (
-        int failedTaskID, 
-        JobTaskStatus errorStatus, 
-        TimeSpan retryAfter, 
-        NextTaskModel[] nextTasks, 
-        string category, 
-        string message, 
+        int failedTaskID,
+        JobTaskStatus errorStatus,
+        TimeSpan retryAfter,
+        NextTaskModel[] nextTasks,
+        string category,
+        string message,
         string details,
-        string sourceLogEntryKey
+        string sourceLogEntryKey,
+        CancellationToken ct
     )
     {
         var now = clock.Now();
@@ -560,46 +573,47 @@ public sealed class EfJobDb : IJobDb
                 Details = details,
                 TimeOccurred = now,
                 SourceLogEntryKey = sourceLogEntryKey
-            }
+            },
+            ct
         );
-        var currentTaskEntity = await GetTask(failedTaskID);
+        var currentTaskEntity = await GetTask(failedTaskID, ct);
         var efTask = CreateEfTriggeredJobTask(currentTaskEntity);
         if (errorStatus.Equals(JobTaskStatus.Values.Retry))
         {
-            await Retry(currentTaskEntity, retryAfter, now);
+            await Retry(currentTaskEntity, retryAfter, now, ct);
         }
         else if (errorStatus.Equals(JobTaskStatus.Values.Canceled))
         {
-            await efTask.Cancel();
+            await efTask.Cancel(ct);
         }
         else if (errorStatus.Equals(JobTaskStatus.Values.Failed))
         {
-            await efTask.Fail();
+            await efTask.Fail(ct);
         }
         else if (errorStatus.Equals(JobTaskStatus.Values.Completed))
         {
-            await efTask.Complete(true);
+            await efTask.Complete(true, ct);
         }
         else
         {
             throw new ArgumentException($"Error status '{errorStatus.DisplayText}' is not valid");
         }
-        var jobEntity = await JobByID(currentTaskEntity.TriggeredJobID);
-        await AddNextTasks(jobEntity, currentTaskEntity, nextTasks, now);
+        var jobEntity = await JobByID(currentTaskEntity.TriggeredJobID, ct);
+        await AddNextTasks(jobEntity, currentTaskEntity, nextTasks, now, ct);
         return currentTaskEntity;
     }
 
-    private Task<TriggeredJobTaskEntity> GetTask(int taskID) =>
-        db.TriggeredJobTasks.Retrieve().FirstAsync(t => t.ID == taskID);
+    private Task<TriggeredJobTaskEntity> GetTask(int taskID, CancellationToken ct) =>
+        db.TriggeredJobTasks.Retrieve().FirstAsync(t => t.ID == taskID, ct);
 
     private EfTriggeredJobTask CreateEfTriggeredJobTask(TriggeredJobTaskEntity taskEntity) =>
         new EfTriggeredJobTask(db, taskEntity, clock);
 
-    private async Task Retry(TriggeredJobTaskEntity currentTaskEntity, TimeSpan retryAfter, DateTimeOffset now)
+    private async Task Retry(TriggeredJobTaskEntity currentTaskEntity, TimeSpan retryAfter, DateTimeOffset now, CancellationToken ct)
     {
         var timeToRetry = now.Add(retryAfter);
         var job = await db.TriggeredJobs.Retrieve()
-            .FirstAsync(j => j.ID == currentTaskEntity.TriggeredJobID);
+            .FirstAsync(j => j.ID == currentTaskEntity.TriggeredJobID, ct);
         if (timeToRetry > job.TimeInactive)
         {
             await db.TriggeredJobTasks.Update
@@ -609,7 +623,8 @@ public sealed class EfJobDb : IJobDb
                 {
                     t.Status = JobTaskStatus.Values.Failed.Value;
                     t.TimeEnded = now;
-                }
+                },
+                ct
             );
             await db.LogEntries.Create
             (
@@ -621,16 +636,17 @@ public sealed class EfJobDb : IJobDb
                     Category = JobErrors.JobTimeoutCategory,
                     Message = JobErrors.JobTimeoutMessage,
                     Details = ""
-                }
+                },
+                ct
             );
         }
         else
         {
-            await CreateEfTriggeredJobTask(currentTaskEntity).Retry(timeToRetry);
+            await CreateEfTriggeredJobTask(currentTaskEntity).Retry(timeToRetry, ct);
         }
     }
 
-    public Task LogMessage(int taskID, string category, string message, string details) =>
+    public Task LogMessage(int taskID, string category, string message, string details, CancellationToken ct) =>
         db.LogEntries.Create
         (
             new LogEntryEntity
@@ -641,7 +657,8 @@ public sealed class EfJobDb : IJobDb
                 Message = message,
                 Details = details,
                 TimeOccurred = clock.Now()
-            }
+            },
+            ct
         );
 
 }

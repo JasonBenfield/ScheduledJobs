@@ -13,9 +13,9 @@ public sealed class EventNotification
 
     public EventNotificationModel ToModel() => notification;
 
-    public async Task<TriggeredJob[]> TriggeredJobs()
+    public async Task<TriggeredJob[]> TriggeredJobs(CancellationToken ct)
     {
-        var jobs = await db.TriggeredJobs(notification.ID);
+        var jobs = await db.TriggeredJobs(notification.ID, ct);
         return jobs.Select(j => new TriggeredJob(db, j)).ToArray();
     }
 }

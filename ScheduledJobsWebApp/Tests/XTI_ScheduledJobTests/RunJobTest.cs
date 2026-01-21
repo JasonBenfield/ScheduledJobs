@@ -105,7 +105,7 @@ internal sealed class RunJobTest
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
-        Assert.That(demoContext.Values, Is.EqualTo(new[] { "Value1", "Value2", "Value3" }), "Should loop through tasks");
+        Assert.That(demoContext.Values, Is.EqualTo(["Value1", "Value2", "Value3"]), "Should loop through tasks");
     }
 
     [Test]
@@ -128,7 +128,7 @@ internal sealed class RunJobTest
             new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var status = triggeredJobs[0].Status();
         Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Completed), "Should complete job");
     }
@@ -155,7 +155,7 @@ internal sealed class RunJobTest
         var context = host.GetRequiredService<DemoActionContext<DemoAction01>>();
         context.Messages = new[] { "Whatever" };
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var messages = triggeredJobs[0].Messages();
         Assert.That(messages.Length, Is.EqualTo(1), "Should log message");
         Assert.That(messages[0].Message, Is.EqualTo("Whatever"), "Should log message");
@@ -183,7 +183,7 @@ internal sealed class RunJobTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var errors = triggeredJobs[0].Errors();
         Assert.That(errors.Length, Is.EqualTo(1), "Should log error");
         Assert.That(errors[0].Message, Is.EqualTo("Whatever"), "Should log error");
@@ -212,7 +212,7 @@ internal sealed class RunJobTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var status = triggeredJobs[0].Status();
         Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Failed), "Should fail job when task fails");
     }
@@ -239,7 +239,7 @@ internal sealed class RunJobTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var task = triggeredJobs[0].Tasks(DemoJobs.DoSomething.TaskItem01)[1];
         Assert.That(task.Data<DoSomethingItemData>().ItemID, Is.EqualTo(2), "Should preserve data when task fails");
     }
@@ -320,7 +320,7 @@ internal sealed class RunJobTest
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext.CancelAfterError();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var status = triggeredJobs[0].Status();
         Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Canceled), "Should cancel job");
     }
@@ -430,7 +430,7 @@ internal sealed class RunJobTest
         demoContext01.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         demoContext01.ContinueAfterError();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var status = triggeredJobs[0].Status();
         Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Completed), "Should complete job when continuing after an error");
     }
@@ -520,7 +520,7 @@ internal sealed class RunJobTest
         var howLong = TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1));
         host.FastForward(howLong);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var messages = triggeredJobs[0].Messages();
         Assert.That(messages.Select(m => m.Category), Is.EqualTo(new[] { "Retried" }));
         Assert.That(messages.Select(m => m.Message), Is.EqualTo(new[] { "Retried" }));
@@ -553,7 +553,7 @@ internal sealed class RunJobTest
         var howLong = TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1));
         host.FastForward(howLong);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var status = triggeredJobs[0].Status();
         Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Completed), "Should complete job when retrying after an error");
     }
@@ -613,7 +613,7 @@ internal sealed class RunJobTest
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         host.FastForward(TimeSpan.FromHours(1).Add(TimeSpan.FromSeconds(1)));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var status = triggeredJobs[0].Status();
         Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Failed), "Should not retry after job times out");
     }
@@ -643,7 +643,7 @@ internal sealed class RunJobTest
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         host.FastForward(TimeSpan.FromHours(1).Add(TimeSpan.FromSeconds(1)));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var errors = triggeredJobs[0].Errors().Where(err => err.Message != "Whatever").ToArray();
         Assert.That(errors.Length, Is.EqualTo(1), "Should log job timeout error");
         Assert.That(errors[0].Category, Is.EqualTo(JobErrors.JobTimeoutCategory), "Should log job timeout error");
@@ -679,7 +679,7 @@ internal sealed class RunJobTest
         host.FastForward(TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var status = triggeredJobs[0].Status();
         Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Failed), "Should fail job when job times out");
         host.GetRequiredService<CancellationTokenSource>().Cancel();
@@ -714,7 +714,7 @@ internal sealed class RunJobTest
         host.FastForward(TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var errors = triggeredJobs[0].Errors();
         Assert.That(errors.Length, Is.EqualTo(1), "Should log error when task times out");
         Assert.That(errors[0].Category, Is.EqualTo(JobErrors.TaskTimeoutCategory), "Should log error when task times out");
@@ -751,7 +751,7 @@ internal sealed class RunJobTest
         host.FastForward(TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(-1)));
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         await api.Recurring.TimeoutTasks.Execute(new EmptyRequest());
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var status = triggeredJobs[0].Status();
         Assert.That(status, Is.EqualTo(JobTaskStatus.Values.Running), "Should not fail job before job times out");
         host.GetRequiredService<CancellationTokenSource>().Cancel();
@@ -777,7 +777,7 @@ internal sealed class RunJobTest
             new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var itemIDs = triggeredJobs[0].Tasks(DemoJobs.DoSomething.TaskItem01)
             .Select(t => t.Data<DoSomethingItemData>().ItemID)
             .ToArray();
@@ -812,7 +812,7 @@ internal sealed class RunJobTest
         catch { }
         transformedEventData.AllowTransformSourceData();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That(triggeredJobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should retry after error during transform source data");
     }
 
@@ -836,7 +836,7 @@ internal sealed class RunJobTest
             new XtiEventSource(sourceData.ID.ToString(), JsonSerializer.Serialize(sourceData))
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var itemIDs = triggeredJobs[0].Tasks(DemoJobs.DoSomething.TaskItem02)
             .Select(t => t.Data<DoSomethingItemData>().ItemID)
             .ToArray();

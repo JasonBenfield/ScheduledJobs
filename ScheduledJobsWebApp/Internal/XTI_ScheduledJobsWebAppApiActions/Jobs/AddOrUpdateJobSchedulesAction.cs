@@ -15,7 +15,7 @@ public sealed class AddOrUpdateJobSchedulesAction : AppAction<AddOrUpdateJobSche
     {
         var jobKey = new JobKey(model.JobKey);
         var aggregateSchedule = AggregateSchedule.Deserialize(model.Schedules);
-        await db.AddOrUpdateJobSchedules(jobKey, aggregateSchedule, model.DeleteAfter);
+        await db.AddOrUpdateJobSchedules(jobKey, aggregateSchedule, model.DeleteAfter, ct);
         return new EmptyActionResult();
     }
 }

@@ -27,12 +27,12 @@ internal sealed class CancelTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var failedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
         await api.Tasks.CancelTask.Invoke(new GetTaskRequest(failedTask.Model.ID));
-        triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs[0].Status(),
@@ -63,7 +63,7 @@ internal sealed class CancelTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var completedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Completed));

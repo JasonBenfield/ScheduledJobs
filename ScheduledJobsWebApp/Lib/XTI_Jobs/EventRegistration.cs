@@ -11,10 +11,10 @@ public sealed class EventRegistration
         this.events = events;
     }
 
-    public Task Register()
+    public Task Register(CancellationToken ct)
     {
         var registeredEvents = events.Select(evt => evt.BuildEvent()).ToArray();
-        return db.AddOrUpdateRegisteredEvents(registeredEvents);
+        return db.AddOrUpdateRegisteredEvents(registeredEvents, ct);
     }
 }
 

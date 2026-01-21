@@ -17,24 +17,24 @@ public sealed class AddJobScheduleNotificationsAction : AppAction<EmptyRequest, 
 
     public async Task<EmptyActionResult> Execute(EmptyRequest model, CancellationToken stoppingToken)
     {
-        var schedules = await db.JobSchedules.Retrieve().ToArrayAsync();
+        var schedules = await db.JobSchedules.Retrieve().ToArrayAsync(stoppingToken);
         foreach (var schedule in schedules)
         {
-            await db.Transaction(() => AddNotifications(schedule));
+            await db.Transaction(() => AddNotifications(schedule, stoppingToken));
         }
         return new EmptyActionResult();
     }
 
-    private async Task AddNotifications(JobScheduleEntity schedule)
+    private async Task AddNotifications(JobScheduleEntity schedule, CancellationToken ct)
     {
         var jobDef = await db.JobDefinitions.Retrieve()
             .Where(jd => jd.ID == schedule.JobDefinitionID)
-            .FirstAsync();
+            .FirstAsync(ct);
         var jobKey = new JobKey(jobDef.DisplayText);
         var eventKey = EventKey.Scheduled(jobKey);
         var evtDef = await db.EventDefinitions.Retrieve()
             .Where(ed => ed.EventKey == eventKey.Value)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
         if (evtDef == null)
         {
             throw new ArgumentException($"Event Definition '{eventKey.DisplayText}' not found");
@@ -44,6 +44,6 @@ public sealed class AddJobScheduleNotificationsAction : AppAction<EmptyRequest, 
         var dateTimeRanges = aggregateSchedule.DateTimeRanges(DateRange.From(clock.Now().Date).ForOneDay())
             .Where(dtr => dtr.Start >= minTime)
             .ToArray();
-        await new EfEventNotificationCreator(db, clock).AddJobScheduleNotifications(evtDef, dateTimeRanges);
+        await new EfEventNotificationCreator(db, clock).AddJobScheduleNotifications(evtDef, dateTimeRanges, ct);
     }
 }

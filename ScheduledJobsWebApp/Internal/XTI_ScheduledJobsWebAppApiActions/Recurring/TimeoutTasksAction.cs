@@ -19,14 +19,14 @@ public sealed class TimeoutTasksAction : AppAction<EmptyRequest, EmptyActionResu
         var now = clock.Now();
         var runningTasks = await db.TriggeredJobTasks.Retrieve()
             .Where(t => t.Status == JobTaskStatus.Values.Running.Value && t.TimeInactive < now)
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         foreach(var runningTask in runningTasks)
         {
             await db.Transaction
             (
                 async () =>
                 {
-                    await new EfTriggeredJobTask(db, runningTask, clock).Timeout();
+                    await new EfTriggeredJobTask(db, runningTask, clock).Timeout(ct);
                 }
             );
         }

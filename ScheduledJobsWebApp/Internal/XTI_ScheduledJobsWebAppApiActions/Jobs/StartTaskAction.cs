@@ -11,7 +11,7 @@ public sealed class StartTaskAction : AppAction<StartTaskRequest, EmptyActionRes
 
     public async Task<EmptyActionResult> Execute(StartTaskRequest model, CancellationToken ct)
     {
-        await db.StartTask(model.TaskID);
+        await db.StartTask(model.TaskID, ct);
         return new EmptyActionResult();
     }
 }

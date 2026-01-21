@@ -11,7 +11,7 @@ public sealed class SjcJobDb : IJobDb
         this.schdJobClient = schdJobClient;
     }
 
-    public Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule aggregateSchedule, TimeSpan deleteAfter) =>
+    public Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule aggregateSchedule, TimeSpan deleteAfter, CancellationToken ct) =>
         schdJobClient.Jobs.AddOrUpdateJobSchedules
         (
             new AddOrUpdateJobSchedulesRequest
@@ -19,22 +19,24 @@ public sealed class SjcJobDb : IJobDb
                 JobKey = jobKey.DisplayText,
                 Schedules = aggregateSchedule.Serialize(),
                 DeleteAfter = deleteAfter
-            }
+            },
+            ct
         );
 
-    public Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources) =>
+    public Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources, CancellationToken ct) =>
         schdJobClient.Events.AddNotifications
         (
-            new AddNotificationsRequest(eventKey, sources)
+            new AddNotificationsRequest(eventKey, sources),
+            ct
         );
 
-    public Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents) =>
-        schdJobClient.Events.AddOrUpdateRegisteredEvents(registeredEvents);
+    public Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents, CancellationToken ct) =>
+        schdJobClient.Events.AddOrUpdateRegisteredEvents(registeredEvents, ct);
 
-    public Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs) =>
-        schdJobClient.Jobs.AddOrUpdateRegisteredJobs(registeredJobs);
+    public Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs, CancellationToken ct) =>
+        schdJobClient.Jobs.AddOrUpdateRegisteredJobs(registeredJobs, ct);
 
-    public Task LogMessage(int taskID, string category, string message, string details) =>
+    public Task LogMessage(int taskID, string category, string message, string details, CancellationToken ct) =>
         schdJobClient.Jobs.LogMessage
         (
             new LogMessageRequest
@@ -43,48 +45,56 @@ public sealed class SjcJobDb : IJobDb
                 Category = category,
                 Message = message,
                 Details = details
-            }
+            },
+            ct
         );
 
-    public Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey) =>
+    public Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey, CancellationToken ct) =>
         schdJobClient.Jobs.DeleteJobsWithNoTasks
         (
-            new DeleteJobsWithNoTasksRequest(eventKey, jobKey)
+            new DeleteJobsWithNoTasksRequest(eventKey, jobKey),
+            ct
         );
 
-    public Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey) =>
+    public Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey, CancellationToken ct) =>
         schdJobClient.Jobs.RetryJobs
         (
-            new RetryJobsRequest(eventKey, jobKey)
+            new RetryJobsRequest(eventKey, jobKey),
+            ct
         );
 
-    public Task<TriggeredJobWithTasksModel> StartJob(int jobID, NextTaskModel[] nextTasks) =>
+    public Task<TriggeredJobWithTasksModel> StartJob(int jobID, NextTaskModel[] nextTasks, CancellationToken ct) =>
         schdJobClient.Jobs.StartJob
         (
-            new StartJobRequest(jobID, nextTasks)
+            new StartJobRequest(jobID, nextTasks),
+            ct
         );
 
-    public Task StartTask(int taskID) =>
+    public Task StartTask(int taskID, CancellationToken ct) =>
         schdJobClient.Jobs.StartTask
         (
-            new StartTaskRequest(taskID)
+            new StartTaskRequest(taskID),
+            ct
         );
 
-    public Task JobCancelled(int taskID, string reason) =>
+    public Task JobCancelled(int taskID, string reason, CancellationToken ct) =>
         schdJobClient.Jobs.JobCancelled
         (
-            new JobCancelledRequest(taskID, reason)
+            new JobCancelledRequest(taskID, reason),
+            ct
         );
 
     public Task<TriggeredJobWithTasksModel> TaskCompleted
     (
         int completedTaskID,
         bool preserveData,
-        NextTaskModel[] nextTasks
+        NextTaskModel[] nextTasks,
+        CancellationToken ct
     ) =>
         schdJobClient.Jobs.TaskCompleted
         (
-            new TaskCompletedRequest(completedTaskID, preserveData, nextTasks)
+            new TaskCompletedRequest(completedTaskID, preserveData, nextTasks),
+            ct
         );
 
     public Task<TriggeredJobWithTasksModel> TaskFailed
@@ -96,7 +106,8 @@ public sealed class SjcJobDb : IJobDb
         string category,
         string message,
         string detail,
-        string sourceLogEntryKey
+        string sourceLogEntryKey,
+        CancellationToken ct
     ) =>
         schdJobClient.Jobs.TaskFailed
         (
@@ -110,22 +121,25 @@ public sealed class SjcJobDb : IJobDb
                 Message = message,
                 Detail = detail,
                 SourceLogEntryKey = sourceLogEntryKey
-            }
+            },
+            ct
         );
 
-    public Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID) =>
+    public Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID, CancellationToken ct) =>
         schdJobClient.Events.TriggeredJobs
         (
             new TriggeredJobsRequest
             {
                 EventNotificationID = notificationID
-            }
+            },
+            ct
         );
 
-    public Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime) =>
+    public Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime, CancellationToken ct) =>
         schdJobClient.Jobs.TriggerJobs
         (
-            new TriggerJobsRequest(eventKey, jobKey, eventRaisedStartTime)
+            new TriggerJobsRequest(eventKey, jobKey, eventRaisedStartTime),
+            ct
         );
 
 }

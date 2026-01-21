@@ -11,7 +11,7 @@ public sealed class AddOrUpdateRegisteredEventsAction : AppAction<RegisteredEven
 
     public async Task<EmptyActionResult> Execute(RegisteredEvent[] registeredEvents, CancellationToken ct)
     {
-        await db.AddOrUpdateRegisteredEvents(registeredEvents);
+        await db.AddOrUpdateRegisteredEvents(registeredEvents, ct);
         return new EmptyActionResult();
     }
 }

@@ -15,14 +15,14 @@ internal static class XtiTestHostExtensions
     )
     {
         var events = host.GetRequiredService<EventRegistrationBuilder>();
-        await configEvents(events).Build().Register();
+        await configEvents(events).Build().Register(ct: default);
         await host.RegisterJobs(configJobs);
     }
 
     public static Task RegisterJobs(this XtiHost host, Func<JobRegistrationBuilder, JobRegistrationBuilder1> configJobs)
     {
         var jobs = host.GetRequiredService<JobRegistrationBuilder>();
-        return configJobs(jobs).Build().Register();
+        return configJobs(jobs).Build().Register(ct: default);
     }
 
     public static Task RegisterJobSchedule(this XtiHost host, JobKey jobKey, params Schedule[] schedules)
@@ -32,7 +32,7 @@ internal static class XtiTestHostExtensions
             .Trigger(jobKey)
             .When(schedules)
             .Build()
-            .Register();
+            .Register(ct: default);
     }
 
     public static Task<TriggeredJob[]> MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey, Action<EventMonitorBuilderFinal>? configMonitor = null)
@@ -84,7 +84,7 @@ internal static class XtiTestHostExtensions
         return incomingEventFactory
             .Incoming(eventKey)
             .From(sources)
-            .Notify();
+            .Notify(ct: default);
     }
 
     public static void FastForward(this XtiHost host, TimeSpan howLong)

@@ -14,12 +14,12 @@ public sealed class GetNotificationDetailAction : AppAction<GetNotificationDetai
     public async Task<EventNotificationDetailModel> Execute(GetNotificationDetailRequest model, CancellationToken stoppingToken)
     {
         var inquiry = new EfEventNotificationInquiry(db);
-        var evt = await inquiry.Notification(model.NotificationID);
+        var evt = await inquiry.Notification(model.NotificationID, stoppingToken);
         var triggeredJobs = await db.ExpandedTriggeredJobs.Retrieve()
             .Where(j => j.EventNotificationID == model.NotificationID)
             .OrderBy(j => j.TimeJobStarted)
             .Select(j => new JobSummaryModel(j))
-            .ToArrayAsync();
+            .ToArrayAsync(stoppingToken);
         return new EventNotificationDetailModel(evt, triggeredJobs);
     }
 }

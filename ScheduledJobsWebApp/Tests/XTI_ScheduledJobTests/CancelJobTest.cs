@@ -28,7 +28,7 @@ internal sealed class CancelJobTest
             throwError => throwError.Because("Stone Cold said so").Throw()
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs[0].Status(),
@@ -64,18 +64,18 @@ internal sealed class CancelJobTest
             throwError => throwError.Because(reason).Throw()
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var messages = triggeredJobs[0].Messages();
         Assert.That
         (
             messages.Select(m => m.Category),
-            Is.EqualTo(new[] { "Cancelled" }),
+            Is.EqualTo(["Cancelled"]),
             "Should log cancellation reason"
         );
         Assert.That
         (
             messages.Select(m => m.Message),
-            Is.EqualTo(new[] { reason }),
+            Is.EqualTo([reason]),
             "Should log cancellation reason"
         );
     }

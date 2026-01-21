@@ -10,5 +10,5 @@ public sealed class AddNotificationsAction : AppAction<AddNotificationsRequest, 
     }
 
     public Task<EventNotificationModel[]> Execute(AddNotificationsRequest addRequest, CancellationToken ct) =>
-        db.AddEventNotifications(new EventKey(addRequest.EventKey), addRequest.Sources);
+        db.AddEventNotifications(new EventKey(addRequest.EventKey), addRequest.Sources, ct);
 }

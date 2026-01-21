@@ -21,13 +21,13 @@ public sealed class RetryTaskAction : AppAction<GetTaskRequest, EmptyActionResul
             async () =>
             {
                 var currentTaskEntity = await db.TriggeredJobTasks.Retrieve()
-                    .FirstAsync(t => t.ID == model.TaskID);
+                    .FirstAsync(t => t.ID == model.TaskID, stoppingToken);
                 var status = JobTaskStatus.Values.Value(currentTaskEntity.Status);
                 if (!status.Equals(JobTaskStatus.Values.Failed))
                 {
                     throw new AppException(string.Format(TaskErrors.TaskWithStatusCannotBeRetried, status.DisplayText));
                 }
-                await new EfTriggeredJobTask(db, currentTaskEntity, clock).Retry(clock.Now());
+                await new EfTriggeredJobTask(db, currentTaskEntity, clock).Retry(clock.Now(), stoppingToken);
             }
         );
         return new EmptyActionResult();

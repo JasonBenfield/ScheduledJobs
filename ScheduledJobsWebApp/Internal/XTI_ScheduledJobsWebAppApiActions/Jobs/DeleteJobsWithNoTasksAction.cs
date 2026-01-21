@@ -11,7 +11,7 @@ public sealed class DeleteJobsWithNoTasksAction : AppAction<DeleteJobsWithNoTask
 
     public async Task<EmptyActionResult> Execute(DeleteJobsWithNoTasksRequest deleteRequest, CancellationToken stoppingToken)
     {
-        await db.DeleteJobsWithNoTasks(new EventKey(deleteRequest.EventKey), new JobKey(deleteRequest.JobKey));
+        await db.DeleteJobsWithNoTasks(new EventKey(deleteRequest.EventKey), new JobKey(deleteRequest.JobKey), stoppingToken);
         return new EmptyActionResult();
     }
 }

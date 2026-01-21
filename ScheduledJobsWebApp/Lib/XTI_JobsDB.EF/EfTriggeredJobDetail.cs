@@ -21,7 +21,7 @@ public sealed class EfTriggeredJobDetail
         this.jobID = jobID;
     }
 
-    public async Task<TriggeredJobWithTasksModel> Value()
+    public async Task<TriggeredJobWithTasksModel> Value(CancellationToken ct)
     {
         if(jobWithDef == null)
         {
@@ -35,20 +35,20 @@ public sealed class EfTriggeredJobDetail
                         jd => jd.ID,
                         (tj, jd) => new TriggeredJobWithDefinitionEntity(tj, jd)
                     )
-                    .FirstAsync();
+                    .FirstAsync(ct);
         }
-        var jobModel = await GetTriggeredJob(jobWithDef);
+        var jobModel = await GetTriggeredJob(jobWithDef, ct);
         return jobModel;
     }
 
-    private async Task<TriggeredJobWithTasksModel> GetTriggeredJob(TriggeredJobWithDefinitionEntity jobWithDef)
+    private async Task<TriggeredJobWithTasksModel> GetTriggeredJob(TriggeredJobWithDefinitionEntity jobWithDef, CancellationToken ct)
     {
-        var tasks = await TaskModels(jobWithDef.Job.ID);
+        var tasks = await TaskModels(jobWithDef.Job.ID, ct);
         var jobModel = CreateTriggeredJobDetailModel(jobWithDef.Job, jobWithDef.Definition, tasks);
         return jobModel;
     }
 
-    private async Task<TriggeredJobTaskModel[]> TaskModels(int jobID)
+    private async Task<TriggeredJobTaskModel[]> TaskModels(int jobID, CancellationToken ct)
     {
         var taskModels = new List<TriggeredJobTaskModel>();
         var taskEntities = await db.TriggeredJobTasks.Retrieve()
@@ -61,12 +61,12 @@ public sealed class EfTriggeredJobDetail
                 (t, td) => new { Task = t, Definition = td }
             )
             .OrderBy(grouped => grouped.Task.Sequence)
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
         foreach (var t in taskEntities)
         {
             var entries = await db.LogEntries.Retrieve()
                 .Where(e => e.TaskID == t.Task.ID)
-                .ToArrayAsync();
+                .ToArrayAsync(ct);
             taskModels.Add(CreateTriggeredJobTaskModel(t.Definition, t.Task, entries));
         }
         return taskModels.ToArray();

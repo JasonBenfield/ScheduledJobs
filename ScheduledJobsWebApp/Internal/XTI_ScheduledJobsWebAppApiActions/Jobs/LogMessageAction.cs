@@ -11,7 +11,7 @@ public sealed class LogMessageAction : AppAction<LogMessageRequest, EmptyActionR
 
     public async Task<EmptyActionResult> Execute(LogMessageRequest model, CancellationToken ct)
     {
-        await db.LogMessage(model.TaskID, model.Category, model.Message, model.Details);
+        await db.LogMessage(model.TaskID, model.Category, model.Message, model.Details, ct);
         return new EmptyActionResult();
     }
 }

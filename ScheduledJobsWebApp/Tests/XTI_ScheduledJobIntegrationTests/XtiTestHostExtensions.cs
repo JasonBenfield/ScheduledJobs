@@ -51,14 +51,14 @@ internal static class XtiTestHostExtensions
     public static async Task Register(this XtiHost host, Func<EventRegistrationBuilder, EventRegistrationBuilder1> configEvents, Func<JobRegistrationBuilder, JobRegistrationBuilder1> configJobs)
     {
         var events = host.GetRequiredService<EventRegistrationBuilder>();
-        await configEvents(events).Build().Register();
+        await configEvents(events).Build().Register(ct: default);
         await host.RegisterJobs(configJobs);
     }
 
     public static Task RegisterJobs(this XtiHost host, Func<JobRegistrationBuilder, JobRegistrationBuilder1> configJobs)
     {
         var jobs = host.GetRequiredService<JobRegistrationBuilder>();
-        return configJobs(jobs).Build().Register();
+        return configJobs(jobs).Build().Register(ct: default);
     }
 
     public static Task RegisterJobSchedule(this XtiHost host, JobKey jobKey, params Schedule[] schedules)
@@ -68,7 +68,7 @@ internal static class XtiTestHostExtensions
             .Trigger(jobKey)
             .When(schedules)
             .Build()
-            .Register();
+            .Register(ct: default);
     }
 
     public static Task MonitorEvent(this XtiHost host, EventKey eventKey, JobKey jobKey)
@@ -116,6 +116,6 @@ internal static class XtiTestHostExtensions
         return incomingEventFactory
             .Incoming(eventKey)
             .From(source)
-            .Notify();
+            .Notify(ct: default);
     }
 }

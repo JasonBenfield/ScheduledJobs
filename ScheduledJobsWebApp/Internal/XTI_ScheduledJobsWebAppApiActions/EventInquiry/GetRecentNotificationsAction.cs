@@ -12,11 +12,11 @@ public sealed class GetRecentNotificationsAction : AppAction<EmptyRequest, Event
     public async Task<EventSummaryModel[]> Execute(EmptyRequest model, CancellationToken stoppingToken)
     {
         var inquiry = new EfEventNotificationInquiry(db);
-        var evtModels = await inquiry.Recent();
+        var evtModels = await inquiry.Recent(stoppingToken);
         var summaries = new List<EventSummaryModel>();
         foreach(var evtModel in evtModels)
         {
-            var jobCount = await inquiry.JobCount(evtModel.ID);
+            var jobCount = await inquiry.JobCount(evtModel.ID, stoppingToken);
             summaries.Add(new EventSummaryModel(evtModel, jobCount));
         }
         return summaries.ToArray();

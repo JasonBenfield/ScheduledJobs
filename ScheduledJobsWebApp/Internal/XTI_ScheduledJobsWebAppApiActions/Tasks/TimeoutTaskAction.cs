@@ -21,13 +21,13 @@ public sealed class TimeoutTaskAction : AppAction<GetTaskRequest, EmptyActionRes
             async () =>
             {
                 var currentTaskEntity = await db.TriggeredJobTasks.Retrieve()
-                    .FirstAsync(t => t.ID == model.TaskID);
+                    .FirstAsync(t => t.ID == model.TaskID, stoppingToken);
                 var status = JobTaskStatus.Values.Value(currentTaskEntity.Status);
                 if (!status.Equals(JobTaskStatus.Values.Running))
                 {
                     throw new AppException(string.Format(TaskErrors.TaskWithStatusCannotBeTimedOut, status.DisplayText));
                 }
-                await new EfTriggeredJobTask(db, currentTaskEntity, clock).Timeout();
+                await new EfTriggeredJobTask(db, currentTaskEntity, clock).Timeout(stoppingToken);
             }
         );
         return new EmptyActionResult();

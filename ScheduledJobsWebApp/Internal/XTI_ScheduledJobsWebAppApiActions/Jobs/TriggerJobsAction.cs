@@ -10,5 +10,5 @@ public sealed class TriggerJobsAction : AppAction<TriggerJobsRequest, PendingJob
     }
 
     public Task<PendingJobModel[]> Execute(TriggerJobsRequest triggerRequest, CancellationToken ct) =>
-        db.TriggerJobs(new EventKey(triggerRequest.EventKey), new JobKey(triggerRequest.JobKey), triggerRequest.EventRaisedStartTime);
+        db.TriggerJobs(new EventKey(triggerRequest.EventKey), new JobKey(triggerRequest.JobKey), triggerRequest.EventRaisedStartTime, ct);
 }

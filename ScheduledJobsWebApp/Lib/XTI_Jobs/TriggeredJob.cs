@@ -5,7 +5,7 @@ namespace XTI_Jobs;
 public sealed class TriggeredJob
 {
     private readonly IJobDb db;
-    private TriggeredJobTask[] tasks = new TriggeredJobTask[0];
+    private TriggeredJobTask[] tasks = [];
 
     internal TriggeredJob(IJobDb db, PendingJobModel pendingJob)
         : this
@@ -15,11 +15,11 @@ public sealed class TriggeredJob
             (
                 new TriggeredJobModel
                 (
-                    pendingJob.Job.ID, 
-                    pendingJob.Job.JobDefinition, 
+                    pendingJob.Job.ID,
+                    pendingJob.Job.JobDefinition,
                     pendingJob.Job.EventNotificationID
                 ),
-                new TriggeredJobTaskModel[0]
+                []
             )
         )
     {
@@ -59,18 +59,18 @@ public sealed class TriggeredJob
         .FirstOrDefault()
         ?? JobTaskStatus.Values.NotSet;
 
-    internal Task CancelJob(TriggeredJobTask triggeredJobTask, string reason) =>
-        db.JobCancelled(triggeredJobTask.Model.ID, reason);
+    internal Task CancelJob(TriggeredJobTask triggeredJobTask, string reason, CancellationToken ct) =>
+        db.JobCancelled(triggeredJobTask.Model.ID, reason, ct);
 
-    internal async Task<TriggeredJobTask?> Start(NextTaskModel[] firstTasks)
+    internal async Task<TriggeredJobTask?> Start(NextTaskModel[] firstTasks, CancellationToken ct)
     {
-        var startedJob = await db.StartJob(Model.ID, firstTasks);
+        var startedJob = await db.StartJob(Model.ID, firstTasks, ct);
         UpdateJob(startedJob);
-        var task = await StartNextTask();
+        var task = await StartNextTask(ct);
         return task;
     }
 
-    internal async Task<TriggeredJobTask?> StartNextTask()
+    internal async Task<TriggeredJobTask?> StartNextTask(CancellationToken ct)
     {
         TriggeredJobTask? nextTask = null;
         var anyErrors = tasks.Any(t => t.Model.Status.EqualsAny(JobTaskStatus.Values.Failed, JobTaskStatus.Values.Retry));
@@ -79,22 +79,23 @@ public sealed class TriggeredJob
             nextTask = tasks.Where(t => t.Model.Status.Equals(JobTaskStatus.Values.Pending)).FirstOrDefault();
             if (nextTask != null)
             {
-                await db.StartTask(nextTask.Model.ID);
+                await db.StartTask(nextTask.Model.ID, ct);
             }
         }
         return nextTask;
     }
 
-    internal Task LogMessage(TriggeredJobTask task, string category, string message, string details) =>
+    internal Task LogMessage(TriggeredJobTask task, string category, string message, string details, CancellationToken ct) =>
         db.LogMessage
         (
             task.Model.ID,
             category,
             message,
-            details
+            details,
+            ct
         );
 
-    internal async Task<TriggeredJobTask?> TaskFailed(TriggeredJobTask task, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, Exception ex)
+    internal async Task<TriggeredJobTask?> TaskFailed(TriggeredJobTask task, JobTaskStatus errorStatus, TimeSpan retryAfter, NextTaskModel[] nextTasks, Exception ex, CancellationToken ct)
     {
         var clientException = ex as AppClientException;
         var updatedJob = await db.TaskFailed
@@ -106,16 +107,17 @@ public sealed class TriggeredJob
             ex.GetType().Name,
             ex.Message,
             ex.ToString(),
-            clientException?.LogEntryKey ?? ""
+            clientException?.LogEntryKey ?? "",
+            ct
         );
         UpdateJob(updatedJob);
-        var nextTask = await StartNextTask();
+        var nextTask = await StartNextTask(ct);
         return nextTask;
     }
 
-    internal async Task TaskCompleted(TriggeredJobTask task, bool preserveData, NextTaskModel[] nextTasks)
+    internal async Task TaskCompleted(TriggeredJobTask task, bool preserveData, NextTaskModel[] nextTasks, CancellationToken ct)
     {
-        var updatedJob = await db.TaskCompleted(task.Model.ID, preserveData, nextTasks);
+        var updatedJob = await db.TaskCompleted(task.Model.ID, preserveData, nextTasks, ct);
         UpdateJob(updatedJob);
     }
 

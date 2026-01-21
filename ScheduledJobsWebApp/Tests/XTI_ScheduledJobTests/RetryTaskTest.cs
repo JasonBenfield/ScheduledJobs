@@ -27,12 +27,12 @@ internal sealed class RetryTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var failedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
         await api.Tasks.RetryTask.Invoke(new GetTaskRequest(failedTask.Model.ID));
-        triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs[0].Status(),
@@ -63,12 +63,12 @@ internal sealed class RetryTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var failedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
         await api.Tasks.RetryTask.Invoke(new GetTaskRequest(failedTask.Model.ID));
-        triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var messages = triggeredJobs[0].Messages();
         Assert.That(messages.Length, Is.EqualTo(1), "Should log message after retry");
         Assert.That(messages[0].Category, Is.EqualTo(JobErrors.TaskRetriedCategory), "Should log message after retry");
@@ -97,7 +97,7 @@ internal sealed class RetryTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var completedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Completed));

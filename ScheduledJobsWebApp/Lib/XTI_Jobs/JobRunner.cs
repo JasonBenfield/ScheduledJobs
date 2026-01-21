@@ -14,7 +14,7 @@ internal sealed class JobRunner
     public async Task<TriggeredJob> StartRetry(TriggeredJobWithTasksModel retryJob, CancellationToken stoppingToken)
     {
         var triggeredJob = new TriggeredJob(db, retryJob);
-        var nextTask = await triggeredJob.StartNextTask();
+        var nextTask = await triggeredJob.StartNextTask(stoppingToken);
         while (nextTask != null)
         {
             nextTask = await ExecuteTask(stoppingToken, triggeredJob, nextTask);
@@ -26,7 +26,7 @@ internal sealed class JobRunner
     {
         var firstTasks = jobActionFactory.FirstTasks(taskData);
         var triggeredJob = new TriggeredJob(db, pendingJob);
-        var nextTask = await triggeredJob.Start(firstTasks);
+        var nextTask = await triggeredJob.Start(firstTasks, stoppingToken);
         while (nextTask != null)
         {
             nextTask = await ExecuteTask(stoppingToken, triggeredJob, nextTask);
@@ -42,12 +42,12 @@ internal sealed class JobRunner
         try
         {
             result = await jobAction.Execute(stoppingToken);
-            await currentTask.Completed(result.PreserveData, result.NextTasks);
-            nextTask = await triggeredJob.StartNextTask();
+            await currentTask.Completed(result.PreserveData, result.NextTasks, stoppingToken);
+            nextTask = await triggeredJob.StartNextTask(stoppingToken);
         }
         catch (CancelJobException cancelJobEx)
         {
-            await currentTask.CancelJob(cancelJobEx.Reason);
+            await currentTask.CancelJob(cancelJobEx.Reason, stoppingToken);
             nextTask = null;
         }
         catch (Exception ex)
@@ -66,7 +66,8 @@ internal sealed class JobRunner
                 errorResult.UpdatedStatus,
                 errorResult.RetryAfter,
                 errorResult.NextTasks,
-                ex
+                ex,
+                stoppingToken
             );
         }
         return nextTask;

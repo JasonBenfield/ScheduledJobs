@@ -21,7 +21,7 @@ internal sealed class TriggerJobTest
             new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs.Length,
@@ -45,7 +45,7 @@ internal sealed class TriggerJobTest
             new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingElseHappened, DemoJobs.DoSomethingElse.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var errors = triggeredJobs[0].Errors();
         Console.WriteLine(XtiSerializer.Serialize(errors, new JsonSerializerOptions { WriteIndented = true }));
         Assert.That(errors.Length, Is.EqualTo(0));
@@ -75,7 +75,7 @@ internal sealed class TriggerJobTest
             new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs.Length,
@@ -100,7 +100,7 @@ internal sealed class TriggerJobTest
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs.Length,
@@ -155,14 +155,14 @@ internal sealed class TriggerJobTest
             new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs();
+        var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs1.Length,
             Is.EqualTo(1),
             "Should trigger job for first event."
         );
-        var triggeredJobs2 = await eventNotifications2[0].TriggeredJobs();
+        var triggeredJobs2 = await eventNotifications2[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs2.Length,
@@ -193,14 +193,14 @@ internal sealed class TriggerJobTest
             new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs();
+        var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs1.Length,
             Is.EqualTo(1),
             "Should trigger job for first event."
         );
-        var triggeredJobs2 = await eventNotifications2[0].TriggeredJobs();
+        var triggeredJobs2 = await eventNotifications2[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs2.Length,
@@ -231,14 +231,14 @@ internal sealed class TriggerJobTest
             new XtiEventSource("1", "{ \"ID\": 1 }")
         );
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs();
+        var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs1.Length,
             Is.EqualTo(0),
             "Should not trigger job for older events."
         );
-        var triggeredJobs2 = await eventNotifications2[0].TriggeredJobs();
+        var triggeredJobs2 = await eventNotifications2[0].TriggeredJobs(ct: default);
         Assert.That
         (
             triggeredJobs2.Length,
@@ -292,7 +292,7 @@ internal sealed class TriggerJobTest
         );
         clock.Add(activeFor.Add(TimeSpan.FromSeconds(1)));
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That(triggeredJobs.Length, Is.EqualTo(0), "Should not trigger job when event is no longer active");
     }
 
@@ -347,7 +347,7 @@ internal sealed class TriggerJobTest
                 monitorBuilder.HandleEventsRaisedOnOrAfter(eventRaisedStartTime);
             }
         );
-        var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs();
+        var triggeredJobs1 = await eventNotifications1[0].TriggeredJobs(ct: default);
         Assert.That(triggeredJobs1.Length, Is.EqualTo(0), "Should not trigger jobs before event raised start time");
         host.FastForward(TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)));
         sourceData.ID = 4;
@@ -365,7 +365,7 @@ internal sealed class TriggerJobTest
                 monitorBuilder.HandleEventsRaisedOnOrAfter(eventRaisedStartTime);
             }
         );
-        var triggeredJobs2 = await eventNotifications2[0].TriggeredJobs();
+        var triggeredJobs2 = await eventNotifications2[0].TriggeredJobs(ct: default);
         Assert.That(triggeredJobs2.Length, Is.EqualTo(1), "Should trigger jobs after event raised start time");
     }
 

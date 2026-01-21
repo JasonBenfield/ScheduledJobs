@@ -10,5 +10,5 @@ public class TaskCompletedAction : AppAction<TaskCompletedRequest, TriggeredJobW
     }
 
     public Task<TriggeredJobWithTasksModel> Execute(TaskCompletedRequest model, CancellationToken ct) =>
-        db.TaskCompleted(model.CompletedTaskID, model.PreserveData, model.NextTasks);
+        db.TaskCompleted(model.CompletedTaskID, model.PreserveData, model.NextTasks, ct);
 }

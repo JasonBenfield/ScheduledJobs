@@ -28,7 +28,7 @@ internal sealed class EditTaskDataTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var beforeFailedTask = beforeTriggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
@@ -42,7 +42,7 @@ internal sealed class EditTaskDataTest
                 TaskData = XtiSerializer.Serialize(beforeTaskData)
             }
         );
-        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var afterFailedTask = afterTriggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
         var afterTaskData = XtiSerializer.Deserialize<DoSomethingItemData>(afterFailedTask.Model.TaskData);
@@ -71,7 +71,7 @@ internal sealed class EditTaskDataTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var beforeFailedTask = beforeTriggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
@@ -84,7 +84,7 @@ internal sealed class EditTaskDataTest
                 TaskData = beforeFailedTask.Model.TaskData
             }
         );
-        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var messages = afterTriggeredJobs[0].Messages();
         Assert.That(messages.Length, Is.EqualTo(0), "Should not edit task data when nothing changed");
     }
@@ -111,7 +111,7 @@ internal sealed class EditTaskDataTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var beforeFailedTask = beforeTriggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Failed));
@@ -125,10 +125,10 @@ internal sealed class EditTaskDataTest
                 TaskData = XtiSerializer.Serialize(beforeTaskData)
             }
         );
-        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var messages = afterTriggeredJobs[0].Messages();
-        Assert.That(messages.Select(m => m.Category), Is.EqualTo(new[] { "OriginalTaskData" }));
-        Assert.That(messages.Select(m => m.Message), Is.EqualTo(new[] { beforeFailedTask.Model.TaskData }));
+        Assert.That(messages.Select(m => m.Category), Is.EqualTo(["OriginalTaskData"]));
+        Assert.That(messages.Select(m => m.Message), Is.EqualTo([beforeFailedTask.Model.TaskData]));
     }
 
     [Test]
@@ -153,7 +153,7 @@ internal sealed class EditTaskDataTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var completedTask = triggeredJobs[0].Tasks()
             .First

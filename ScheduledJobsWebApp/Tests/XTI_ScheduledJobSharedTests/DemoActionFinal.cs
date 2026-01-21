@@ -22,7 +22,7 @@ public sealed class DemoActionFinal : JobAction<DoSomethingData>
         context.Output = data.Output;
         foreach (var message in context.Messages)
         {
-            await task.LogMessage(message);
+            await task.LogMessage(message, stoppingToken);
         }
     }
 }

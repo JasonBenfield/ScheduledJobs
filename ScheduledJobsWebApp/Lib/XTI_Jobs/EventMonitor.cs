@@ -25,8 +25,8 @@ public sealed class EventMonitor
         {
             throw new ArgumentException($"Unable to monitor on demand job '{eventKey.DisplayText}'");
         }
-        await db.DeleteJobsWithNoTasks(eventKey, jobKey);
-        var retryJobs = await db.RetryJobs(eventKey, jobKey);
+        await db.DeleteJobsWithNoTasks(eventKey, jobKey, stoppingToken);
+        var retryJobs = await db.RetryJobs(eventKey, jobKey, stoppingToken);
         var jobRunner = new JobRunner(db, jobActionFactory);
         var triggeredJobs = new List<TriggeredJob>();
         foreach(var retryJob in retryJobs)
@@ -34,7 +34,7 @@ public sealed class EventMonitor
             var triggeredJob = await jobRunner.StartRetry(retryJob, stoppingToken);
             triggeredJobs.Add(triggeredJob);
         }
-        var pendingJobs = await db.TriggerJobs(eventKey, jobKey, eventRaisedStartTime);
+        var pendingJobs = await db.TriggerJobs(eventKey, jobKey, eventRaisedStartTime, stoppingToken);
         foreach (var pendingJob in pendingJobs)
         {
             var taskData = await transformedEventData.TransformEventData(pendingJob.SourceKey, pendingJob.SourceData);

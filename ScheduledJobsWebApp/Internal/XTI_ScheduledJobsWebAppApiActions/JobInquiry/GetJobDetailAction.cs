@@ -17,9 +17,9 @@ public sealed class GetJobDetailAction : AppAction<GetJobDetailRequest, Triggere
 
     public async Task<TriggeredJobDetailModel> Execute(GetJobDetailRequest model, CancellationToken stoppingToken)
     {
-        var jobWithTasks = await new EfTriggeredJobDetail(db, model.JobID).Value();
+        var jobWithTasks = await new EfTriggeredJobDetail(db, model.JobID).Value(stoppingToken);
         var inquiry = new EfEventNotificationInquiry(db);
-        var triggeredBy = await inquiry.Notification(jobWithTasks.Job.EventNotificationID);
+        var triggeredBy = await inquiry.Notification(jobWithTasks.Job.EventNotificationID, stoppingToken);
         var logEntriesWithSource = jobWithTasks.Tasks
             .SelectMany(t => t.LogEntries)
             .Where(le => !string.IsNullOrWhiteSpace(le.SourceEventKey))

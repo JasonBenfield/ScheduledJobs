@@ -17,9 +17,9 @@ public sealed class IncomingEvent
         this.sources = sources;
     }
 
-    public async Task<EventNotification[]> Notify()
+    public async Task<EventNotification[]> Notify(CancellationToken ct)
     {
-        var notificationModels = await db.AddEventNotifications(eventKey, sources);
+        var notificationModels = await db.AddEventNotifications(eventKey, sources, ct);
         return notificationModels.Select(n => new EventNotification(db, n)).ToArray();
     }
 }

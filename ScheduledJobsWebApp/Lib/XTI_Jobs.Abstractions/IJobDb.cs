@@ -4,37 +4,39 @@ namespace XTI_Jobs.Abstractions;
 
 public interface IJobDb
 {
-    Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule schedule, TimeSpan deleteAfter);
+    Task AddOrUpdateJobSchedules(JobKey jobKey, AggregateSchedule schedule, TimeSpan deleteAfter, CancellationToken ct);
 
-    Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents);
+    Task AddOrUpdateRegisteredEvents(RegisteredEvent[] registeredEvents, CancellationToken ct);
 
-    Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs);
+    Task AddOrUpdateRegisteredJobs(RegisteredJob[] registeredJobs, CancellationToken ct);
 
-    Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources);
+    Task<EventNotificationModel[]> AddEventNotifications(EventKey eventKey, XtiEventSource[] sources, CancellationToken ct);
 
-    Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID);
+    Task<TriggeredJobWithTasksModel[]> TriggeredJobs(int notificationID, CancellationToken ct);
 
-    Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime);
+    Task<PendingJobModel[]> TriggerJobs(EventKey eventKey, JobKey jobKey, DateTimeOffset eventRaisedStartTime, CancellationToken ct);
 
-    Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey);
+    Task DeleteJobsWithNoTasks(EventKey eventKey, JobKey jobKey, CancellationToken ct);
 
-    Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey);
+    Task<TriggeredJobWithTasksModel[]> RetryJobs(EventKey eventKey, JobKey jobKey, CancellationToken ct);
 
     Task<TriggeredJobWithTasksModel> StartJob
     (
         int jobID,
-        NextTaskModel[] nextTasks
+        NextTaskModel[] nextTasks,
+        CancellationToken ct
     );
 
-    Task StartTask(int taskID);
+    Task StartTask(int taskID, CancellationToken ct);
 
-    Task JobCancelled(int taskID, string reason);
+    Task JobCancelled(int taskID, string reason, CancellationToken ct);
     
     Task<TriggeredJobWithTasksModel> TaskCompleted
     (
         int completedTaskID,
         bool preserveData,
-        NextTaskModel[] nextTasks
+        NextTaskModel[] nextTasks,
+        CancellationToken ct
     );
 
     Task<TriggeredJobWithTasksModel> TaskFailed
@@ -46,7 +48,8 @@ public interface IJobDb
         string category,
         string message,
         string detail,
-        string sourceLogEntryKey
+        string sourceLogEntryKey,
+        CancellationToken ct
     );
 
     Task LogMessage
@@ -54,6 +57,7 @@ public interface IJobDb
         int taskID,
         string category,
         string message,
-        string details
+        string details,
+        CancellationToken ct
     );
 }

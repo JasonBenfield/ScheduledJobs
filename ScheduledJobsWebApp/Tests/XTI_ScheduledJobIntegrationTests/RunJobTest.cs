@@ -28,7 +28,7 @@ internal sealed class RunJobTest
         );
         Assert.That(eventNotifications.Length, Is.EqualTo(1), "Should raise event");
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var jobs = await eventNotifications[0].TriggeredJobs();
+        var jobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That(jobs.Length, Is.EqualTo(1), "Should trigger job");
         Assert.That(jobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should complete job");
     }
@@ -56,7 +56,7 @@ internal sealed class RunJobTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var jobs = await eventNotifications[0].TriggeredJobs();
+        var jobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That(jobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Failed), "Should fail job");
         var errors = jobs[0].Errors();
         Assert.That(errors.Select(err => err.Category), Is.EqualTo(new[] { "DemoItemActionException" }), "Should log errors");
@@ -89,7 +89,7 @@ internal sealed class RunJobTest
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
         demoContext.DontThrowError();
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var jobs = await eventNotifications[0].TriggeredJobs();
+        var jobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That(jobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should retry job");
     }
 
@@ -124,7 +124,7 @@ internal sealed class RunJobTest
         transformedEventData.AllowTransformSourceData();
         var host2 = TestHost.CreateDefault(XtiEnvironment.Development);
         await host2.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That(triggeredJobs[0].Status(), Is.EqualTo(JobTaskStatus.Values.Completed), "Should retry after error during transform source data");
     }
 

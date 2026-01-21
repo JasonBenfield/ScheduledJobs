@@ -10,5 +10,5 @@ public sealed class TriggeredJobsAction : AppAction<TriggeredJobsRequest, Trigge
     }
 
     public Task<TriggeredJobWithTasksModel[]> Execute(TriggeredJobsRequest model, CancellationToken ct) =>
-        db.TriggeredJobs(model.EventNotificationID);
+        db.TriggeredJobs(model.EventNotificationID, ct);
 }

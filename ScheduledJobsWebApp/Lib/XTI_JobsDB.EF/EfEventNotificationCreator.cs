@@ -14,24 +14,25 @@ public sealed class EfEventNotificationCreator
         this.clock = clock;
     }
 
-    public async Task<EventNotificationModel[]> AddJobScheduleNotifications(EventDefinitionEntity evtDefEntity, DateTimeRange[] dateTimeRanges)
+    public async Task<EventNotificationModel[]> AddJobScheduleNotifications(EventDefinitionEntity evtDefEntity, DateTimeRange[] dateTimeRanges, CancellationToken ct)
     {
         var eventNotifications = new List<EventNotificationModel>();
         foreach (var dateTimeRange in dateTimeRanges)
         {
             var timeRangeNotifications = await AddEventNotifications
             (
-                new[] { new XtiEventSource($"{dateTimeRange.Format()}", "") },
+                [new XtiEventSource($"{dateTimeRange.Format()}", "")],
                 evtDefEntity,
                 dateTimeRange.Start,
-                dateTimeRange.End - dateTimeRange.Start
+                dateTimeRange.End - dateTimeRange.Start,
+                ct
             );
             eventNotifications.AddRange(timeRangeNotifications);
         }
         return eventNotifications.ToArray();
     }
 
-    public async Task<EventNotificationModel[]> AddEventNotifications(XtiEventSource[] sources, EventDefinitionEntity evtDefEntity, DateTimeOffset timeActive, TimeSpan activeFor)
+    public async Task<EventNotificationModel[]> AddEventNotifications(XtiEventSource[] sources, EventDefinitionEntity evtDefEntity, DateTimeOffset timeActive, TimeSpan activeFor, CancellationToken ct)
     {
         var eventNotifications = new List<EventNotificationModel>();
         var now = clock.Now();
@@ -40,7 +41,7 @@ public sealed class EfEventNotificationCreator
             var duplicateHandling = DuplicateHandling.Values.Value(evtDefEntity.DuplicateHandling);
             foreach (var source in sources)
             {
-                var duplicateNotifications = await GetDuplicateNotifications(evtDefEntity, duplicateHandling, source);
+                var duplicateNotifications = await GetDuplicateNotifications(evtDefEntity, duplicateHandling, source, ct);
                 var timeInactive = activeFor == TimeSpan.MaxValue
                     ? DateTimeOffset.MaxValue
                     : timeActive.Add(activeFor);
@@ -51,7 +52,7 @@ public sealed class EfEventNotificationCreator
                 }
                 if (duplicateHandling.Equals(DuplicateHandling.Values.KeepNewest))
                 {
-                    await DeactiveDuplicateEventNotifications(now, duplicateNotifications);
+                    await DeactiveDuplicateEventNotifications(now, duplicateNotifications, ct);
                 }
                 if (!duplicateHandling.Equals(DuplicateHandling.Values.Ignore) || !duplicateNotifications.Any())
                 {
@@ -65,7 +66,7 @@ public sealed class EfEventNotificationCreator
                         TimeInactive = timeInactive,
                         TimeToDelete = now.Add(evtDefEntity.DeleteAfter)
                     };
-                    await db.EventNotifications.Create(notificationEntity);
+                    await db.EventNotifications.Create(notificationEntity, ct);
                     eventNotifications.Add
                     (
                         new EventNotificationModel
@@ -85,12 +86,12 @@ public sealed class EfEventNotificationCreator
         return eventNotifications.ToArray();
     }
 
-    private async Task<EventNotificationEntity[]> GetDuplicateNotifications(EventDefinitionEntity eventDefinition, DuplicateHandling duplicateHandling, XtiEventSource source)
+    private async Task<EventNotificationEntity[]> GetDuplicateNotifications(EventDefinitionEntity eventDefinition, DuplicateHandling duplicateHandling, XtiEventSource source, CancellationToken ct)
     {
         EventNotificationEntity[] duplicateNotifications;
         if (duplicateHandling.Equals(DuplicateHandling.Values.KeepAll))
         {
-            duplicateNotifications = new EventNotificationEntity[0];
+            duplicateNotifications = [];
         }
         else
         {
@@ -109,20 +110,21 @@ public sealed class EfEventNotificationCreator
                         en => en.SourceData == source.SourceData
                     );
             }
-            duplicateNotifications = await duplicateNotificationsQuery.ToArrayAsync();
+            duplicateNotifications = await duplicateNotificationsQuery.ToArrayAsync(ct);
         }
         return duplicateNotifications;
     }
 
 
-    private async Task DeactiveDuplicateEventNotifications(DateTimeOffset now, EventNotificationEntity[] duplicateNotifications)
+    private async Task DeactiveDuplicateEventNotifications(DateTimeOffset now, EventNotificationEntity[] duplicateNotifications, CancellationToken ct)
     {
         foreach (var duplicateNotification in duplicateNotifications)
         {
             await db.EventNotifications.Update
             (
                 duplicateNotification,
-                dn => dn.TimeInactive = now.AddMinutes(-1)
+                dn => dn.TimeInactive = now.AddMinutes(-1),
+                ct
             );
         }
     }

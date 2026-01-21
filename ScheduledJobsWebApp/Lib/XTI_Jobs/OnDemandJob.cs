@@ -32,8 +32,7 @@ public sealed class OnDemandJob
         var eventKey = EventKey.OnDemand(jobKey);
         await db.AddOrUpdateRegisteredEvents
         (
-            new[]
-            {
+            [
                 new RegisteredEvent
                 (
                     eventKey,
@@ -43,11 +42,12 @@ public sealed class OnDemandJob
                     TimeSpan.FromMinutes(5),
                     deleteAfter
                 )
-            }
+            ],
+            stoppingToken
         );
         var sources = data.Select(d => new XtiEventSource("", d)).ToArray();
-        var notifications = await db.AddEventNotifications(eventKey, sources);
-        var pendingJobs = await db.TriggerJobs(eventKey, jobKey, DateTimeOffset.MinValue);
+        var notifications = await db.AddEventNotifications(eventKey, sources, stoppingToken);
+        var pendingJobs = await db.TriggerJobs(eventKey, jobKey, DateTimeOffset.MinValue, stoppingToken);
         var jobRunner = new JobRunner(db, jobActionFactory);
         var triggeredJobs = new List<TriggeredJob>();
         foreach (var pendingJob in pendingJobs)

@@ -33,11 +33,11 @@ internal sealed class TimeoutTaskTest
         );
         await Task.Delay(TimeSpan.FromSeconds(1));
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
-        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var runningTask = beforeTriggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Running));
         await api.Tasks.TimeoutTask.Invoke(new GetTaskRequest(runningTask.Model.ID));
-        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         Assert.That
         (
             afterTriggeredJobs[0].Status(),
@@ -69,7 +69,7 @@ internal sealed class TimeoutTaskTest
         var demoContext = host.GetRequiredService<DemoItemActionContext<DemoItemAction01>>();
         demoContext.ThrowErrorWhen("Whatever", data => data.ItemID == 2);
         await host.MonitorEvent(DemoEventKeys.SomethingHappened, DemoJobs.DoSomething.JobKey);
-        var triggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var triggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
         var completedTask = triggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Completed));
@@ -114,11 +114,11 @@ internal sealed class TimeoutTaskTest
         );
         await Task.Delay(TimeSpan.FromSeconds(1));
         var api = host.GetRequiredService<ScheduledJobsAppApi>();
-        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var beforeTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var runningTask = beforeTriggeredJobs[0].Tasks()
             .First(t => t.Model.Status.Equals(JobTaskStatus.Values.Running));
         await api.Tasks.TimeoutTask.Invoke(new GetTaskRequest(runningTask.Model.ID));
-        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs();
+        var afterTriggeredJobs = await eventNotifications[0].TriggeredJobs(ct: default);
         var errors = afterTriggeredJobs[0].Errors();
         Assert.That(errors.Length, Is.EqualTo(1), "Should log error when task times out");
         Assert.That(errors[0].Category, Is.EqualTo(JobErrors.TaskTimeoutCategory), "Should log error when task times out");

@@ -10,5 +10,5 @@ public sealed class StartJobAction : AppAction<StartJobRequest, TriggeredJobWith
     }
 
     public Task<TriggeredJobWithTasksModel> Execute(StartJobRequest model, CancellationToken ct) =>
-        db.StartJob(model.JobID, model.NextTasks);
+        db.StartJob(model.JobID, model.NextTasks, ct);
 }

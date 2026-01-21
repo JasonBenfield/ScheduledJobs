@@ -31,21 +31,22 @@ public sealed class TriggeredJobTask
             .Where(e => !e.Severity.Equals(AppEventSeverity.Values.CriticalError))
             .ToArray();
 
-    public Task LogMessage(string message) => LogMessage("", message, "");
+    public Task LogMessage(string message, CancellationToken ct) => LogMessage("", message, "", ct);
 
-    public Task LogMessage(string category, string message, string details) =>
-        job.LogMessage(this, category, message, details);
+    public Task LogMessage(string category, string message, string details, CancellationToken ct) =>
+        job.LogMessage(this, category, message, details, ct);
 
     internal Task<TriggeredJobTask?> Failed
     (
         JobTaskStatus errorStatus,
         TimeSpan retryAfter,
         NextTaskModel[] nextTasks,
-        Exception ex
-    ) => job.TaskFailed(this, errorStatus, retryAfter, nextTasks, ex);
+        Exception ex,
+        CancellationToken ct
+    ) => job.TaskFailed(this, errorStatus, retryAfter, nextTasks, ex, ct);
 
-    internal Task Completed(bool preserveData, NextTaskModel[] nextTasks) =>
-        job.TaskCompleted(this, preserveData, nextTasks);
+    internal Task Completed(bool preserveData, NextTaskModel[] nextTasks, CancellationToken ct) =>
+        job.TaskCompleted(this, preserveData, nextTasks, ct);
 
-    internal Task CancelJob(string reason) => job.CancelJob(this, reason);
+    internal Task CancelJob(string reason, CancellationToken ct) => job.CancelJob(this, reason, ct);
 }

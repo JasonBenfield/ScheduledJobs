@@ -24,7 +24,7 @@ public sealed class DemoAction02 : JobAction<DoSomethingData>
         context.Output = data.Output;
         foreach (var message in context.Messages)
         {
-            await task.LogMessage(message);
+            await task.LogMessage(message, stoppingToken);
         }
         nextTasks.AddNext(DemoJobs.DoSomething.TaskItem01, data.Items);
     }

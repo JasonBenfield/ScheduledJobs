@@ -21,13 +21,13 @@ public sealed class CancelTaskAction : AppAction<GetTaskRequest, EmptyActionResu
             async () =>
             {
                 var currentTaskEntity = await db.TriggeredJobTasks.Retrieve()
-                    .FirstAsync(t => t.ID == model.TaskID);
+                    .FirstAsync(t => t.ID == model.TaskID, stoppingToken);
                 var status = JobTaskStatus.Values.Value(currentTaskEntity.Status);
                 if (!status.Equals(JobTaskStatus.Values.Failed))
                 {
                     throw new AppException(string.Format(TaskErrors.TaskWithStatusCannotBeCanceled, status.DisplayText));
                 }
-                await new EfTriggeredJobTask(db, currentTaskEntity, clock).Cancel();
+                await new EfTriggeredJobTask(db, currentTaskEntity, clock).Cancel(stoppingToken);
             }
         );
         return new EmptyActionResult();

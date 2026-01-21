@@ -11,7 +11,7 @@ public sealed class JobCancelledAction : AppAction<JobCancelledRequest, EmptyAct
 
     public async Task<EmptyActionResult> Execute(JobCancelledRequest model, CancellationToken stoppingToken)
     {
-        await db.JobCancelled(model.TaskID, model.Reason);
+        await db.JobCancelled(model.TaskID, model.Reason, stoppingToken);
         return new EmptyActionResult();
     }
 }

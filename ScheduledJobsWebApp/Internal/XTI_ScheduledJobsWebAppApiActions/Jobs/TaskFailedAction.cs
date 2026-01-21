@@ -19,6 +19,7 @@ public sealed class TaskFailedAction : AppAction<TaskFailedRequest, TriggeredJob
             failedRequest.Category,
             failedRequest.Message,
             failedRequest.Detail,
-            failedRequest.SourceLogEntryKey
+            failedRequest.SourceLogEntryKey,
+            ct
         );
 }

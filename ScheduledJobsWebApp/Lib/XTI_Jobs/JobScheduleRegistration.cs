@@ -17,12 +17,13 @@ public sealed class JobScheduleRegistration
         this.deleteAfter = deleteAfter;
     }
 
-    public Task Register() =>
+    public Task Register(CancellationToken ct) =>
         db.AddOrUpdateJobSchedules
         (
             jobKey,
             new AggregateSchedule(schedules),
-            deleteAfter
+            deleteAfter,
+            ct
         );
 }
 

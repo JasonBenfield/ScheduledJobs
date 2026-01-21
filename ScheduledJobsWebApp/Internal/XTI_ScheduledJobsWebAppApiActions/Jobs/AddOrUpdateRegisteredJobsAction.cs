@@ -11,7 +11,7 @@ public sealed class AddOrUpdateRegisteredJobsAction : AppAction<RegisteredJob[],
 
     public async Task<EmptyActionResult> Execute(RegisteredJob[] registeredJobs, CancellationToken ct)
     {
-        await db.AddOrUpdateRegisteredJobs(registeredJobs);
+        await db.AddOrUpdateRegisteredJobs(registeredJobs, ct);
         return new EmptyActionResult();
     }
 }
